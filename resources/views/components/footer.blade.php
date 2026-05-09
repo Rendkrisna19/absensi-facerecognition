@@ -6,11 +6,7 @@
                     &copy; <span x-data x-text="new Date().getFullYear()"></span> <span class="font-bold text-[#002D8B]">Sekolah Tri Jaya</span>. Hak Cipta Dilindungi.
                 </span>
             </div>
-            <div class="flex justify-center md:justify-end gap-4 text-sm text-gray-400">
-                <span>Versi 1.0.0</span>
-                <span class="hidden sm:inline">&bull;</span>
-                <span>Dikelola oleh Tim IT</span>
-            </div>
+           
         </div>
     </div>
 </footer>

@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\GuruController;
 use App\Http\Controllers\Admin\FaceRecordingController;
 use App\Http\Controllers\Admin\PengaturanLanController;
 use App\Http\Controllers\Admin\PengaturanAbsensiController;
+use App\Http\Controllers\Admin\UserController;
 //import role kepala-yayasan
 use App\Http\Controllers\KepalaYayasan\DashboardYayasanController;
 use App\Http\Controllers\KepalaYayasan\LaporanAbsensiController;
@@ -34,6 +35,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::resource('pengaturan-lan', PengaturanLanController::class)->names('admin.pengaturan-lan');
     Route::get('/pengaturan-absensi', [PengaturanAbsensiController::class, 'index'])->name('admin.pengaturan-absensi.index');
     Route::post('/pengaturan-absensi', [PengaturanAbsensiController::class, 'store'])->name('admin.pengaturan-absensi.store');
+    Route::resource('user', UserController::class, ['as' => 'admin']);
+    Route::get('/admin/guru/export/excel', [\App\Http\Controllers\Admin\GuruController::class, 'exportExcel'])->name('admin.guru.export.excel');
+    Route::get('/admin/guru/export/pdf', [\App\Http\Controllers\Admin\GuruController::class, 'exportPdf'])->name('admin.guru.export.pdf');
+    Route::get('/admin/guru/{guru}/print', [\App\Http\Controllers\Admin\GuruController::class, 'print'])->name('admin.guru.print');
 });
 
 // 4. Group Routes: KEPALA YAYASAN

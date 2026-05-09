@@ -8,15 +8,23 @@ use App\Models\User;
 use App\Models\Guru;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use App\Exports\GuruExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class GuruController extends Controller
 {
-    public function index()
-    {
-        // Mengambil data user yang role-nya guru beserta relasi biodatanya
-        $gurus = User::with('guru')->where('role', 'guru')->latest()->get();
-        return view('admin.guru.index', compact('gurus'));
-    }
+   public function index()
+{
+   
+    $gurus = User::with('guru')
+                 ->where('role', 'guru') 
+                 ->orderBy('name', 'asc') // Default sorting
+                 ->get();
+
+    return view('admin.guru.index', compact('gurus'));
+}
 
     public function create()
     {
@@ -32,10 +40,17 @@ class GuruController extends Controller
             'jabatan' => 'required|string|max:100',
             'jenis_kelamin' => 'required|in:L,P',
             'no_hp' => 'required|numeric',
+            'foto_profil' => 'nullable|image|mimes:jpeg,png,jpg|max:2048' // Validasi foto
         ]);
 
         try {
-            DB::transaction(function () use ($request) {
+            // Handle upload foto sebelum masuk transaksi DB
+            $fotoPath = null;
+            if ($request->hasFile('foto_profil')) {
+                $fotoPath = $request->file('foto_profil')->store('profil', 'public');
+            }
+
+            DB::transaction(function () use ($request, $fotoPath) {
                 // 1. Simpan ke tabel Users
                 $user = User::create([
                     'name' => $request->name,
@@ -44,6 +59,7 @@ class GuruController extends Controller
                     'password' => Hash::make($request->password),
                     'role' => 'guru',
                     'jabatan' => $request->jabatan,
+                    'foto_profil' => $fotoPath, // Simpan path foto
                 ]);
 
                 // 2. Simpan ke tabel Gurus (Biodata)
@@ -90,6 +106,7 @@ class GuruController extends Controller
             'jabatan' => 'required|string|max:100',
             'jenis_kelamin' => 'required|in:L,P',
             'no_hp' => 'required|numeric',
+            'foto_profil' => 'nullable|image|mimes:jpeg,png,jpg|max:2048' // Validasi foto
         ]);
 
         try {
@@ -105,6 +122,16 @@ class GuruController extends Controller
                 // Jika kolom password diisi, maka update passwordnya
                 if ($request->filled('password')) {
                     $userData['password'] = Hash::make($request->password);
+                }
+
+                // Handle upload foto baru dan hapus foto lama
+                if ($request->hasFile('foto_profil')) {
+                    // Hapus foto lama jika ada di storage
+                    if ($guru->foto_profil && Storage::disk('public')->exists($guru->foto_profil)) {
+                        Storage::disk('public')->delete($guru->foto_profil);
+                    }
+                    // Simpan foto baru
+                    $userData['foto_profil'] = $request->file('foto_profil')->store('profil', 'public');
                 }
 
                 // Eksekusi update tabel users
@@ -134,13 +161,49 @@ class GuruController extends Controller
         }
     }
     
-    public function destroy(User $user)
+    public function destroy(User $guru)
     {
         try {
-            $user->delete(); // Karena cascade, biodata di tabel gurus otomatis terhapus
+            // Hapus foto profil dari storage agar tidak menjadi sampah server
+            if ($guru->foto_profil && Storage::disk('public')->exists($guru->foto_profil)) {
+                Storage::disk('public')->delete($guru->foto_profil);
+            }
+
+            $guru->delete(); // Karena cascade, biodata di tabel gurus otomatis terhapus
             return redirect()->route('admin.guru.index')->with('success', 'Data Guru berhasil dihapus!');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menghapus data.');
         }
+    }
+
+    //function untuk export all
+    // Method Export Excel
+    public function exportExcel()
+    {
+        return Excel::download(new GuruExport, 'Data_Pegawai_Tri_Jaya.xlsx');
+    }
+
+    // Method Export PDF (Semua Data)
+    public function exportPdf()
+    {
+        $gurus = User::with('guru')->where('role', 'guru')->orderBy('name', 'asc')->get();
+        
+        // Load view dengan library PDF
+        $pdf = Pdf::loadView('admin.guru.pdf', compact('gurus'))->setPaper('a4', 'landscape');
+        return $pdf->download('Data_Pegawai_Tri_Jaya.pdf');
+    }
+
+    // Method Print/PDF (Per Guru)
+    public function print(User $guru)
+    {
+        if ($guru->role !== 'guru') {
+            abort(404, 'Data tidak ditemukan');
+        }
+
+        $guru->load('guru');
+        
+        // Kita gunakan stream agar PDF langsung terbuka di tab baru (bisa diprint langsung)
+        $pdf = Pdf::loadView('admin.guru.print', compact('guru'))->setPaper('a4', 'portrait');
+        return $pdf->stream('Profil_Pegawai_' . $guru->name . '.pdf');
     }
 }

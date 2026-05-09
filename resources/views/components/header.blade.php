@@ -51,7 +51,7 @@
                  x-transition:leave="transition ease-in duration-150"
                  x-transition:leave-start="opacity-100 translate-y-0"
                  x-transition:leave-end="opacity-0 translate-y-2"
-                 class="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl overflow-hidden shadow-lg z-20 border border-gray-100 py-1" 
+                 class="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl overflow-hidden shadow-lg z-99 border border-gray-100 py-1" 
                  style="display: none;">
                 
                 <a href="#" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#002D8B] transition-colors"><i class="fa-regular fa-user mr-2"></i> Profil Saya</a>
