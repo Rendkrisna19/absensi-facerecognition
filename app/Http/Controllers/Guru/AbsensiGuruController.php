@@ -228,20 +228,38 @@ class AbsensiGuruController extends Controller
         $hariIni = Carbon::now()->format('Y-m-d');
         $jamSekarang = Carbon::now()->format('H:i:s');
         
+        // 1. Ambil Pengaturan Langsung dari Database
         $pengaturan = PengaturanAbsensi::first();
-        $batasMasuk = $pengaturan ? $pengaturan->batas_jam_masuk : '07:15:00';
-        $jamBukaAbsen = $pengaturan->jam_buka_absen ?? '06:00:00';
-        $jamTutupAbsen = $pengaturan->jam_tutup_absen ?? '12:00:00';
 
-        // Validasi Lapis 2: Tolak dari backend jika ditembak di luar jam operasional
-        if ($jamSekarang < $jamBukaAbsen || $jamSekarang > $jamTutupAbsen) {
+        // Jika Admin belum mengatur jadwal di menu Pengaturan, cegah absen
+        if (!$pengaturan) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal! Saat ini di luar jam operasional absensi.'
+                'message' => 'Gagal! Pengaturan jadwal absensi belum dikonfigurasi oleh Admin.'
+            ]);
+        }
+
+        // Ambil data asli dari kolom database kamu
+        $jamBukaAbsen = $pengaturan->jam_buka_absen; 
+        $jamTutupAbsen = $pengaturan->jam_tutup_absen;
+        $batasMasuk    = $pengaturan->batas_jam_masuk;
+        
+        // 2. Validasi Waktu Operasional (Berdasarkan Database)
+        if ($jamSekarang < $jamBukaAbsen) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Absensi belum dibuka. Silakan kembali pada pukul ' . Carbon::parse($jamBukaAbsen)->format('H:i') . ' WIB.'
+            ]);
+        }
+
+        if ($jamSekarang > $jamTutupAbsen) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Batas waktu absensi untuk hari ini sudah ditutup pada pukul ' . Carbon::parse($jamTutupAbsen)->format('H:i') . ' WIB.'
             ]);
         }
         
-        // Cek apakah hari ini sudah absen
+        // 3. Cek apakah hari ini sudah ada record absen
         $sudahAbsen = Absensi::where('user_id', $user->id)
                              ->where('tanggal', $hariIni)
                              ->exists();
@@ -253,7 +271,7 @@ class AbsensiGuruController extends Controller
             ]);
         }
 
-        // Tentukan Status (Hadir / Terlambat)
+        // 4. Tentukan Status (Hadir / Terlambat)
         $status = 'Hadir';
         $menitTerlambat = 0;
 
@@ -265,19 +283,18 @@ class AbsensiGuruController extends Controller
             $menitTerlambat = $waktuBatas->diffInMinutes($waktuMasuk);
         }
 
-        // Simpan ke database
+        // 5. Simpan ke Database
         Absensi::create([
             'user_id' => $user->id,
             'tanggal' => $hariIni,
             'jam_masuk' => $jamSekarang,
-            'jam_pulang' => null, // Dikosongkan dulu untuk fitur pulang nanti
             'status' => $status,
             'menit_terlambat' => $menitTerlambat
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Absensi berhasil dicatat pada ' . $jamSekarang . ' WIB.'
+            'message' => 'Absensi berhasil dicatat sebagai ' . $status . ' pada ' . Carbon::parse($jamSekarang)->format('H:i') . ' WIB.'
         ]);
     }
 }

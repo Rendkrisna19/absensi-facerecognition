@@ -13,7 +13,6 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Akun Admin (Akses Penuh Sistem)
         User::create([
             'name' => 'Administrator Sistem',
             'username' => 'admin_trijaya',
