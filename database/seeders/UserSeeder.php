@@ -16,8 +16,8 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Administrator Sistem',
             'username' => 'admin_trijaya',
-            'nik' => '1234567890123456', // NIK untuk Login Admin
-            'password' => Hash::make('password123'), // Password default
+            'nik' => '1234567890123456', 
+            'password' => Hash::make('password123'), 
             'role' => 'admin',
             'jabatan' => 'IT Support',
         ]);
@@ -40,7 +40,6 @@ class UserSeeder extends Seeder
             'jabatan' => 'Guru Tetap',
         ]);
         
-        // 4. Tambahan Akun Guru (Untuk simulasi data tabel)
         User::create([
             'name' => 'Ahmad Hidayat, S.Pd.',
             'username' => 'ahmad_hidayat',

@@ -3,43 +3,52 @@
 @section('title', 'Perekaman Wajah')
 @section('page_title', 'Registrasi Wajah Guru')
 
+@push('styles')
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    .font-poppins { font-family: 'Poppins', sans-serif !important; }
+</style>
+@endpush
+
 @section('content')
-<div class="max-w-4xl mx-auto">
+<div class="max-w-3xl mx-auto font-poppins">
     
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        
+        <div class="p-5 md:p-6 border-b border-gray-100 flex justify-between items-center bg-white">
             <div>
-                <h3 class="text-lg font-bold text-gray-800">Perekaman Wajah: {{ $guru->name }}</h3>
-                <p class="text-sm text-gray-500 mt-1">NIK: {{ $guru->nik }}</p>
+                <h3 class="text-lg md:text-xl font-bold text-gray-800">Perekaman Wajah</h3>
+                <p class="text-sm font-medium text-[#1e3b8b] mt-0.5">{{ $guru->name }} <span class="text-gray-400 font-normal">| NIK: {{ $guru->nik ?? $guru->username }}</span></p>
             </div>
-            <a href="{{ route('admin.face.index') }}" class="text-gray-500 hover:text-gray-800 transition font-medium text-sm">
-                <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+            <a href="{{ route('admin.face.index') }}" class="flex items-center justify-center w-10 h-10 bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-800 rounded-xl transition-colors shadow-sm" title="Kembali">
+                <i class="fa-solid fa-arrow-left"></i>
             </a>
         </div>
 
-        <div class="p-6 flex flex-col items-center">
+        <div class="p-6 md:p-8 flex flex-col items-center bg-gray-50/30">
             
-            <!-- Area Kamera -->
-            <div class="relative w-full max-w-md bg-black rounded-xl overflow-hidden aspect-[3/4] shadow-inner mb-6 border-4 border-gray-100 flex items-center justify-center">
+            <div class="relative w-full max-w-[400px] mx-auto bg-[#0f172a] rounded-2xl overflow-hidden aspect-[3/4] shadow-md mb-6 border-[5px] border-white flex items-center justify-center ring-1 ring-gray-200">
                 
-                <!-- Indikator Loading Model -->
-                <div id="loading" class="absolute inset-0 flex flex-col items-center justify-center bg-black/80 text-white z-20">
-                    <i class="fa-solid fa-spinner fa-spin text-4xl mb-3 text-brand-light"></i>
-                    <p class="text-sm font-medium animate-pulse">Memuat Model AI...</p>
+                <div id="loading" class="absolute inset-0 flex flex-col items-center justify-center bg-[#0f172a]/90 text-white z-20 backdrop-blur-sm">
+                    <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-4 text-[#3b82f6]"></i>
+                    <p class="text-sm font-medium animate-pulse tracking-wide">Memuat Model AI...</p>
+                    <p class="text-[10px] text-gray-400 mt-2">Mohon tunggu sebentar</p>
                 </div>
 
-                <!-- Element Video -->
-                <video id="video" autoplay muted class="w-full h-full object-cover hidden"></video>
+                <video id="video" autoplay muted playsinline class="absolute inset-0 w-full h-full object-cover hidden"></video>
                 
-                <!-- Canvas untuk menggambar titik wajah (Landmarks) -->
                 <canvas id="overlay" class="absolute inset-0 w-full h-full object-cover z-10"></canvas>
             </div>
 
-            <div class="w-full max-w-md text-center space-y-4">
-                <p id="status-text" class="text-sm text-gray-500 font-medium">Pastikan wajah berada di tengah kamera dan pencahayaan cukup.</p>
+            <div class="w-full max-w-[400px] text-center space-y-5 mx-auto">
+                <div class="bg-white px-4 py-3 rounded-xl border border-gray-100 shadow-sm">
+                    <p id="status-text" class="text-sm text-gray-500 font-medium flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-camera text-gray-400"></i> Pastikan wajah berada di tengah kamera.
+                    </p>
+                </div>
                 
-                <button id="capture-btn" disabled class="w-full bg-brand hover:bg-brand-dark text-white font-bold py-3 px-6 rounded-xl transition shadow-md disabled:bg-gray-300 disabled:cursor-not-allowed">
-                    <i class="fa-solid fa-camera mr-2"></i> Rekam & Simpan Wajah
+                <button id="capture-btn" disabled class="w-full bg-[#1e3b8b] hover:bg-[#152b69] text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-sm disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed flex items-center justify-center text-sm uppercase tracking-wider">
+                    <i class="fa-solid fa-expand mr-2 text-lg"></i> Rekam & Simpan Wajah
                 </button>
             </div>
 
@@ -47,11 +56,11 @@
     </div>
 </div>
 
-<!-- Load Library secara lokal -->
 <script src="{{ asset('js/face-api.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    // --- LOGIC JAVASCRIPT TIDAK DIRUBAH SAMA SEKALI ---
     const video = document.getElementById('video');
     const overlay = document.getElementById('overlay');
     const loading = document.getElementById('loading');
@@ -67,7 +76,11 @@
         faceapi.nets.faceRecognitionNet.loadFromUri('/models')
     ]).then(startVideo).catch(err => {
         console.error(err);
-        Swal.fire('Error', 'Gagal memuat model face-api. Pastikan folder /models sudah ada.', 'error');
+        Swal.fire({
+            title: '<span class="font-poppins">Error</span>',
+            html: '<span class="font-poppins">Gagal memuat model face-api. Pastikan folder /models sudah ada.</span>',
+            icon: 'error'
+        });
     });
 
     // 2. Hidupkan Kamera
@@ -81,7 +94,7 @@
             })
             .catch(err => {
                 console.error(err);
-                loading.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-500 text-4xl mb-3"></i><p class="text-sm text-red-500 text-center px-4">Kamera tidak dapat diakses.<br>Pastikan izin kamera diberikan.</p>';
+                loading.innerHTML = '<div class="flex flex-col items-center"><i class="fa-solid fa-triangle-exclamation text-red-500 text-4xl mb-3"></i><p class="text-sm text-red-400 text-center px-4 font-medium">Kamera tidak dapat diakses.<br>Pastikan izin kamera diberikan.</p></div>';
             });
     }
 
@@ -103,11 +116,14 @@
                 faceapi.draw.drawFaceLandmarks(overlay, resizedDetections);
                 
                 captureBtn.disabled = false;
-                captureBtn.classList.replace('bg-gray-300', 'bg-brand');
-                statusText.innerHTML = '<span class="text-green-600"><i class="fa-solid fa-check-circle mr-1"></i> Wajah terdeteksi! Silakan klik rekam.</span>';
+                captureBtn.classList.replace('bg-gray-200', 'bg-[#1e3b8b]');
+                captureBtn.classList.remove('disabled:text-gray-400');
+                statusText.innerHTML = '<span class="text-green-600 font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-face-smile text-lg"></i> Wajah terdeteksi! Silakan klik rekam.</span>';
             } else {
                 captureBtn.disabled = true;
-                statusText.innerHTML = '<span class="text-orange-500"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Mencari wajah...</span>';
+                captureBtn.classList.replace('bg-[#1e3b8b]', 'bg-gray-200');
+                captureBtn.classList.add('disabled:text-gray-400');
+                statusText.innerHTML = '<span class="text-orange-500 flex items-center justify-center gap-2"><i class="fa-solid fa-spinner fa-spin"></i> Mencari wajah...</span>';
             }
         }, 100); // refresh tiap 100ms
     });
@@ -115,13 +131,18 @@
     // 4. Tombol Rekam Diklik
     captureBtn.addEventListener('click', async () => {
         captureBtn.disabled = true;
-        captureBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Memproses...';
+        captureBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Memproses...';
 
         const detection = await faceapi.detectSingleFace(video).withFaceLandmarks().withFaceDescriptor();
         
         if (!detection) {
-            Swal.fire('Gagal', 'Wajah tidak terdeteksi dengan jelas. Ulangi kembali.', 'error');
-            captureBtn.innerHTML = '<i class="fa-solid fa-camera mr-2"></i> Rekam & Simpan Wajah';
+            Swal.fire({
+                title: '<span class="font-poppins">Gagal</span>',
+                html: '<span class="font-poppins text-sm">Wajah tidak terdeteksi dengan jelas. Ulangi kembali.</span>',
+                icon: 'error',
+                confirmButtonColor: '#1e3b8b'
+            });
+            captureBtn.innerHTML = '<i class="fa-solid fa-expand mr-2 text-lg"></i> Rekam & Simpan Wajah';
             return;
         }
 
@@ -147,24 +168,35 @@
                 if(stream) stream.getTracks().forEach(track => track.stop());
                 
                 Swal.fire({
-                    title: 'Berhasil!',
-                    text: data.message,
+                    title: '<span class="font-poppins font-bold">Berhasil!</span>',
+                    html: `<span class="font-poppins text-sm">${data.message}</span>`,
                     icon: 'success',
                     showConfirmButton: false,
-                    timer: 2000
+                    timer: 2000,
+                    customClass: { popup: 'rounded-2xl' }
                 }).then(() => {
                     window.location.href = "{{ route('admin.face.index') }}";
                 });
             } else {
-                Swal.fire('Error', data.message, 'error');
+                Swal.fire({
+                    title: '<span class="font-poppins">Error</span>',
+                    html: `<span class="font-poppins text-sm">${data.message}</span>`,
+                    icon: 'error',
+                    confirmButtonColor: '#1e3b8b'
+                });
             }
         })
         .catch(err => {
             console.error(err);
-            Swal.fire('Error', 'Terjadi kesalahan jaringan.', 'error');
+            Swal.fire({
+                title: '<span pclass="font-poppins">Error</span>',
+                html: '<span class="font-poppins text-sm">Terjadi kesalahan jaringan.</span>',
+                icon: 'error',
+                confirmButtonColor: '#1e3b8b'
+            });
         })
         .finally(() => {
-            captureBtn.innerHTML = '<i class="fa-solid fa-camera mr-2"></i> Rekam & Simpan Wajah';
+            captureBtn.innerHTML = '<i class="fa-solid fa-expand mr-2 text-lg"></i> Rekam & Simpan Wajah';
             captureBtn.disabled = false;
         });
     });

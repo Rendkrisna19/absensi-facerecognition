@@ -76,7 +76,7 @@
                         <td class="value">{{ $guru->jabatan }}</td>
                     </tr>
                     <tr class="border-bottom">
-                        <td class="label">Status Pegawai</td>
+                        {{-- <td class="label">Status Pegawai</td> --}}
                         <td class="separator">:</td>
                         <td class="value">{{ $guru->guru?->status_pegawai ?? 'Belum Diatur' }}</td>
                     </tr>

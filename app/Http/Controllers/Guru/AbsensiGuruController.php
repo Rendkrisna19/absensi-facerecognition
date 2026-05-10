@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Absensi;
 use App\Models\IpLokal;
 use App\Models\PengaturanAbsensi;
+use App\Models\LiburSemester; 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Storage;
 class AbsensiGuruController extends Controller
 {
     // Menampilkan Halaman Beranda (Dashboard)
-   public function dashboard()
+    public function dashboard()
     {
         $user = auth()->user();
         
@@ -34,10 +35,24 @@ class AbsensiGuruController extends Controller
         $isLibur = false;
         $keteranganLibur = '';
 
-        if ($hariIni->isSunday()) {
+        // ---> TAMBAHAN 2: Cek apakah hari ini termasuk rentang Libur Semester <---
+        $liburSemester = LiburSemester::where('is_active', true)
+                            ->whereDate('tanggal_mulai', '<=', $hariIni->format('Y-m-d'))
+                            ->whereDate('tanggal_selesai', '>=', $hariIni->format('Y-m-d'))
+                            ->first();
+
+        if ($liburSemester) {
+            // Jika ada libur semester, prioritas libur diatur ke ini
+            $isLibur = true;
+            $keteranganLibur = 'Libur Semester: ' . $liburSemester->nama_semester;
+        } 
+        // Lanjut cek hari Minggu jika bukan libur semester
+        elseif ($hariIni->isSunday()) {
             $isLibur = true;
             $keteranganLibur = 'Libur Akhir Pekan (Minggu)';
-        } else {
+        } 
+        // Lanjut cek libur nasional via API
+        else {
             try {
                 $response = Http::timeout(3)->get('https://dayoffapi.vercel.app/api?month=' . $hariIni->month . '&year=' . $hariIni->year);
                 if ($response->successful()) {
@@ -56,8 +71,6 @@ class AbsensiGuruController extends Controller
         }
 
         // 3. AMBIL DATA REAL UNTUK KARTU INFORMASI (Bulan Ini)
-        
-        // Menghitung total hari hadir di bulan ini (semua status kecuali Alpa)
         $totalHadirBulanIni = Absensi::where('user_id', $user->id)
             ->whereMonth('tanggal', $bulanIni)
             ->whereYear('tanggal', $tahunIni)
@@ -90,7 +103,7 @@ class AbsensiGuruController extends Controller
     }
 
     // Menampilkan Halaman Kamera & Validasi IP
-   public function scan()
+    public function scan()
     {
         $user = auth()->user();
         
@@ -101,16 +114,35 @@ class AbsensiGuruController extends Controller
         $ipUser = request()->ip();
         $ipValid = IpLokal::where('ip_address', $ipUser)->where('is_active', true)->exists();
 
-        // 3. Validasi: CEK WAKTU (Jam Buka & Tutup Absen)
         $pengaturan = PengaturanAbsensi::first();
         $jamSekarang = Carbon::now()->format('H:i:s');
+        $hariIni = Carbon::now()->format('Y-m-d');
         
-        // Gunakan default jam 06:00 - 12:00 jika kolom di database belum dibuat
-        $jamBukaAbsen = $pengaturan->jam_buka_absen ?? '06:00:00'; 
-        $jamTutupAbsen = $pengaturan->jam_tutup_absen ?? '12:00:00';
-
         $isWaktuAbsen = true;
         $pesanWaktu = '';
+
+        // ---> TAMBAHAN 3: Kunci Halaman Scan Jika Libur Semester <---
+        $liburSemester = LiburSemester::where('is_active', true)
+                            ->whereDate('tanggal_mulai', '<=', $hariIni)
+                            ->whereDate('tanggal_selesai', '>=', $hariIni)
+                            ->first();
+
+        if ($liburSemester) {
+            $isWaktuAbsen = false;
+            $pesanWaktu = 'Saat ini sedang masa ' . $liburSemester->nama_semester . '. Sistem absensi ditutup sementara.';
+            return view('guru.scan', compact('wajahTerdaftar', 'ipValid', 'ipUser', 'pengaturan', 'isWaktuAbsen', 'pesanWaktu'));
+        }
+        // ---> Selesai Tambahan 3 <---
+
+        // 3. Validasi: CEK WAKTU (Fleksibel & Aman)
+        if (!$pengaturan) {
+            $isWaktuAbsen = false;
+            $pesanWaktu = 'Pengaturan jadwal absensi belum dikonfigurasi sama sekali oleh Admin.';
+            return view('guru.scan', compact('wajahTerdaftar', 'ipValid', 'ipUser', 'pengaturan', 'isWaktuAbsen', 'pesanWaktu'));
+        }
+
+        $jamBukaAbsen = $pengaturan->jam_buka_absen ?? '00:00:00'; 
+        $jamTutupAbsen = $pengaturan->jam_tutup_absen ?? '23:59:59';
 
         if ($jamSekarang < $jamBukaAbsen) {
             $isWaktuAbsen = false;
@@ -123,28 +155,22 @@ class AbsensiGuruController extends Controller
         return view('guru.scan', compact('wajahTerdaftar', 'ipValid', 'ipUser', 'pengaturan', 'isWaktuAbsen', 'pesanWaktu'));
     }
 
-
-    //riwayat absensi
-    // Jangan lupa pastikan 'use Illuminate\Http\Request;' sudah ada di paling atas file
-    
+    // Riwayat Absensi
     public function riwayat(Request $request)
     {
         $user = auth()->user();
         Carbon::setLocale('id');
 
-        // 1. Ambil input filter dari user, jika kosong gunakan bulan & tahun saat ini
         $bulanSelected = $request->input('bulan', Carbon::now()->month);
         $tahunSelected = $request->input('tahun', Carbon::now()->year);
 
-        // 2. Query dengan Filter dan Pagination (10 data per halaman)
         $riwayatAbsen = Absensi::where('user_id', $user->id)
             ->whereMonth('tanggal', $bulanSelected)
             ->whereYear('tanggal', $tahunSelected)
             ->orderBy('tanggal', 'desc')
             ->paginate(10)
-            ->withQueryString(); // withQueryString agar filter tidak hilang saat pindah halaman (Next/Prev)
+            ->withQueryString(); 
 
-        // 3. Menghitung total kehadiran khusus untuk bulan yang difilter
         $totalHadir = Absensi::where('user_id', $user->id)
             ->whereMonth('tanggal', $bulanSelected)
             ->whereYear('tanggal', $tahunSelected)
@@ -154,20 +180,18 @@ class AbsensiGuruController extends Controller
         return view('guru.riwayat', compact('riwayatAbsen', 'bulanSelected', 'tahunSelected', 'totalHadir'));
     }
 
+    // Denda Keterlambatan
     public function denda(Request $request)
     {
         $user = auth()->user();
         Carbon::setLocale('id');
 
-        // 1. Ambil input filter, default ke bulan dan tahun sekarang
         $bulanSelected = $request->input('bulan', Carbon::now()->month);
         $tahunSelected = $request->input('tahun', Carbon::now()->year);
 
-        // Ambil pengaturan untuk tahu nominal denda flat
         $pengaturan = PengaturanAbsensi::first();
         $nominalDendaFlat = $pengaturan ? $pengaturan->denda_terlambat : 0;
 
-        // Ambil riwayat khusus yang statusnya "Terlambat" berdasarkan filter bulan & tahun
         $riwayatTerlambat = Absensi::where('user_id', $user->id)
             ->whereMonth('tanggal', $bulanSelected)
             ->whereYear('tanggal', $tahunSelected)
@@ -178,7 +202,6 @@ class AbsensiGuruController extends Controller
         $totalHariTelat = $riwayatTerlambat->count();
         $totalDenda = $totalHariTelat * $nominalDendaFlat;
 
-        // Buat nama bulan & tahun untuk ditampilkan di kartu denda (Contoh: "Mei 2026")
         $namaBulanTahun = Carbon::createFromDate($tahunSelected, $bulanSelected, 1)->translatedFormat('F Y');
 
         return view('guru.denda', compact(
@@ -192,59 +215,68 @@ class AbsensiGuruController extends Controller
         ));
     }
 
+    // Halaman Pengaturan Profil
     public function pengaturan()
     {
         $user = auth()->user();
         return view('guru.pengaturan', compact('user'));
     }
 
+    // Update Profil Wajah/Foto
     public function updateProfil(Request $request)
     {
         $request->validate([
-            'foto_profil' => 'nullable|image|mimes:jpeg,png,jpg|max:2048' // Maksimal 2MB
+            'foto_profil' => 'nullable|image|mimes:jpeg,png,jpg|max:2048' 
         ]);
 
         $user = auth()->user();
 
         if ($request->hasFile('foto_profil')) {
-            // Hapus foto lama jika ada
             if ($user->foto_profil && Storage::exists('public/' . $user->foto_profil)) {
                 Storage::delete('public/' . $user->foto_profil);
             }
-
-            // Simpan foto baru ke folder storage/app/public/profil
             $path = $request->file('foto_profil')->store('profil', 'public');
-            
-            // Update nama file di database
             $user->update(['foto_profil' => $path]);
         }
 
         return redirect()->back()->with('success', 'Foto profil berhasil diperbarui!');
     }
 
+    // Menyimpan Absensi via AJAX
     public function storeAbsensi(Request $request)
     {
         $user = auth()->user();
         $hariIni = Carbon::now()->format('Y-m-d');
         $jamSekarang = Carbon::now()->format('H:i:s');
         
-        // 1. Ambil Pengaturan Langsung dari Database
+        // ---> TAMBAHAN 4: Kunci API Backend Jika Libur Semester <---
+        $liburSemester = LiburSemester::where('is_active', true)
+                            ->whereDate('tanggal_mulai', '<=', $hariIni)
+                            ->whereDate('tanggal_selesai', '>=', $hariIni)
+                            ->first();
+
+        if ($liburSemester) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal! Saat ini sedang masa ' . $liburSemester->nama_semester . '. Sistem ditutup.'
+            ]);
+        }
+        // ---> Selesai Tambahan 4 <---
+
         $pengaturan = PengaturanAbsensi::first();
 
-        // Jika Admin belum mengatur jadwal di menu Pengaturan, cegah absen
         if (!$pengaturan) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal! Pengaturan jadwal absensi belum dikonfigurasi oleh Admin.'
+                'message' => 'Gagal! Pengaturan jadwal absensi belum dikonfigurasi.'
             ]);
         }
 
-        // Ambil data asli dari kolom database kamu
-        $jamBukaAbsen = $pengaturan->jam_buka_absen; 
-        $jamTutupAbsen = $pengaturan->jam_tutup_absen;
-        $batasMasuk    = $pengaturan->batas_jam_masuk;
+        // Ambil data asli, fallback ke nilai aman jika database NULL
+        $jamBukaAbsen = $pengaturan->jam_buka_absen ?? '00:00:00'; 
+        $jamTutupAbsen = $pengaturan->jam_tutup_absen ?? '23:59:59';
+        $batasMasuk    = $pengaturan->batas_jam_masuk ?? '07:15:00';
         
-        // 2. Validasi Waktu Operasional (Berdasarkan Database)
         if ($jamSekarang < $jamBukaAbsen) {
             return response()->json([
                 'success' => false,
@@ -255,11 +287,10 @@ class AbsensiGuruController extends Controller
         if ($jamSekarang > $jamTutupAbsen) {
             return response()->json([
                 'success' => false,
-                'message' => 'Batas waktu absensi untuk hari ini sudah ditutup pada pukul ' . Carbon::parse($jamTutupAbsen)->format('H:i') . ' WIB.'
+                'message' => 'Batas waktu absensi untuk hari ini sudah ditutup.'
             ]);
         }
         
-        // 3. Cek apakah hari ini sudah ada record absen
         $sudahAbsen = Absensi::where('user_id', $user->id)
                              ->where('tanggal', $hariIni)
                              ->exists();
@@ -271,19 +302,16 @@ class AbsensiGuruController extends Controller
             ]);
         }
 
-        // 4. Tentukan Status (Hadir / Terlambat)
         $status = 'Hadir';
         $menitTerlambat = 0;
 
         if ($jamSekarang > $batasMasuk) {
             $status = 'Terlambat';
-            // Hitung selisih menit keterlambatan
             $waktuBatas = Carbon::parse($batasMasuk);
             $waktuMasuk = Carbon::parse($jamSekarang);
             $menitTerlambat = $waktuBatas->diffInMinutes($waktuMasuk);
         }
 
-        // 5. Simpan ke Database
         Absensi::create([
             'user_id' => $user->id,
             'tanggal' => $hariIni,

@@ -8,10 +8,50 @@ use Illuminate\Http\Request;
 
 class PengaturanLanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $ips = IpLokal::latest()->get();
+        $query = IpLokal::latest();
+
+        // Filter Pencarian (Nama Jaringan / IP)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_jaringan', 'like', "%{$search}%")
+                  ->orWhere('ip_address', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter Status Aktif/Non-Aktif
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status);
+        }
+
+        // Pagination
+        $perPage = $request->input('per_page', 10);
+        $ips = $query->paginate($perPage)->withQueryString();
+
         return view('admin.pengaturan_lan.index', compact('ips'));
+    }
+
+    // Fungsi Baru untuk AJAX Toggle Switch
+    public function toggleStatus(Request $request, $id)
+    {
+        try {
+            $ip = IpLokal::findOrFail($id);
+            $ip->is_active = !$ip->is_active; // Balikkan statusnya (0 jadi 1, 1 jadi 0)
+            $ip->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status jaringan berhasil diperbarui!',
+                'is_active' => $ip->is_active
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengubah status.'
+            ], 500);
+        }
     }
 
     public function create()
@@ -21,7 +61,6 @@ class PengaturanLanController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi 'ip' otomatis mengecek format angka IP address yang benar
         $request->validate([
             'nama_jaringan' => 'required|string|max:255',
             'ip_address' => 'required|ip|unique:ip_lokals,ip_address',

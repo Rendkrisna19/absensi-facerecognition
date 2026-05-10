@@ -13,14 +13,14 @@
             <p class="text-sm text-gray-500 mt-1">Kelola data guru, kepala sekolah, dan staff lainnya.</p>
         </div>
         <div class="flex flex-wrap gap-2">
-            <!-- Tombol Export Excel (Dummy Integration) -->
+            <!-- Tombol Export Excel -->
             <a href="{{ route('admin.guru.export.excel') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-sm flex items-center gap-2">
-    <i class="fa-solid fa-file-excel"></i> Excel
-</a>
-<!-- Tombol Export PDF -->
-<a href="{{ route('admin.guru.export.pdf') }}" target="_blank" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-sm flex items-center gap-2">
-    <i class="fa-solid fa-file-pdf"></i> PDF
-</a>
+                <i class="fa-solid fa-file-excel"></i> Excel
+            </a>
+            <!-- Tombol Export PDF -->
+            <a href="{{ route('admin.guru.export.pdf') }}" target="_blank" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-file-pdf"></i> PDF
+            </a>
             <!-- Tombol Tambah -->
             <a href="{{ route('admin.guru.create') }}" class="bg-blue-800 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-sm flex items-center gap-2">
                 <i class="fa-solid fa-plus"></i> Tambah Data
@@ -87,20 +87,21 @@
                     }
 
                     // Foto Profil Safe URL
-                    $fotoUrl = $item->foto_profil ? asset('storage/' . $item->foto_profil) : asset('images/default-avatar.png'); // Ganti path default avatar sesuai aplikasimu
+                    $fotoUrl = $item->foto_profil ? asset('storage/' . $item->foto_profil) : asset('images/default-avatar.png');
                     $statusPegawai = strtolower($item->guru?->status_pegawai ?? 'belum diatur');
                 @endphp
 
                 <!-- Data attribute digunakan oleh Javascript untuk filter & search DOM -->
                 <tr class="data-row border-b border-gray-100 hover:bg-blue-50 transition-colors" 
-                    x-data="{ detailOpen: false }"
+                    x-data="{ detailOpen: false, photoOpen: false }"
                     data-search="{{ strtolower($item->name . ' ' . $item->nik . ' ' . $item->jabatan) }}"
                     data-status="{{ $statusPegawai }}"
                 >
                     <!-- Col 1: Profil -->
                     <td class="p-3">
                         <div class="flex items-center gap-3">
-                            <img src="{{ $fotoUrl }}" alt="Foto {{ $item->name }}" class="w-10 h-10 rounded-full object-cover border border-gray-300 shadow-sm">
+                            <!-- Foto bisa diklik untuk buka modal zoom foto -->
+                            <img @click.stop="photoOpen = true" src="{{ $fotoUrl }}" alt="Foto {{ $item->name }}" class="w-10 h-10 rounded-full object-cover border border-gray-300 shadow-sm cursor-pointer hover:opacity-80 transition-opacity" title="Klik untuk memperbesar foto">
                             <div>
                                 <div class="font-bold text-gray-800">{{ $item->name }}</div>
                                 <div class="text-xs text-gray-500 mt-0.5"><i class="fa-regular fa-id-card mr-1"></i> {{ $item->nik }}</div>
@@ -150,10 +151,9 @@
                             </button>
                             
                             <!-- Tombol Cetak PDF Per Guru -->
-                           <!-- Tombol Cetak PDF Per Guru (di tabel kolom Aksi) -->
-<a href="{{ route('admin.guru.print', $item->id) }}" target="_blank" class="w-8 h-8 flex items-center justify-center bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-600 hover:text-white transition shadow-sm" title="Cetak Profil">
-    <i class="fa-solid fa-print"></i>
-</a>
+                            <a href="{{ route('admin.guru.print', $item->id) }}" target="_blank" class="w-8 h-8 flex items-center justify-center bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-600 hover:text-white transition shadow-sm" title="Cetak Profil">
+                                <i class="fa-solid fa-print"></i>
+                            </a>
                             
                             <!-- Tombol Edit -->
                             <a href="{{ route('admin.guru.edit', $item->id) }}" class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-800 rounded-lg hover:bg-blue-800 hover:text-white transition shadow-sm" title="Edit Data">
@@ -170,7 +170,31 @@
                         </div>
                     </td>
 
-                    <!-- MODAL DETAIL GURU (Tersembunyi) -->
+                    <!-- =========================================
+                         MODAL FOTO ZOOM (TELEPORTED)
+                    ========================================== -->
+                    <template x-teleport="body">
+                        <div x-show="photoOpen" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                            <!-- Backdrop Hitam Gelap -->
+                            <div x-show="photoOpen" x-transition.opacity @click="photoOpen = false" class="absolute inset-0 bg-black bg-opacity-80 backdrop-blur-sm cursor-pointer"></div>
+
+                            <!-- Konten Foto Besar -->
+                            <div x-show="photoOpen" x-transition.scale.origin.center class="relative z-10 max-w-2xl max-h-[90vh] flex flex-col items-center">
+                                <button @click="photoOpen = false" class="absolute -top-10 right-0 text-white hover:text-gray-300 transition z-20">
+                                    <i class="fa-solid fa-xmark text-3xl"></i>
+                                </button>
+                                <img src="{{ $fotoUrl }}" alt="Foto Zoom {{ $item->name }}" class="max-w-full max-h-[75vh] object-contain rounded-xl shadow-2xl border-4 border-white">
+                                <div class="mt-4 text-center">
+                                    <h4 class="text-white text-xl font-bold">{{ $item->name }}</h4>
+                                    <p class="text-gray-300">{{ $item->nik }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- =========================================
+                         MODAL DETAIL GURU (TELEPORTED)
+                    ========================================== -->
                     <template x-teleport="body">
                         <div x-show="detailOpen" style="display: none;" class="fixed inset-0 z-[99] flex items-center justify-center p-4">
                             <!-- Backdrop -->
@@ -204,10 +228,6 @@
                                             <div>
                                                 <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">NIK</p>
                                                 <p class="font-medium text-gray-800">{{ $item->nik }}</p>
-                                            </div>
-                                            <div>
-                                                <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">Status Pegawai</p>
-                                                <p class="font-medium text-gray-800">{{ $item->guru?->status_pegawai ?? 'Belum Diatur' }}</p>
                                             </div>
                                             <div>
                                                 <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">Jenis Kelamin</p>
@@ -252,9 +272,9 @@
                                 
                                 <!-- Footer Modal -->
                                 <div class="p-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
-                                    <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition" title="Cetak Data">
+                                    <a href="{{ route('admin.guru.print', $item->id) }}" target="_blank" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition" title="Cetak Data">
                                         <i class="fa-solid fa-print mr-1"></i> Cetak
-                                    </button>
+                                    </a>
                                     <button @click="detailOpen = false" type="button" class="px-4 py-2 bg-blue-800 rounded-lg text-sm font-semibold text-white hover:bg-blue-700 transition">
                                         Tutup
                                     </button>

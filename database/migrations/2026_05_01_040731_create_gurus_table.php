@@ -21,7 +21,6 @@ return new class extends Migration
             $table->text('alamat')->nullable();
             $table->string('no_hp', 20)->nullable();
             $table->string('pendidikan_terakhir', 50)->nullable(); // S1, S2, D3
-            $table->enum('status_pegawai', ['Tetap', 'Honorer', 'Kontrak'])->default('Honorer');
             $table->date('tanggal_bergabung')->nullable();
             
             $table->timestamps();

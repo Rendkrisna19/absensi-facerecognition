@@ -9,16 +9,31 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+   public function index(Request $request)
     {
-        // Menampilkan semua user dari yang terbaru
-        $users = User::latest()->get();
-        return view('admin.user.index', compact('users'));
-    }
+        $query = User::latest();
 
-    public function create()
-    {
-        return view('admin.user.create');
+        // Filter berdasarkan Role
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        // Filter berdasarkan Pencarian (Nama / Username)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('username', 'like', "%{$search}%");
+            });
+        }
+
+        // Pagination dinamis (default 10 data per halaman)
+        $perPage = $request->input('per_page', 10);
+        
+        // withQueryString() berguna agar saat pindah halaman (page 2), filter pencariannya tidak hilang
+        $users = $query->paginate($perPage)->withQueryString(); 
+
+        return view('admin.user.index', compact('users'));
     }
 
     public function store(Request $request)

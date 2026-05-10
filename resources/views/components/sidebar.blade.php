@@ -47,7 +47,7 @@
 
             <p x-show="!isMini" class="px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 mt-6">Konfigurasi</p>
 
-            <a href="{{ route('admin.pengaturan-lan.index') }}" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.pengaturan-lan.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Pengaturan Sistem">
+            <a href="{{ route('admin.pengaturan-lan.index') }}" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.pengaturan-lan.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Pengaturan LAN">
                 <i class="fa-solid fa-network-wired text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Pengaturan LAN</span>
             </a>
@@ -55,6 +55,12 @@
             <a href="{{ route('admin.pengaturan-absensi.index') }}" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.pengaturan-absensi.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Pengaturan Absensi">
                 <i class="fa-solid fa-business-time text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Pengaturan Absensi</span>
+            </a>
+
+            <a href="{{ route('admin.libur-semester.index') }}" 
+               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.libur-semester.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Libur Semester">
+                <i class="fa-solid fa-calendar-day text-lg min-w-[24px] text-center"></i>
+                <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Libur Semester</span>
             </a>
         @endif
 
@@ -73,7 +79,7 @@
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Laporan Kehadiran</span>
             </a>
 
-            <a href="#" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('yayasan.potongan.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Rekap Pemotongan Gaji">
+            <a href="{{ route('yayasan.potongan.index') }}" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('yayasan.potongan.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Rekap Pemotongan Gaji">
                 <i class="fa-solid fa-money-bill-transfer text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Potongan Gaji</span>
             </a>

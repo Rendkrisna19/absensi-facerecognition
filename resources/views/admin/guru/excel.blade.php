@@ -18,7 +18,7 @@
             <th style="background-color: #1a2a40; color: #ffffff; font-weight: bold; border: 1px solid #000000; text-align: center;">NIK</th>
             <th style="background-color: #1a2a40; color: #ffffff; font-weight: bold; border: 1px solid #000000; text-align: center;">Nama Lengkap</th>
             <th style="background-color: #1a2a40; color: #ffffff; font-weight: bold; border: 1px solid #000000; text-align: center;">Jabatan</th>
-            <th style="background-color: #1a2a40; color: #ffffff; font-weight: bold; border: 1px solid #000000; text-align: center;">Status Pegawai</th>
+            {{-- <th style="background-color: #1a2a40; color: #ffffff; font-weight: bold; border: 1px solid #000000; text-align: center;">Status Pegawai</th> --}}
             <th style="background-color: #1a2a40; color: #ffffff; font-weight: bold; border: 1px solid #000000; text-align: center;">Jenis Kelamin</th>
             <th style="background-color: #1a2a40; color: #ffffff; font-weight: bold; border: 1px solid #000000; text-align: center;">TTL</th>
             <th style="background-color: #1a2a40; color: #ffffff; font-weight: bold; border: 1px solid #000000; text-align: center;">Pendidikan</th>
