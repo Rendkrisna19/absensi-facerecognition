@@ -19,9 +19,14 @@
     @endif
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="px-6 md:px-8 py-6 border-b border-gray-50 bg-gray-50/50">
-            <h3 class="text-xl font-bold text-gray-800">Detail Profil Akun</h3>
-            <p class="text-sm text-gray-500 mt-1">Kelola informasi pribadi dan keamanan akun Anda.</p>
+        <div class="px-6 md:px-8 py-6 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
+            <div>
+                <h3 class="text-xl font-bold text-gray-800">Detail Profil Akun</h3>
+                <p class="text-sm text-gray-500 mt-1">Kelola informasi pribadi dan keamanan akun Anda.</p>
+            </div>
+            <span class="bg-[#002D8B]/10 text-[#002D8B] px-4 py-1.5 rounded-lg font-bold text-xs uppercase tracking-wider">
+                {{ str_replace('_', ' ', $user->role) }}
+            </span>
         </div>
 
         <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8">
@@ -34,23 +39,23 @@
                     <div class="relative group cursor-pointer mb-4">
                         <div class="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-lg bg-gray-100 flex items-center justify-center">
                             <img id="photo-preview" 
-                                 src="{{ $user->photo ? asset('storage/' . $user->photo) : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=002D8B&color=fff&size=256' }}" 
+                                 src="{{ $user->foto_profil ? asset('storage/' . $user->foto_profil) : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=002D8B&color=fff&size=256' }}" 
                                  alt="Profile Photo" 
                                  class="w-full h-full object-cover">
                         </div>
                         
-                        <label for="photo" class="absolute inset-0 bg-black/40 rounded-full flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                        <label for="foto_profil" class="absolute inset-0 bg-black/40 rounded-full flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                             <i class="fa-solid fa-camera text-2xl mb-1"></i>
                             <span class="text-xs font-semibold">Ubah Foto</span>
                         </label>
                     </div>
                     
-                    <input type="file" name="photo" id="photo" class="hidden" accept="image/jpeg, image/png, image/jpg" onchange="previewImage(event)">
+                    <input type="file" name="foto_profil" id="foto_profil" class="hidden" accept="image/jpeg, image/png, image/jpg" onchange="previewImage(event)">
                     
                     <p class="text-xs text-gray-400 text-center px-4">
                         Format .jpg, .jpeg, .png<br>Maksimal ukuran 2MB
                     </p>
-                    @error('photo')
+                    @error('foto_profil')
                         <p class="text-xs text-red-500 font-medium mt-2">{{ $message }}</p>
                     @enderror
                 </div>
@@ -65,7 +70,7 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Username / NIK</label>
-                        <input type="text" name="username" value="{{ old('username', $user->username) }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all bg-gray-50" readonly title="Hubungi Super Admin jika ingin mengubah NIK">
+                        <input type="text" name="username" value="{{ old('username', $user->username) }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all">
                         @error('username') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                     </div>
 
@@ -77,7 +82,7 @@
                                 <i class="fa-regular fa-eye" id="eye-icon"></i>
                             </button>
                         </div>
-                        <p class="text-xs text-gray-500 mt-2"><i class="fa-solid fa-circle-info mr-1 text-[#002D8B]"></i> Biarkan kosong jika Anda hanya ingin mengubah nama atau foto profil.</p>
+                        <p class="text-xs text-gray-500 mt-2"><i class="fa-solid fa-circle-info mr-1 text-[#002D8B]"></i> Biarkan kosong jika Anda hanya ingin mengubah data di atas.</p>
                         @error('password') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                     </div>
 

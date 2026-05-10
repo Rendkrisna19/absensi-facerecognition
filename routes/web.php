@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 
 //import controller admin
 use App\Http\Controllers\Admin\DashboardAdminController;
@@ -12,7 +13,6 @@ use App\Http\Controllers\Admin\PengaturanAbsensiController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\LiburSemesterController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\ProfileController;
 //import role kepala-yayasan
 use App\Http\Controllers\KepalaYayasan\DashboardYayasanController;
 use App\Http\Controllers\KepalaYayasan\LaporanAbsensiController;
@@ -22,12 +22,16 @@ use App\Http\Controllers\KepalaYayasan\PotonganController;
 use App\Http\Controllers\Guru\AbsensiGuruController;
 
 
+
+
 Route::redirect('/', '/login');
 
 // 2. Route Authentication
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/profil-saya', [ProfileController::class, 'index'])->name('profile.index');
+Route::put('/profil-saya', [ProfileController::class, 'update'])->name('profile.update');
 
 // 3. Group Routes: ADMIN
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
@@ -55,8 +59,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::post('/libur-semester', [LiburSemesterController::class, 'store'])->name('admin.libur.store');
     Route::put('/libur-semester/{libur}', [LiburSemesterController::class, 'update'])->name('admin.libur.update');
     Route::delete('/libur-semester/{libur}', [LiburSemesterController::class, 'destroy'])->name('admin.libur.destroy');
-    Route::get('/profil-saya', [ProfileController::class, 'index'])->name('admin.profile.index');
-    Route::put('/profil-saya', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 // 4. Group Routes: KEPALA YAYASAN
