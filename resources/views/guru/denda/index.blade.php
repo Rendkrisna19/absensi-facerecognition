@@ -94,5 +94,5 @@
 
     <!-- Spacer agar list terbawah tidak tertutup navigasi -->
     <div class="h-8"></div>
-</div>z`
+</div>
 @endsection

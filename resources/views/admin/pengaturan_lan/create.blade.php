@@ -14,7 +14,7 @@
     
     <div class="mb-8 border-b border-gray-100 pb-4">
         <h4 class="text-xl font-bold text-gray-800">Tambah Jaringan LAN Baru</h4>
-        <p class="text-sm text-gray-500 mt-1">Tambahkan IP Address atau Gateway yang diizinkan untuk melakukan absensi.</p>
+        <p class="text-sm text-gray-500 mt-1">Tambahkan IP Address WiFi sekolah yang diizinkan untuk melakukan absensi.</p>
     </div>
 
     @if ($errors->any())
@@ -44,18 +44,35 @@
 
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">
-                    IP Address <span class="text-red-500">*</span>
+                    Alamat IP (IP Address) <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="ip_address" value="{{ old('ip_address') }}" placeholder="Contoh: 192.168.1.100" required class="w-full font-mono border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all placeholder-gray-400 text-blue-700">
-                <p class="text-xs text-gray-500 mt-2"><i class="fa-solid fa-circle-info mr-1"></i> Masukkan IP Publik atau IP Lokal Router (Gateway) Yayasan.</p>
+                
+                <div class="flex flex-col gap-2">
+                    <div class="flex">
+                        <input type="text" id="ip_address" name="ip_address" value="{{ old('ip_address') }}" placeholder="Contoh: 103.144.xxx.xxx atau 192.168.1.%" required class="w-full font-mono border border-gray-300 rounded-l-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all placeholder-gray-400 text-blue-700">
+                        <button type="button" onclick="detectMyIp()" class="bg-[#1e3b8b] hover:bg-[#152b69] text-white px-4 py-3 rounded-r-xl transition-colors text-sm font-semibold whitespace-nowrap flex items-center gap-2">
+                            <i class="fa-solid fa-satellite-dish"></i> Deteksi IP
+                        </button>
+                    </div>
+
+                    <div class="flex gap-2 mt-1">
+                        <button type="button" onclick="document.getElementById('ip_address').value = '{{ $myIp }}'" class="text-[10px] bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg border border-gray-200 transition-colors">
+                            Gunakan IP Perangkat Ini ({{ $myIp }})
+                        </button>
+                    </div>
+                    
+                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">
+                        <i class="fa-solid fa-circle-info mr-1 text-blue-500"></i> Jika aplikasi di-hosting online, deteksi IP di atas akan mengisi IP Publik sekolah. Jika aplikasi dijalankan offline (localhost), masukkan IP dengan tanda persen, contoh: <strong>192.168.1.%</strong> agar semua HP dengan WiFi yang sama bisa absen.
+                    </p>
+                </div>
             </div>
 
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Status Jaringan</label>
                 <div class="relative">
                     <select name="is_active" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all appearance-none bg-white">
-                        <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>Aktif (Diizinkan Absen)</option>
-                        <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Non-Aktif</option>
+                        <option value="1" {{ old('is_active', '1') == '1' ? 'selected' : '' }}>Aktif (Diizinkan Absen)</option>
+                        <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Non-Aktif (Diblokir)</option>
                     </select>
                     <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
                         <i class="fa-solid fa-chevron-down text-sm"></i>
@@ -79,4 +96,39 @@
         </div>
     </form>
 </div>
+
+@push('scripts')
+<script>
+    // Fungsi untuk mendeteksi IP Publik jaringan (Sangat akurat untuk WiFi sekolah)
+    async function detectMyIp() {
+        const ipInput = document.getElementById('ip_address');
+        const oldVal = ipInput.value;
+        
+        ipInput.value = "Mendeteksi...";
+        
+        try {
+            // Memanggil API Publik untuk mendapatkan IP Router
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            ipInput.value = data.ip;
+            
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'IP Publik Jaringan Berhasil Dideteksi!',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        } catch (error) {
+            ipInput.value = oldVal;
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal Mendeteksi',
+                text: 'Pastikan Anda terkoneksi ke internet saat menekan tombol ini.',
+            });
+        }
+    }
+</script>
+@endpush
 @endsection

@@ -39,6 +39,13 @@
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Data Guru</span>
             </a>
 
+            
+            <a href="{{ route('admin.pengajuan-izin.index') }}" 
+   class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.pengajuan-izin.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Validasi Izin & Cuti">
+    <i class="fa-solid fa-envelope-open-text text-lg min-w-[24px] text-center"></i>
+    <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Validasi Izin</span>
+</a>
+
             <a href="{{ route('admin.face.index') }}" 
                class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.face.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Perekaman Wajah">
                 <i class="fa-solid fa-id-badge text-lg min-w-[24px] text-center"></i>
@@ -78,6 +85,7 @@
                 <i class="fa-solid fa-file-signature text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Laporan Kehadiran</span>
             </a>
+
 
             <a href="{{ route('yayasan.potongan.index') }}" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('yayasan.potongan.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Rekap Pemotongan Gaji">
                 <i class="fa-solid fa-money-bill-transfer text-lg min-w-[24px] text-center"></i>

@@ -7,12 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
     .font-poppins { font-family: 'Poppins', sans-serif !important; }
-    
-    /* CSS Kustom untuk efek Toggle yang lebih mulus */
-    .toggle-checkbox:checked { right: 0; border-color: #22c55e; }
-    .toggle-checkbox:checked + .toggle-label { background-color: #22c55e; }
-    .toggle-checkbox { right: 0; z-index: 1; border-color: #e5e7eb; transition: all 0.3s; }
-    .toggle-label { width: 3rem; background-color: #e5e7eb; border-radius: 9999px; transition: all 0.3s; }
 </style>
 @endpush
 
@@ -103,9 +97,9 @@
                         <td class="px-5 py-4 text-center">
                             <label class="relative inline-flex items-center justify-center cursor-pointer">
                                 <input type="checkbox" class="sr-only peer toggle-status" data-id="{{ $item->id }}" {{ $item->is_active ? 'checked' : '' }}>
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500 shadow-inner"></div>
                             </label>
-                            <div class="text-[10px] font-semibold text-gray-400 mt-1 status-label-{{ $item->id }}">
+                            <div class="mt-1 status-label-{{ $item->id }} text-[10px] font-semibold {{ $item->is_active ? 'text-green-500' : 'text-gray-400' }}">
                                 {{ $item->is_active ? 'AKTIF' : 'NON-AKTIF' }}
                             </div>
                         </td>
@@ -115,11 +109,14 @@
                                 <a href="{{ route('admin.pengaturan-lan.edit', $item->id) }}" class="w-9 h-9 flex items-center justify-center bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-blue-100 hover:border-transparent" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <button type="button" onclick="confirmDelete({{ $item->id }})" class="w-9 h-9 flex items-center justify-center bg-red-50 text-red-500 rounded-lg hover:bg-red-600 hover:text-white transition-all shadow-sm border border-red-100 hover:border-transparent" title="Hapus">
+                                
+                                <button type="button" onclick="confirmDelete('{{ $item->id }}')" class="w-9 h-9 flex items-center justify-center bg-red-50 text-red-500 rounded-lg hover:bg-red-600 hover:text-white transition-all shadow-sm border border-red-100 hover:border-transparent" title="Hapus">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
-                                <form id="delete-form-{{ $item->id }}" action="{{ route('admin.pengaturan-lan.destroy', $item->id) }}" method="POST" class="hidden">
-                                    @csrf @method('DELETE')
+                                
+                                <form id="delete-form-{{ $item->id }}" action="{{ route('admin.pengaturan-lan.destroy', $item->id) }}" method="POST" class="hidden" style="display: none;">
+                                    @csrf 
+                                    @method('DELETE')
                                 </form>
                             </div>
                         </td>
@@ -152,8 +149,8 @@
 </div>
 @endsection
 
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 <script>
     // --- SweetAlert Hapus ---
     function confirmDelete(id) {
@@ -173,9 +170,10 @@
             }
         }).then((result) => {
             if (result.isConfirmed) {
+                // Submit form dengan ID yang spesifik
                 document.getElementById('delete-form-' + id).submit();
             }
-        })
+        });
     }
 
     // --- AJAX Toggle Switch Aktif/Non-Aktif ---
@@ -188,9 +186,10 @@
                 const isChecked = this.checked;
                 const labelStatus = document.querySelector(`.status-label-${ipId}`);
 
-                // Animasi teks kecil di bawah toggle
-                labelStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                // Tampilkan loading berputar
+                labelStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-gray-400"></i>';
 
+                // HARAP PASTIKAN URL PREFIX (admin) SESUAI DENGAN ROUTE WEB.PHP ANDA
                 fetch(`/admin/pengaturan-lan/toggle/${ipId}`, {
                     method: 'POST',
                     headers: {
@@ -199,27 +198,30 @@
                         'Accept': 'application/json'
                     }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
                 .then(data => {
                     if(data.success) {
-                        // Update teks label
+                        // Update teks label dan warnanya
                         labelStatus.innerText = data.is_active ? 'AKTIF' : 'NON-AKTIF';
-                        labelStatus.className = data.is_active ? `text-[10px] font-semibold text-green-500 mt-1 status-label-${ipId}` : `text-[10px] font-semibold text-gray-400 mt-1 status-label-${ipId}`;
+                        labelStatus.className = data.is_active 
+                            ? `mt-1 status-label-${ipId} text-[10px] font-semibold text-green-500` 
+                            : `mt-1 status-label-${ipId} text-[10px] font-semibold text-gray-400`;
                         
-                        // Opsional: Tampilkan Toast Notifikasi Kecil
-                        const Toast = Swal.mixin({
+                        // Notifikasi sukses
+                        Swal.fire({
                             toast: true,
                             position: 'top-end',
+                            icon: 'success',
+                            title: '<span class="font-poppins text-sm">' + data.message + '</span>',
                             showConfirmButton: false,
                             timer: 2000,
                             timerProgressBar: true,
                         });
-                        Toast.fire({
-                            icon: 'success',
-                            title: '<span class="font-poppins text-sm">' + data.message + '</span>'
-                        });
                     } else {
-                        // Jika gagal dari server, balikkan toggle
+                        // Jika gagal dari server, balikkan posisi toggle
                         this.checked = !isChecked;
                         labelStatus.innerText = !isChecked ? 'AKTIF' : 'NON-AKTIF';
                         Swal.fire('Error', 'Gagal merubah status', 'error');
@@ -227,13 +229,17 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    // Jika jaringan putus/error, balikkan toggle
+                    // Jika jaringan putus atau route tidak ditemukan (404/500), balikkan posisi toggle
                     this.checked = !isChecked;
                     labelStatus.innerText = !isChecked ? 'AKTIF' : 'NON-AKTIF';
-                    Swal.fire('Error', 'Terjadi kesalahan jaringan', 'error');
+                    
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Terjadi kesalahan sistem atau rute (URL) tidak ditemukan! Pastikan Route toggleStatus sudah ditambahkan di web.php.',
+                    });
                 });
             });
         });
     });
 </script>
-@endpush

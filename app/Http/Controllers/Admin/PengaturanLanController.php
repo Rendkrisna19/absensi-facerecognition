@@ -33,7 +33,7 @@ class PengaturanLanController extends Controller
         return view('admin.pengaturan_lan.index', compact('ips'));
     }
 
-    // Fungsi Baru untuk AJAX Toggle Switch
+    // Fungsi AJAX Toggle Switch (Aktif / Non-aktifkan IP)
     public function toggleStatus(Request $request, $id)
     {
         try {
@@ -54,19 +54,21 @@ class PengaturanLanController extends Controller
         }
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        return view('admin.pengaturan_lan.create');
+        // Deteksi IP Admin yang sedang membuka halaman ini
+        $myIp = $request->ip(); 
+        
+        return view('admin.pengaturan_lan.create', compact('myIp'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'nama_jaringan' => 'required|string|max:255',
-            'ip_address' => 'required|ip|unique:ip_lokals,ip_address',
+            'ip_address' => 'required|unique:ip_lokals,ip_address', // Hapus rule 'ip' agar mendukung format wildcard (192.168.1.%)
             'is_active' => 'required|boolean',
         ], [
-            'ip_address.ip' => 'Format IP Address tidak valid (Contoh: 192.168.1.1)',
             'ip_address.unique' => 'IP Address ini sudah terdaftar di sistem.'
         ]);
 
@@ -87,7 +89,7 @@ class PengaturanLanController extends Controller
 
         $request->validate([
             'nama_jaringan' => 'required|string|max:255',
-            'ip_address' => 'required|ip|unique:ip_lokals,ip_address,' . $id,
+            'ip_address' => 'required|unique:ip_lokals,ip_address,' . $id,
             'is_active' => 'required|boolean',
         ]);
 

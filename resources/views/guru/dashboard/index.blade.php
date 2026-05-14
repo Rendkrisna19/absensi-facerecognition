@@ -1,13 +1,10 @@
-@extends('layouts.mobile')
-
-@section('title', 'Beranda')
+@extends('layouts.mobile') @section('title', 'Beranda')
 @section('subtitle', 'Halo, Selamat Pagi')
 @section('page_title', auth()->user()->name)
 
 @section('content')
 <div class="space-y-6">
 
-    <!-- Header Tanggal Hari Ini -->
     <div class="flex items-center justify-between px-1">
         <div>
             <h2 class="text-gray-800 font-bold text-lg">Hari Ini</h2>
@@ -16,16 +13,27 @@
                 {{ $tanggalFormat }}
             </p>
         </div>
-        <!-- Real-time Clock -->
         <div class="bg-white border border-gray-200 px-3 py-1.5 rounded-xl text-sm font-bold text-[#002D8B] shadow-sm flex items-center gap-2" id="realtime-clock">
             <i class="fa-regular fa-clock"></i> <span>--:--</span>
         </div>
     </div>
 
-    <!-- KARTU UTAMA (Berubah sesuai status: Libur / Sudah Absen / Belum Absen) -->
-    
-    @if($isLibur)
-        <!-- MODE HARI LIBUR -->
+    @if($izinHariIni)
+        <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden border border-amber-400">
+            <div class="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+            <div class="relative z-10 text-center py-4">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
+                    <i class="fa-solid fa-envelope-open-text text-3xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold mb-1">Status: {{ $izinHariIni->jenis }}</h2>
+                <p class="text-amber-100 text-sm font-medium bg-black/10 inline-block px-3 py-1 rounded-full mt-2">
+                    {{ $izinHariIni->status == 'Pending' ? 'Menunggu Persetujuan' : 'Telah Disetujui' }}
+                </p>
+                <p class="text-xs text-amber-50 mt-4 px-4 line-clamp-2 italic">"{{ $izinHariIni->alasan }}"</p>
+            </div>
+        </div>
+
+    @elseif($isLibur)
         <div class="bg-gradient-to-br from-teal-500 to-teal-600 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden border border-teal-400">
             <div class="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
             <div class="relative z-10 text-center py-4">
@@ -41,7 +49,6 @@
         </div>
 
     @else
-        <!-- MODE HARI KERJA -->
         <div class="bg-[#002D8B] rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
             <div class="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
             
@@ -58,7 +65,6 @@
                 </div>
 
                 @if($absenHariIni)
-                    <!-- Jika Sudah Absen -->
                     <div class="bg-white/10 rounded-xl p-4 flex items-center justify-between backdrop-blur-md border border-white/10">
                         <div>
                             <p class="text-xs text-blue-200 mb-0.5">Jam Masuk</p>
@@ -69,12 +75,11 @@
                             @if($absenHariIni->status == 'Terlambat')
                                 <span class="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded">Terlambat</span>
                             @else
-                                <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">Hadir Tepat Waktu</span>
+                                <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">Hadir Tepat</span>
                             @endif
                         </div>
                     </div>
                 @else
-                    <!-- Jika Belum Absen -->
                     <a href="{{ route('guru.scan') }}" class="flex items-center justify-center gap-3 w-full bg-orange-400 hover:bg-orange-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-md active:scale-95">
                         <i class="fa-solid fa-camera text-xl"></i> Buka Kamera Absensi
                     </a>
@@ -84,7 +89,6 @@
         </div>
     @endif
 
-    <!-- Informasi Ringkas Bulanan (DATA REAL) -->
     <div class="grid grid-cols-2 gap-4">
         <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex flex-col justify-between h-28 relative overflow-hidden group">
             <div class="absolute -right-4 -top-4 w-16 h-16 bg-green-50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
@@ -99,7 +103,6 @@
 
         <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex flex-col justify-between h-28 relative overflow-hidden group">
             <div class="absolute -right-4 -top-4 w-16 h-16 bg-red-50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
-            <!-- Hiasan background rupiah -->
             <i class="fa-solid fa-rupiah-sign absolute -right-2 -bottom-2 text-5xl text-red-50 opacity-50"></i>
             <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-2 relative z-10">
                 <i class="fa-solid fa-money-bill-transfer"></i>
@@ -111,17 +114,59 @@
         </div>
     </div>
 
+    <div class="mt-8 mb-2 flex items-center justify-between px-1">
+        <h3 class="text-gray-800 font-bold text-base">Riwayat Izin Terbaru</h3>
+        <a href="{{ route('guru.pengajuan-izin.index') }}" class="text-[11px] text-[#002D8B] font-semibold hover:underline">Lihat Semua</a>
+    </div>
+
+    <div class="space-y-3">
+        @forelse($riwayatIzin as $izin)
+            <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden flex flex-col gap-2">
+                <div class="absolute left-0 top-0 bottom-0 w-1.5 {{ $izin->status == 'Disetujui' ? 'bg-green-500' : ($izin->status == 'Ditolak' ? 'bg-red-500' : 'bg-yellow-400') }}"></div>
+                
+                <div class="flex justify-between items-center pl-2">
+                    <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-gray-100 text-gray-600">{{ $izin->jenis }}</span>
+                    <span class="text-[9px] font-bold px-2 py-1 rounded-full {{ $izin->status == 'Disetujui' ? 'bg-green-100 text-green-700' : ($izin->status == 'Ditolak' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">
+                        {{ $izin->status }}
+                    </span>
+                </div>
+                
+                <div class="pl-2">
+                    <p class="text-[11px] font-semibold text-gray-800 mb-0.5">
+                        <i class="fa-regular fa-calendar text-[#002D8B] mr-1"></i> 
+                        {{ \Carbon\Carbon::parse($izin->tanggal_mulai)->format('d M') }} 
+                        @if($izin->tanggal_mulai != $izin->tanggal_selesai) 
+                            - {{ \Carbon\Carbon::parse($izin->tanggal_selesai)->format('d M Y') }} 
+                        @endif
+                    </p>
+                    <p class="text-[10px] text-gray-500 truncate" title="{{ $izin->alasan }}">{{ $izin->alasan }}</p>
+                </div>
+            </div>
+        @empty
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center">
+                <i class="fa-solid fa-folder-open text-gray-300 text-3xl mb-2"></i>
+                <p class="text-xs text-gray-400">Belum ada riwayat izin.</p>
+            </div>
+        @endforelse
+    </div>
+
+    @if($riwayatIzin->hasPages())
+        <div class="mt-4 flex justify-center text-xs">
+            {{ $riwayatIzin->links('pagination::simple-tailwind') }}
+        </div>
+    @endif
+
 </div>
 
 @push('scripts')
 <script>
-    // Script Jam Realtime dengan format yang lebih rapi
+    // Script Jam Realtime
     function updateClock() {
         const date = new Date();
         const hours = date.getHours().toString().padStart(2, '0');
         const minutes = date.getMinutes().toString().padStart(2, '0');
         
-        // Animasi titik dua berkedip setiap detik
+        // Animasi titik dua berkedip
         const separator = date.getSeconds() % 2 === 0 ? ':' : '<span class="opacity-50">:</span>';
         
         document.getElementById('realtime-clock').innerHTML = 
@@ -129,7 +174,7 @@
     }
     
     setInterval(updateClock, 1000);
-    updateClock(); // Panggil sekali di awal agar tidak delay 1 detik
+    updateClock(); 
 </script>
 @endpush
 @endsection

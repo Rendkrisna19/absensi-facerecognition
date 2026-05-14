@@ -19,7 +19,12 @@ use App\Http\Controllers\KepalaYayasan\LaporanAbsensiController;
 use App\Http\Controllers\KepalaYayasan\PotonganController;
 
 //impoert role guru
-use App\Http\Controllers\Guru\AbsensiGuruController;
+use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
+use App\Http\Controllers\Guru\ScanAbsensiController;
+use App\Http\Controllers\Guru\RiwayatController;
+use App\Http\Controllers\Guru\DendaController;
+use App\Http\Controllers\Guru\PengaturanController;
+use App\Http\Controllers\Guru\PengajuanIzinController;
 
 
 
@@ -59,6 +64,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::post('/libur-semester', [LiburSemesterController::class, 'store'])->name('admin.libur.store');
     Route::put('/libur-semester/{libur}', [LiburSemesterController::class, 'update'])->name('admin.libur.update');
     Route::delete('/libur-semester/{libur}', [LiburSemesterController::class, 'destroy'])->name('admin.libur.destroy');
+    Route::get('/pengajuan-izin', [App\Http\Controllers\Admin\PengajuanIzinController::class, 'index'])->name('admin.pengajuan-izin.index');
+    Route::post('/pengajuan-izin/{id}/status', [App\Http\Controllers\Admin\PengajuanIzinController::class, 'updateStatus'])->name('admin.pengajuan-izin.status');
+    Route::post('/pengaturan-lan/toggle/{id}', [\App\Http\Controllers\Admin\PengaturanLanController::class, 'toggleStatus'])->name('admin.pengaturan-lan.toggle');
 });
 
 // 4. Group Routes: KEPALA YAYASAN
@@ -74,11 +82,22 @@ Route::middleware(['auth', 'role:kepala_yayasan'])->prefix('yayasan')->group(fun
 
 // 5. Group Routes: GURU
 Route::middleware(['auth', 'role:guru'])->prefix('guru')->group(function () {
-    Route::get('/dashboard', [AbsensiGuruController::class, 'dashboard'])->name('guru.dashboard');
-    Route::get('/riwayat', [AbsensiGuruController::class, 'riwayat'])->name('guru.riwayat');
-    Route::get('/denda', [AbsensiGuruController::class, 'denda'])->name('guru.denda');
-    Route::get('/pengaturan', [AbsensiGuruController::class, 'pengaturan'])->name('guru.pengaturan');
-    Route::post('/pengaturan/update-profil', [AbsensiGuruController::class, 'updateProfil'])->name('guru.pengaturan.update');
-    Route::post('/scan-absensi/store', [App\Http\Controllers\Guru\AbsensiGuruController::class, 'storeAbsensi'])->name('guru.scan.store');
-    Route::get('/scan-absensi', [AbsensiGuruController::class, 'scan'])->name('guru.scan');
+    // Dashboard
+    Route::get('/dashboard', [GuruDashboardController::class, 'index'])->name('guru.dashboard');
+
+    // Scan Absensi
+    Route::get('/scan-absensi', [ScanAbsensiController::class, 'index'])->name('guru.scan');
+    Route::post('/scan-absensi/store', [ScanAbsensiController::class, 'store'])->name('guru.scan.store');
+
+    // Riwayat & Denda
+    Route::get('/riwayat', [RiwayatController::class, 'index'])->name('guru.riwayat');
+    Route::get('/denda', [DendaController::class, 'index'])->name('guru.denda');
+
+    // Pengaturan
+    Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('guru.pengaturan');
+    Route::post('/pengaturan/update-profil', [PengaturanController::class, 'updateProfil'])->name('guru.pengaturan.update');
+    Route::get('/pengajuan-izin', [PengajuanIzinController::class, 'index'])->name('guru.pengajuan-izin.index');
+    Route::get('/pengajuan-izin/create', [PengajuanIzinController::class, 'create'])->name('guru.pengajuan-izin.create');
+    Route::post('/pengajuan-izin', [PengajuanIzinController::class, 'store'])->name('guru.pengajuan-izin.store');
+    Route::get('/pengajuan-izin/{pengajuanIzin}', [PengajuanIzinController::class, 'show'])->name('guru.pengajuan-izin.show');
 });

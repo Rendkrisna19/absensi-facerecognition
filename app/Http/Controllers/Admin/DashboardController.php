@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Absensi; // Pastikan Model Absensi Anda sudah di-import
+use App\Models\Absensi; 
 use Carbon\Carbon;
 
 class DashboardController extends Controller
