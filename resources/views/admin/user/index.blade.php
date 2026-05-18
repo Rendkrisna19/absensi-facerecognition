@@ -115,14 +115,22 @@
                         <td class="px-5 py-4">
                             <div class="flex items-center gap-4">
                                 <!-- Avatar -->
-                                <div class="w-11 h-11 rounded-xl 
-                                    @if($user->role == 'admin') bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700
-                                    @elseif($user->role == 'kepala_yayasan') bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700
-                                    @else bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700
-                                    @endif 
-                                    flex items-center justify-center font-bold text-lg shadow-inner group-hover:scale-105 transition-transform">
-                                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                                </div>
+                                @php
+                                    $fotoUrl = $user->foto_profil ? asset('storage/' . $user->foto_profil) : null;
+                                @endphp
+                                
+                                @if($fotoUrl)
+                                    <img src="{{ $fotoUrl }}" alt="Foto {{ $user->name }}" class="w-12 h-12 rounded-xl object-cover border border-gray-200 shadow-sm group-hover:scale-105 transition-transform duration-300">
+                                @else
+                                    <div class="w-12 h-12 rounded-xl 
+                                        @if($user->role == 'admin') bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700
+                                        @elseif($user->role == 'kepala_yayasan') bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700
+                                        @else bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700
+                                        @endif 
+                                        flex items-center justify-center font-bold text-lg shadow-inner border border-gray-100 group-hover:scale-105 transition-transform duration-300">
+                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                    </div>
+                                @endif
                                 
                                 <div>
                                     <p class="font-bold text-gray-800 text-base">{{ $user->name }}</p>
@@ -132,9 +140,11 @@
                         </td>
                         <td class="px-5 py-4">
                             <!-- Only NIK displayed here -->
-                            <div class="inline-flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-                                <i class="fa-regular fa-id-badge text-gray-400 text-xs"></i>
-                                <span class="text-gray-700 font-mono font-bold tracking-wider text-xs">{{ $user->nik ?? '-' }}</span>
+                            <div class="inline-flex items-center gap-2 bg-[#1e3b8b]/5 px-3 py-1.5 rounded-lg border border-[#1e3b8b]/10 shadow-sm group-hover:bg-[#1e3b8b]/10 transition-colors">
+                                <div class="w-6 h-6 rounded-md bg-white flex items-center justify-center shadow-sm">
+                                    <i class="fa-regular fa-id-card text-[#1e3b8b] text-[10px]"></i>
+                                </div>
+                                <span class="text-[#1e3b8b] font-poppins font-bold tracking-widest text-xs">{{ $user->nik ?? 'BELUM DIATUR' }}</span>
                             </div>
                         </td>
                         <td class="px-5 py-4">

@@ -14,7 +14,13 @@
             </div>
             
             <div class="flex items-center gap-3">
-                <form method="GET" class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-lg border border-gray-200 shadow-inner">
+                <form method="GET" class="flex flex-wrap md:flex-nowrap items-center gap-2 bg-gray-50 p-1.5 rounded-lg border border-gray-200 shadow-inner">
+                    <select name="unit_sekolah" class="bg-transparent text-sm font-bold outline-none px-2 cursor-pointer text-gray-700">
+                        <option value="Semua" {{ $unitSekolah == 'Semua' ? 'selected' : '' }}>Semua Unit</option>
+                        <option value="SD" {{ $unitSekolah == 'SD' ? 'selected' : '' }}>SD</option>
+                        <option value="SMP" {{ $unitSekolah == 'SMP' ? 'selected' : '' }}>SMP</option>
+                    </select>
+                    <div class="w-px h-4 bg-gray-300"></div>
                     <select name="bulan" class="bg-transparent text-sm font-bold outline-none px-2 cursor-pointer text-gray-700">
                         @foreach(range(1, 12) as $bln)
                             <option value="{{ $bln }}" {{ $bulanSelected == $bln ? 'selected' : '' }}>
@@ -34,11 +40,11 @@
                 </form>
 
                <div class="flex items-center gap-2">
-    <a href="{{ route('yayasan.potongan.pdf', ['bulan' => $bulanSelected, 'tahun' => $tahunSelected]) }}" target="_blank" class="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border border-red-200 hover:border-transparent px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 shadow-sm">
+    <a href="{{ route('yayasan.potongan.pdf', request()->all()) }}" target="_blank" class="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border border-red-200 hover:border-transparent px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 shadow-sm">
         <i class="fa-solid fa-file-pdf"></i> Cetak PDF
     </a>
     
-    <a href="{{ route('yayasan.potongan.excel', ['bulan' => $bulanSelected, 'tahun' => $tahunSelected]) }}" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white border border-emerald-200 hover:border-transparent px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 shadow-sm">
+    <a href="{{ route('yayasan.potongan.excel', request()->all()) }}" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white border border-emerald-200 hover:border-transparent px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 shadow-sm">
         <i class="fa-solid fa-file-excel"></i> Export Excel
     </a>
 </div>

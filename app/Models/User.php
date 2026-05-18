@@ -23,6 +23,7 @@ class User extends Authenticatable
         'nik',
         'password',
         'role',
+        'unit_sekolah',
         'jabatan',
         'face_descriptor', // PASTIKAN KOLOM INI SUDAH DITAMBAHKAN
         'foto_profil',

@@ -52,6 +52,15 @@
                     <option value="guru" {{ old('jabatan') == 'guru' ? 'selected' : '' }}>Guru</option>
                 </select>
             </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Unit Sekolah <span class="text-red-500">*</span></label>
+                <select name="unit_sekolah" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#24429b] focus:border-[#24429b] bg-white outline-none">
+                    <option value="" disabled selected hidden>Pilih Unit Sekolah</option>
+                    <option value="SD" {{ old('unit_sekolah') == 'SD' ? 'selected' : '' }}>SD (Sekolah Dasar)</option>
+                    <option value="SMP" {{ old('unit_sekolah') == 'SMP' ? 'selected' : '' }}>SMP (Sekolah Menengah Pertama)</option>
+                </select>
+            </div>
         </div>
 
         <h4 class="font-bold text-gray-800 border-b border-gray-100 pb-2 mb-4 text-[#24429b] mt-6"><i class="fa-solid fa-address-book mr-2"></i> Biodata Lengkap</h4>

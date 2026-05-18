@@ -16,17 +16,22 @@
         </div>
         
         <form method="GET" class="relative z-10 flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 p-2.5 rounded-xl">
-            <select name="bulan" class="bg-white text-gray-800 text-sm font-medium rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-300">
+            <select name="bulan" class="bg-white/90 text-gray-800 text-sm font-bold rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-300 border-none shadow-inner">
                 @foreach(range(1, 12) as $bln)
                     <option value="{{ $bln }}" {{ $bulanSelected == $bln ? 'selected' : '' }}>
                         {{ \Carbon\Carbon::create()->month($bln)->translatedFormat('F') }}
                     </option>
                 @endforeach
             </select>
-            <select name="tahun" class="bg-white text-gray-800 text-sm font-medium rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-300">
+            <select name="tahun" class="bg-white/90 text-gray-800 text-sm font-bold rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-300 border-none shadow-inner">
                 @foreach(range(date('Y')-2, date('Y')) as $thn)
                     <option value="{{ $thn }}" {{ $tahunSelected == $thn ? 'selected' : '' }}>{{ $thn }}</option>
                 @endforeach
+            </select>
+            <select name="unit_sekolah" class="bg-white/90 text-gray-800 text-sm font-bold rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-300 border-none shadow-inner">
+                <option value="all" {{ $unitSelected == 'all' ? 'selected' : '' }}>Semua Unit</option>
+                <option value="SD" {{ $unitSelected == 'SD' ? 'selected' : '' }}>Unit SD</option>
+                <option value="SMP" {{ $unitSelected == 'SMP' ? 'selected' : '' }}>Unit SMP</option>
             </select>
             <button type="submit" class="bg-white text-[#002D8B] hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm">
                 <i class="fa-solid fa-filter"></i> Filter
@@ -35,33 +40,37 @@
     </div>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white rounded-2xl p-5 border-t-4 border-blue-400 shadow-sm relative overflow-hidden group">
+        <div class="bg-white rounded-2xl p-5 border-t-4 border-blue-500 shadow-md hover:shadow-xl hover:-translate-y-1 relative overflow-hidden group transition-all duration-300">
             <p class="text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-1">Total Guru</p>
-            <h3 class="text-3xl font-bold text-gray-800">{{ $metrics['total_guru'] }}</h3>
-            <i class="fa-solid fa-users absolute -right-3 -bottom-3 text-6xl text-blue-50 group-hover:scale-110 transition-transform"></i>
+            <h3 class="text-3xl font-black text-gray-800">{{ $metrics['total_guru'] }}</h3>
+            <i class="fa-solid fa-users absolute -right-3 -bottom-3 text-6xl text-blue-50 group-hover:text-blue-100 group-hover:scale-110 transition-transform duration-300"></i>
         </div>
-        <div class="bg-white rounded-2xl p-5 border-t-4 border-green-400 shadow-sm relative overflow-hidden group">
+        <div class="bg-white rounded-2xl p-5 border-t-4 border-green-500 shadow-md hover:shadow-xl hover:-translate-y-1 relative overflow-hidden group transition-all duration-300">
             <p class="text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-1">Hadir Tepat (Hari Ini)</p>
-            <h3 class="text-3xl font-bold text-green-600">{{ $metrics['hadir_tepat'] }}</h3>
-            <i class="fa-solid fa-check-circle absolute -right-3 -bottom-3 text-6xl text-green-50 group-hover:scale-110 transition-transform"></i>
+            <h3 class="text-3xl font-black text-green-600">{{ $metrics['hadir_tepat'] }}</h3>
+            <i class="fa-solid fa-check-circle absolute -right-3 -bottom-3 text-6xl text-green-50 group-hover:text-green-100 group-hover:scale-110 transition-transform duration-300"></i>
         </div>
-        <div class="bg-white rounded-2xl p-5 border-t-4 border-yellow-400 shadow-sm relative overflow-hidden group">
+        <div class="bg-white rounded-2xl p-5 border-t-4 border-yellow-500 shadow-md hover:shadow-xl hover:-translate-y-1 relative overflow-hidden group transition-all duration-300">
             <p class="text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-1">Terlambat (Hari Ini)</p>
-            <h3 class="text-3xl font-bold text-yellow-500">{{ $metrics['terlambat_hari_ini'] }}</h3>
-            <i class="fa-solid fa-clock absolute -right-3 -bottom-3 text-6xl text-yellow-50 group-hover:scale-110 transition-transform"></i>
+            <h3 class="text-3xl font-black text-yellow-500">{{ $metrics['terlambat_hari_ini'] }}</h3>
+            <i class="fa-solid fa-clock absolute -right-3 -bottom-3 text-6xl text-yellow-50 group-hover:text-yellow-100 group-hover:scale-110 transition-transform duration-300"></i>
         </div>
-        <div class="bg-white rounded-2xl p-5 border-t-4 border-red-400 shadow-sm relative overflow-hidden group">
+        <div class="bg-white rounded-2xl p-5 border-t-4 border-red-500 shadow-md hover:shadow-xl hover:-translate-y-1 relative overflow-hidden group transition-all duration-300">
             <p class="text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-1">Belum Absen / Alpa</p>
-            <h3 class="text-3xl font-bold text-red-500">{{ $metrics['alpa_hari_ini'] }}</h3>
-            <i class="fa-solid fa-user-xmark absolute -right-3 -bottom-3 text-6xl text-red-50 group-hover:scale-110 transition-transform"></i>
+            <h3 class="text-3xl font-black text-red-500">{{ $metrics['alpa_hari_ini'] }}</h3>
+            <i class="fa-solid fa-user-xmark absolute -right-3 -bottom-3 text-6xl text-red-50 group-hover:text-red-100 group-hover:scale-110 transition-transform duration-300"></i>
         </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:col-span-2">
-            <div class="flex justify-between items-center mb-4">
-                <h4 class="text-base font-bold text-gray-800">Tren Kehadiran (7 Hari Terakhir)</h4>
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 lg:col-span-2 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -mr-20 -mt-20"></div>
+            <div class="flex justify-between items-center mb-6 relative z-10">
+                <div>
+                    <h4 class="text-lg font-black text-gray-800 tracking-tight">Tren Kehadiran Harian</h4>
+                    <p class="text-xs text-gray-500 font-medium mt-1">Perbandingan tingkat kedisiplinan 7 hari terakhir</p>
+                </div>
             </div>
             <div id="chart-tren" class="w-full h-[300px]"></div>
         </div>
@@ -113,35 +122,48 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h4 class="text-base font-bold text-gray-800 mb-4 text-center">Komposisi Kehadiran Hari Ini</h4>
-            <div id="chart-pie" class="flex justify-center"></div>
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 flex flex-col relative overflow-hidden">
+            <h4 class="text-base font-black text-gray-800 mb-6 text-center z-10 relative tracking-tight">Distribusi Kehadiran</h4>
+            <div id="chart-pie" class="flex justify-center flex-1 items-center z-10 relative mt-4"></div>
+            <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-gray-50 to-transparent z-0"></div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between relative overflow-hidden group">
-            <div class="absolute right-0 top-0 mt-6 mr-4 text-red-50 opacity-50 text-7xl group-hover:scale-110 transition-transform">
-                <i class="fa-solid fa-money-bill-transfer"></i>
+        <div class="bg-gradient-to-br from-rose-50 to-white rounded-3xl shadow-sm border border-rose-100 p-8 flex flex-col justify-center relative overflow-hidden group">
+            <div class="absolute right-0 bottom-0 mb-4 mr-4 text-rose-500/10 text-8xl group-hover:scale-110 group-hover:-rotate-12 transition-all duration-500">
+                <i class="fa-solid fa-sack-dollar"></i>
             </div>
             <div class="relative z-10 w-full">
-                <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Total Estimasi Denda ({{ $bulanSekarang }})</p>
-                <h4 class="text-4xl font-black text-red-600 mb-2">Rp {{ number_format($metrics['total_denda_bulan_ini'], 0, ',', '.') }}</h4>
-                <div class="inline-block bg-red-50 text-red-600 text-[10px] font-bold px-3 py-1 rounded-full border border-red-100">
-                    Potongan Gaji Yayasan
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600">
+                        <i class="fa-solid fa-arrow-trend-down text-sm"></i>
+                    </div>
+                    <p class="text-xs font-black text-rose-600 uppercase tracking-widest">Estimasi Potongan</p>
                 </div>
+                <h4 class="text-4xl font-black text-gray-800 mb-2 font-mono tracking-tighter">Rp {{ number_format($metrics['total_denda_bulan_ini'], 0, ',', '.') }}</h4>
+                <p class="text-xs text-gray-500 font-medium">Akumulasi denda keterlambatan bulan <b>{{ $bulanSekarang }}</b></p>
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between relative overflow-hidden group">
-            <div class="absolute right-0 top-0 mt-6 mr-4 text-green-50 opacity-50 text-7xl group-hover:scale-110 transition-transform">
-                <i class="fa-solid fa-chart-line"></i>
+        <div class="bg-gradient-to-br from-emerald-50 to-white rounded-3xl shadow-sm border border-emerald-100 p-8 flex flex-col justify-center relative overflow-hidden group">
+            <div class="absolute right-0 bottom-0 mb-4 mr-4 text-emerald-500/10 text-8xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
+                <i class="fa-solid fa-ranking-star"></i>
             </div>
             <div class="relative z-10 w-full">
-                <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Rata-rata Kedisiplinan</p>
-                <h4 class="text-4xl font-black text-green-500 mb-2">{{ $metrics['rata_kehadiran'] }}%</h4>
-                <div class="w-full bg-gray-100 rounded-full h-2 mb-1">
-                    <div class="bg-green-500 h-2 rounded-full" style="width: {{ $metrics['rata_kehadiran'] }}%"></div>
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                        <i class="fa-solid fa-percent text-sm"></i>
+                    </div>
+                    <p class="text-xs font-black text-emerald-600 uppercase tracking-widest">Rata-rata Disiplin</p>
                 </div>
-                <p class="text-[10px] text-gray-400">Target kehadiran yayasan: 90%</p>
+                <div class="flex items-end gap-3 mb-3">
+                    <h4 class="text-5xl font-black text-gray-800 font-mono tracking-tighter leading-none">{{ $metrics['rata_kehadiran'] }}<span class="text-2xl text-emerald-500">%</span></h4>
+                </div>
+                <div class="w-full bg-emerald-100/50 rounded-full h-2.5 mb-2 overflow-hidden shadow-inner">
+                    <div class="bg-gradient-to-r from-emerald-400 to-emerald-600 h-2.5 rounded-full relative" style="width: {{ $metrics['rata_kehadiran'] }}%">
+                        <div class="absolute inset-0 bg-white/20 w-full animate-pulse"></div>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 font-medium">Target minimum yayasan: <span class="font-bold text-gray-700">90%</span></p>
             </div>
         </div>
 
@@ -152,65 +174,92 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         
-        // 1. AREA CHART (Tren Mingguan)
+        // 1. BAR CHART (Tren Mingguan - Premium Style)
         var optionsTren = {
             series: [{
-                name: 'Hadir Tepat',
+                name: 'Tepat Waktu',
                 data: @json($chartData['hadir'])
             }, {
                 name: 'Terlambat',
                 data: @json($chartData['terlambat'])
             }, {
-                name: 'Alpa/Belum Hadir',
+                name: 'Alpa/Izin',
                 data: @json($chartData['alpa'])
             }],
             chart: {
-                height: 300,
-                type: 'area',
+                height: 320,
+                type: 'bar',
+                stacked: false,
                 toolbar: { show: false },
-                fontFamily: "'Poppins', sans-serif"
+                fontFamily: "'Poppins', sans-serif",
+                animations: { enabled: true, easing: 'easeinout', speed: 800 }
             },
-            colors: ['#10b981', '#f59e0b', '#ef4444'], // Hijau, Oranye, Merah
-            dataLabels: { enabled: false },
-            stroke: { curve: 'smooth', width: 2 },
-            fill: {
-                type: 'gradient',
-                gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] }
+            colors: ['#10b981', '#f59e0b', '#ef4444'], 
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '55%',
+                    borderRadius: 4,
+                    dataLabels: { position: 'top' }
+                },
             },
+            dataLabels: { 
+                enabled: true,
+                offsetY: -20,
+                style: { fontSize: '10px', colors: ['#6b7280'] },
+                formatter: function (val) { return val > 0 ? val : ''; }
+            },
+            stroke: { show: true, width: 2, colors: ['transparent'] },
             xaxis: {
                 categories: @json($chartData['labels']),
-                labels: { style: { colors: '#9ca3af', fontSize: '11px', fontWeight: 500 } },
+                labels: { style: { colors: '#6b7280', fontSize: '11px', fontWeight: 600 } },
                 axisBorder: { show: false },
                 axisTicks: { show: false }
             },
             yaxis: {
                 labels: { style: { colors: '#9ca3af', fontSize: '11px' } }
             },
-            grid: { borderColor: '#f3f4f6', strokeDashArray: 4 },
-            legend: { position: 'top', horizontalAlign: 'right', fontSize: '12px', markers: { radius: 12 } },
-            tooltip: { theme: 'light' }
+            grid: { borderColor: '#f1f5f9', strokeDashArray: 4, yaxis: { lines: { show: true } } },
+            legend: { position: 'top', horizontalAlign: 'right', fontSize: '12px', fontWeight: 600, markers: { radius: 12 } },
+            fill: { opacity: 1 },
+            tooltip: { 
+                theme: 'light',
+                y: { formatter: function (val) { return val + " Pegawai" } }
+            }
         };
         var chartTren = new ApexCharts(document.querySelector("#chart-tren"), optionsTren);
         chartTren.render();
 
-        // 2. DONUT CHART (Komposisi Hari Ini)
+        // 2. RADIAL BAR CHART (Komposisi Hari Ini - Premium Style)
+        var totalHariIni = {{ $metrics['hadir_tepat'] + $metrics['terlambat_hari_ini'] + $metrics['alpa_hari_ini'] }};
+        totalHariIni = totalHariIni === 0 ? 1 : totalHariIni; // Prevent div by zero
+        
+        var pctHadir = Math.round(({{ $metrics['hadir_tepat'] }} / totalHariIni) * 100);
+        var pctTelat = Math.round(({{ $metrics['terlambat_hari_ini'] }} / totalHariIni) * 100);
+        var pctAlpa = Math.round(({{ $metrics['alpa_hari_ini'] }} / totalHariIni) * 100);
+
         var optionsPie = {
-            series: [{{ $metrics['hadir_tepat'] }}, {{ $metrics['terlambat_hari_ini'] }}, {{ $metrics['alpa_hari_ini'] }}],
-            labels: ['Tepat Waktu', 'Terlambat', 'Belum Hadir/Alpa'],
+            series: [pctHadir, pctTelat, pctAlpa],
+            labels: ['Tepat Waktu', 'Terlambat', 'Belum Hadir'],
             chart: {
-                type: 'donut',
-                height: 250,
+                type: 'radialBar',
+                height: 300,
                 fontFamily: "'Poppins', sans-serif"
             },
             colors: ['#10b981', '#f59e0b', '#ef4444'],
             plotOptions: {
-                pie: {
-                    donut: { size: '65%', labels: { show: true, name: { show: false }, value: { fontSize: '24px', fontWeight: 700 } } }
+                radialBar: {
+                    hollow: { size: '45%', background: 'transparent' },
+                    track: { background: '#f1f5f9', strokeWidth: '100%', margin: 5 },
+                    dataLabels: {
+                        name: { fontSize: '12px', fontWeight: 600, color: '#6b7280' },
+                        value: { fontSize: '24px', fontWeight: 800, color: '#1f2937', formatter: function (val) { return val + "%" } },
+                        total: { show: true, label: 'Disiplin', color: '#10b981', formatter: function (w) { return pctHadir + "%" } }
+                    }
                 }
             },
-            dataLabels: { enabled: false },
-            legend: { position: 'bottom', fontSize: '12px', markers: { radius: 12 } },
-            stroke: { show: true, colors: '#ffffff', width: 2 }
+            stroke: { lineCap: 'round' },
+            legend: { show: true, position: 'bottom', fontSize: '11px', fontWeight: 600, markers: { radius: 12 } }
         };
         var chartPie = new ApexCharts(document.querySelector("#chart-pie"), optionsPie);
         chartPie.render();

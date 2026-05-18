@@ -14,18 +14,25 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class PotonganExport implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
 {
-    protected $bulan, $tahun;
+    protected $bulan, $tahun, $unitSekolah;
 
-    public function __construct($bulan, $tahun)
+    public function __construct($bulan, $tahun, $unitSekolah = null)
     {
         $this->bulan = $bulan;
         $this->tahun = $tahun;
+        $this->unitSekolah = $unitSekolah;
     }
 
     public function collection()
     {
         $nominalDenda = PengaturanAbsensi::first()->denda_terlambat ?? 0;
-        $gurus = User::where('role', 'guru')->orderBy('name', 'asc')->get();
+        $query = User::where('role', 'guru');
+        
+        if ($this->unitSekolah && $this->unitSekolah !== 'Semua') {
+            $query->where('unit_sekolah', $this->unitSekolah);
+        }
+        
+        $gurus = $query->orderBy('name', 'asc')->get();
         $data = [];
 
         foreach ($gurus as $guru) {

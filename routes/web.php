@@ -43,6 +43,8 @@ Route::put('/profil-saya', [ProfileController::class, 'update'])->name('profile.
 // 3. Group Routes: ADMIN
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/guru/download-template', [GuruController::class, 'downloadTemplate'])->name('admin.guru.downloadTemplate');
+    Route::post('/guru/import-excel', [GuruController::class, 'importExcel'])->name('admin.guru.importExcel');
     Route::resource('guru', GuruController::class)->names('admin.guru');
     Route::get('/face-recording', [FaceRecordingController::class, 'index'])->name('admin.face.index');
     Route::get('/face-recording/{guru}/record', [FaceRecordingController::class, 'record'])->name('admin.face.record');
@@ -70,6 +72,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::post('/pengajuan-izin/{id}/status', [App\Http\Controllers\Admin\PengajuanIzinController::class, 'updateStatus'])->name('admin.pengajuan-izin.status');
     Route::post('/pengaturan-lan/toggle/{id}', [\App\Http\Controllers\Admin\PengaturanLanController::class, 'toggleStatus'])->name('admin.pengaturan-lan.toggle');
     Route::get('/riwayat-absensi', [RiwayatAbsensiController::class, 'index'])->name('admin.riwayat-absensi.index');
+    Route::get('/riwayat-absensi/pdf', [RiwayatAbsensiController::class, 'exportPdf'])->name('admin.riwayat-absensi.pdf');
+    Route::get('/riwayat-absensi/excel', [RiwayatAbsensiController::class, 'exportExcel'])->name('admin.riwayat-absensi.excel');
 });
 
 // 4. Group Routes: KEPALA YAYASAN

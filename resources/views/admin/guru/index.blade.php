@@ -21,6 +21,10 @@
             <a href="{{ route('admin.guru.export.pdf') }}" target="_blank" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-sm flex items-center gap-2">
                 <i class="fa-solid fa-file-pdf"></i> PDF
             </a>
+            <!-- Tombol Import Excel -->
+            <button x-data @click="$dispatch('open-import-modal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-file-import"></i> Import Excel
+            </button>
             <!-- Tombol Tambah -->
             <a href="{{ route('admin.guru.create') }}" class="bg-blue-800 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-sm flex items-center gap-2">
                 <i class="fa-solid fa-plus"></i> Tambah Data
@@ -111,15 +115,33 @@
 
                     <!-- Col 2: Jabatan & Status -->
                     <td class="p-3">
-                        <div class="mb-1">
-                            <span class="inline-block text-[11px] px-2 py-0.5 rounded-md font-semibold border {{ $badgeJabatan }}">
-                                {{ strtoupper($item->jabatan) }}
-                            </span>
-                        </div>
-                        <div>
-                            <span class="text-[11px] px-2 py-0.5 rounded-full font-medium {{ ($item->guru?->status_pegawai == 'Tetap') ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700' }}">
-                                {{ $item->guru?->status_pegawai ?? 'Belum Diatur' }}
-                            </span>
+                        <div class="flex flex-col gap-1.5 items-start">
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="inline-block text-[11px] px-2 py-0.5 rounded-md font-semibold border {{ $badgeJabatan }}">
+                                    {{ strtoupper($item->jabatan) }}
+                                </span>
+                                
+                                <!-- Badge Unit Sekolah -->
+                                @if($item->unit_sekolah === 'SD')
+                                    <span class="inline-block text-[11px] px-2 py-0.5 rounded-md font-semibold border bg-red-50 text-red-600 border-red-200">
+                                        Unit SD
+                                    </span>
+                                @elseif($item->unit_sekolah === 'SMP')
+                                    <span class="inline-block text-[11px] px-2 py-0.5 rounded-md font-semibold border bg-[#002D8B]/10 text-[#002D8B] border-[#002D8B]/20">
+                                        Unit SMP
+                                    </span>
+                                @else
+                                    <span class="inline-block text-[11px] px-2 py-0.5 rounded-md font-semibold border bg-gray-50 text-gray-600 border-gray-200">
+                                        Umum
+                                    </span>
+                                @endif
+                            </div>
+                            
+                            <div>
+                                <span class="text-[11px] px-2 py-0.5 rounded-full font-medium {{ ($item->guru?->status_pegawai == 'Tetap') ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700' }}">
+                                    Status: {{ $item->guru?->status_pegawai ?? 'Belum Diatur' }}
+                                </span>
+                            </div>
                         </div>
                     </td>
 
@@ -304,6 +326,48 @@
         <div class="inline-flex rounded-md shadow-sm" id="paginationButtons">
             <!-- Tombol pagination digenerate JS disini -->
         </div>
+    </div>
+
+    <!-- Modal Import Excel (AlpineJS) -->
+    <div x-data="{ open: false }" @open-import-modal.window="open = true">
+        <template x-teleport="body">
+            <div x-show="open" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <!-- Backdrop -->
+                <div x-show="open" x-transition.opacity @click="open = false" class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm cursor-pointer"></div>
+
+                <!-- Modal Content -->
+                <div x-show="open" x-transition.scale.origin.bottom class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden z-10">
+                    <div class="px-6 py-4 border-b flex justify-between items-center bg-emerald-600 text-white">
+                        <h3 class="text-lg font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-file-import"></i> Import Data Excel
+                        </h3>
+                        <button @click="open = false" type="button" class="text-emerald-100 hover:text-white transition-colors">
+                            <i class="fa-solid fa-xmark text-2xl"></i>
+                        </button>
+                    </div>
+
+                    <form action="{{ route('admin.guru.importExcel') }}" method="POST" enctype="multipart/form-data" class="p-6">
+                        @csrf
+                        <div class="mb-5">
+                            <p class="text-sm text-gray-600 mb-3">Silakan unggah file Excel sesuai dengan format template yang disediakan.</p>
+                            <a href="{{ route('admin.guru.downloadTemplate') }}" class="inline-flex items-center gap-2 text-sm text-emerald-600 font-semibold hover:text-emerald-800 mb-4 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 transition">
+                                <i class="fa-solid fa-download"></i> Unduh Template Excel
+                            </a>
+                            
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">File Excel (.xlsx)</label>
+                            <input type="file" name="file" accept=".xlsx, .xls, .csv" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 text-sm file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                        </div>
+                        
+                        <div class="flex justify-end gap-2 border-t border-gray-100 pt-4">
+                            <button type="button" @click="open = false" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">Batal</button>
+                            <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition flex items-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Upload & Import
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </template>
     </div>
 </div>
 

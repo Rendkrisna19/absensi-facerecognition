@@ -16,17 +16,27 @@ class LaporanAbsensiController extends Controller
     public function index(Request $request)
     {
         // 1. Ambil data guru untuk dropdown
-        $gurus = User::where('role', 'guru')->orderBy('name', 'asc')->get();
+        $guruQuery = User::where('role', 'guru');
+        if ($request->filled('unit_sekolah') && $request->unit_sekolah !== 'Semua') {
+            $guruQuery->where('unit_sekolah', $request->unit_sekolah);
+        }
+        $gurus = $guruQuery->orderBy('name', 'asc')->get();
 
         // 2. Set default tanggal (Awal bulan sampai Akhir bulan saat ini) jika filter kosong
         $startDate = $request->start_date ?? Carbon::now()->startOfMonth()->toDateString();
         $endDate = $request->end_date ?? Carbon::now()->endOfMonth()->toDateString();
+        $unitSekolah = $request->unit_sekolah ?? 'Semua';
 
         // 3. Query menggunakan Eloquent Best Practice (when)
         $absensis = Absensi::with(['user.guru'])
             ->whereBetween('tanggal', [$startDate, $endDate])
             ->when($request->filled('guru_id'), function ($query) use ($request) {
                 return $query->where('user_id', $request->guru_id);
+            })
+            ->when($request->filled('unit_sekolah') && $request->unit_sekolah !== 'Semua', function ($query) use ($request) {
+                return $query->whereHas('user', function($q) use ($request) {
+                    $q->where('unit_sekolah', $request->unit_sekolah);
+                });
             })
             ->orderBy('tanggal', 'desc')
             ->get(); // Gunakan get() agar pagination di-handle oleh Javascript (Tanpa Reload)
@@ -39,7 +49,7 @@ class LaporanAbsensiController extends Controller
             'total' => $absensis->count(),
         ];
 
-        return view('kepala-yayasan.laporan.index', compact('absensis', 'gurus', 'summary', 'startDate', 'endDate'));
+        return view('kepala-yayasan.laporan.index', compact('absensis', 'gurus', 'summary', 'startDate', 'endDate', 'unitSekolah'));
     }
 
     public function exportPdf(Request $request)
@@ -50,11 +60,17 @@ class LaporanAbsensiController extends Controller
         $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
         $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
         $guruId = $request->input('guru_id');
+        $unitSekolah = $request->input('unit_sekolah');
 
         // 2. Query data sesuai filter
         $query = Absensi::with('user')->whereBetween('tanggal', [$startDate, $endDate]);
         if ($guruId) {
             $query->where('user_id', $guruId);
+        }
+        if ($unitSekolah && $unitSekolah !== 'Semua') {
+            $query->whereHas('user', function($q) use ($unitSekolah) {
+                $q->where('unit_sekolah', $unitSekolah);
+            });
         }
         
         $absensis = $query->orderBy('tanggal', 'asc')->get();
@@ -72,7 +88,8 @@ class LaporanAbsensiController extends Controller
         $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
         $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
         $guruId = $request->input('guru_id');
+        $unitSekolah = $request->input('unit_sekolah');
 
-        return Excel::download(new LaporanAbsensiExport($startDate, $endDate, $guruId), 'Laporan_Kehadiran_'.$startDate.'_sd_'.$endDate.'.xlsx');
+        return Excel::download(new LaporanAbsensiExport($startDate, $endDate, $guruId, $unitSekolah), 'Laporan_Kehadiran_'.$startDate.'_sd_'.$endDate.'.xlsx');
     }
 }

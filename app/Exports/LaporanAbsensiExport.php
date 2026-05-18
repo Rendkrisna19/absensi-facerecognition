@@ -13,13 +13,14 @@ use Carbon\Carbon;
 
 class LaporanAbsensiExport implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
 {
-    protected $startDate, $endDate, $guruId;
+    protected $startDate, $endDate, $guruId, $unitSekolah;
 
-    public function __construct($startDate, $endDate, $guruId)
+    public function __construct($startDate, $endDate, $guruId, $unitSekolah = null)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->guruId = $guruId;
+        $this->unitSekolah = $unitSekolah;
     }
 
     public function collection()
@@ -28,6 +29,12 @@ class LaporanAbsensiExport implements FromCollection, WithHeadings, WithMapping,
         
         if ($this->guruId) {
             $query->where('user_id', $this->guruId);
+        }
+
+        if ($this->unitSekolah && $this->unitSekolah !== 'Semua') {
+            $query->whereHas('user', function($q) {
+                $q->where('unit_sekolah', $this->unitSekolah);
+            });
         }
 
         return $query->orderBy('tanggal', 'asc')->get();

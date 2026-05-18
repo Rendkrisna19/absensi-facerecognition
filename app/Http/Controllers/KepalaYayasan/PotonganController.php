@@ -15,11 +15,16 @@ use App\Exports\PotonganExport;
 class PotonganController extends Controller
 {
     // Fungsi Helper Khusus agar tidak mengulang kodingan
-    private function getPotonganData($bulan, $tahun)
+    private function getPotonganData($bulan, $tahun, $unitSekolah = null)
     {
         $pengaturan = PengaturanAbsensi::first();
         $nominalDenda = $pengaturan ? $pengaturan->denda_terlambat : 0;
-        $gurus = User::with('guru')->where('role', 'guru')->orderBy('name', 'asc')->get();
+        
+        $query = User::with('guru')->where('role', 'guru');
+        if ($unitSekolah && $unitSekolah !== 'Semua') {
+            $query->where('unit_sekolah', $unitSekolah);
+        }
+        $gurus = $query->orderBy('name', 'asc')->get();
 
         $dataPotongan = [];
         $totalKeseluruhanPotongan = 0;
@@ -68,8 +73,9 @@ class PotonganController extends Controller
         Carbon::setLocale('id');
         $bulanSelected = $request->input('bulan', Carbon::now()->month);
         $tahunSelected = $request->input('tahun', Carbon::now()->year);
+        $unitSekolah = $request->input('unit_sekolah', 'Semua');
 
-        $laporan = $this->getPotonganData($bulanSelected, $tahunSelected);
+        $laporan = $this->getPotonganData($bulanSelected, $tahunSelected, $unitSekolah);
         $namaBulanTahun = Carbon::createFromDate($tahunSelected, $bulanSelected, 1)->translatedFormat('F Y');
 
         return view('kepala-yayasan.potongan.index', [
@@ -79,7 +85,8 @@ class PotonganController extends Controller
             'nominalDenda' => $laporan['nominal_denda'],
             'bulanSelected' => $bulanSelected,
             'tahunSelected' => $tahunSelected,
-            'namaBulanTahun' => $namaBulanTahun
+            'namaBulanTahun' => $namaBulanTahun,
+            'unitSekolah' => $unitSekolah
         ]);
     }
 
@@ -89,8 +96,9 @@ class PotonganController extends Controller
         Carbon::setLocale('id');
         $bulan = $request->input('bulan', Carbon::now()->month);
         $tahun = $request->input('tahun', Carbon::now()->year);
+        $unitSekolah = $request->input('unit_sekolah');
         
-        $laporan = $this->getPotonganData($bulan, $tahun);
+        $laporan = $this->getPotonganData($bulan, $tahun, $unitSekolah);
         $namaBulanTahun = Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F Y');
 
         $pdf = Pdf::loadView('kepala-yayasan.potongan.pdf', [
@@ -107,8 +115,9 @@ class PotonganController extends Controller
     {
         $bulan = $request->input('bulan', Carbon::now()->month);
         $tahun = $request->input('tahun', Carbon::now()->year);
+        $unitSekolah = $request->input('unit_sekolah');
         $namaBulanTahun = Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F Y');
 
-        return Excel::download(new PotonganExport($bulan, $tahun), 'Laporan_Potongan_Gaji_'.$namaBulanTahun.'.xlsx');
+        return Excel::download(new PotonganExport($bulan, $tahun, $unitSekolah), 'Laporan_Potongan_Gaji_'.$namaBulanTahun.'.xlsx');
     }
 }

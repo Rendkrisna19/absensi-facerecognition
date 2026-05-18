@@ -37,6 +37,7 @@ class GuruController extends Controller
             'nik' => 'required|numeric|unique:users,nik',
             'password' => 'required|min:6',
             'jabatan' => 'required|in:guru,kepala_sekolah', 
+            'unit_sekolah' => 'required|in:SD,SMP',
             'jenis_kelamin' => 'required|in:L,P',
             'no_hp' => 'required|numeric',
             'foto_profil' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
@@ -56,6 +57,7 @@ class GuruController extends Controller
                     'password' => Hash::make($request->password),
                     'role' => 'guru',
                     'jabatan' => $request->jabatan,
+                    'unit_sekolah' => $request->unit_sekolah,
                     'foto_profil' => $fotoPath, 
                 ]);
 
@@ -97,6 +99,7 @@ class GuruController extends Controller
             'nik' => 'required|numeric|unique:users,nik,' . $guru->id,
             'password' => 'nullable|min:6', 
             'jabatan' => 'required|in:guru,kepala_sekolah', 
+            'unit_sekolah' => 'required|in:SD,SMP',
             'jenis_kelamin' => 'required|in:L,P',
             'no_hp' => 'required|numeric',
             'foto_profil' => 'nullable|image|mimes:jpeg,png,jpg|max:2048' 
@@ -109,6 +112,7 @@ class GuruController extends Controller
                     'username' => $request->nik, 
                     'nik' => $request->nik,
                     'jabatan' => $request->jabatan,
+                    'unit_sekolah' => $request->unit_sekolah,
                 ];
 
                 if ($request->filled('password')) {
@@ -158,6 +162,25 @@ class GuruController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menghapus data.');
         }
+    }
+
+    public function importExcel(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        try {
+            Excel::import(new \App\Imports\GuruImport, $request->file('file'));
+            return redirect()->route('admin.guru.index')->with('success', 'Data Guru berhasil diimport!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal mengimport data: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadTemplate()
+    {
+        return Excel::download(new \App\Exports\GuruTemplateExport, 'Template_Import_Guru.xlsx');
     }
 
     public function exportExcel()

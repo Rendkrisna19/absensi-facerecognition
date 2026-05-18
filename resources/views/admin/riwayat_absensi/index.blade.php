@@ -10,9 +10,17 @@
             <h3 class="text-xl font-bold text-gray-800">Log Kehadiran Pegawai</h3>
             <p class="text-sm text-gray-500 mt-1">Pantau seluruh riwayat jam masuk, jam pulang, dan status izin pegawai.</p>
         </div>
+        <div class="flex gap-2">
+            <a href="{{ route('admin.riwayat-absensi.pdf', request()->all()) }}" target="_blank" class="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border border-red-200 hover:border-transparent px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-file-pdf"></i> PDF
+            </a>
+            <a href="{{ route('admin.riwayat-absensi.excel', request()->all()) }}" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white border border-emerald-200 hover:border-transparent px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-file-excel"></i> Excel
+            </a>
+        </div>
     </div>
 
-    <form method="GET" action="{{ route('admin.riwayat-absensi.index') }}" class="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+    <form method="GET" action="{{ route('admin.riwayat-absensi.index') }}" class="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6 grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
         
         <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Cari Pegawai</label>
@@ -37,6 +45,15 @@
             </select>
         </div>
 
+        <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Unit Sekolah</label>
+            <select name="unit_sekolah" class="w-full bg-white border border-gray-300 text-sm rounded-lg focus:ring-[#002D8B] focus:border-[#002D8B] p-2.5">
+                <option value="all">Semua Unit</option>
+                <option value="SD" {{ request('unit_sekolah') == 'SD' ? 'selected' : '' }}>SD</option>
+                <option value="SMP" {{ request('unit_sekolah') == 'SMP' ? 'selected' : '' }}>SMP</option>
+            </select>
+        </div>
+
         <div class="flex gap-2">
             <div class="w-1/2">
                 <label class="block text-xs font-semibold text-gray-600 mb-1.5">Bulan</label>
@@ -58,10 +75,13 @@
             </div>
         </div>
 
-        <div class="flex items-end">
-            <button type="submit" class="w-full bg-[#002D8B] hover:bg-[#001f63] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm">
-                <i class="fa-solid fa-filter mr-1"></i> Terapkan Filter
+        <div class="flex items-end gap-2">
+            <button type="submit" class="w-full bg-[#002D8B] hover:bg-[#001f63] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm h-[42px] flex items-center justify-center">
+                <i class="fa-solid fa-filter mr-1"></i> Filter
             </button>
+            <a href="{{ route('admin.riwayat-absensi.index') }}" class="px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-semibold rounded-lg transition-all flex items-center justify-center h-[42px]" title="Reset Filter">
+                <i class="fa-solid fa-rotate-right"></i>
+            </a>
         </div>
     </form>
 
@@ -82,8 +102,20 @@
                 <tr class="hover:bg-blue-50/50 transition-colors">
                     <td class="p-4 text-gray-600">{{ $riwayat->firstItem() + $index }}</td>
                     <td class="p-4">
-                        <div class="font-bold text-gray-800">{{ $absen->user->name ?? 'User Terhapus' }}</div>
-                        <div class="text-[11px] text-gray-500">{{ $absen->user->nik ?? '-' }}</div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs border border-blue-200 shrink-0">
+                                {{ strtoupper(substr($absen->user->name ?? 'U', 0, 1)) }}
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-800">{{ $absen->user->name ?? 'User Terhapus' }}</div>
+                                <div class="text-[11px] text-gray-500 font-mono tracking-wide">
+                                    {{ $absen->user->nik ?? '-' }} 
+                                    @if($absen->user)
+                                     • <span class="{{ $absen->user->unit_sekolah == 'SD' ? 'text-red-500' : 'text-blue-500' }} font-bold">Unit {{ $absen->user->unit_sekolah ?? 'Umum' }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                     </td>
                     <td class="p-4 text-center font-medium text-gray-700">
                         {{ \Carbon\Carbon::parse($absen->tanggal)->translatedFormat('d M Y') }}
@@ -92,7 +124,14 @@
                         @if($absen->jam_masuk)
                             <span class="bg-gray-100 px-2 py-1 rounded text-gray-800">{{ \Carbon\Carbon::parse($absen->jam_masuk)->format('H:i') }}</span>
                             @if($absen->menit_terlambat > 0)
-                                <div class="text-[10px] text-red-500 mt-1 font-sans font-semibold">Telat {{ $absen->menit_terlambat }} mnt</div>
+                                @php
+                                    $jam = floor($absen->menit_terlambat / 60);
+                                    $menit = $absen->menit_terlambat % 60;
+                                    $teksTelat = '';
+                                    if($jam > 0) $teksTelat .= $jam . ' jam ';
+                                    if($menit > 0) $teksTelat .= $menit . ' mnt';
+                                @endphp
+                                <div class="text-[10px] text-red-500 mt-1 font-sans font-semibold">Telat {{ trim($teksTelat) }}</div>
                             @endif
                         @else
                             <span class="text-gray-400">-</span>
@@ -130,8 +169,16 @@
         </table>
     </div>
 
-    <div class="mt-6">
-        {{ $riwayat->links() }}
+    <!-- Pagination Section -->
+    <div class="mt-6 flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
+        <div class="text-sm text-gray-500 font-medium">
+            Menampilkan <span class="font-bold text-[#002D8B] bg-blue-50 px-2 py-0.5 rounded-md">{{ $riwayat->firstItem() ?? 0 }}</span> 
+            sampai <span class="font-bold text-[#002D8B] bg-blue-50 px-2 py-0.5 rounded-md">{{ $riwayat->lastItem() ?? 0 }}</span> 
+            dari total <span class="font-bold text-[#002D8B] bg-blue-50 px-2 py-0.5 rounded-md">{{ $riwayat->total() }}</span> data.
+        </div>
+        <div class="pagination-wrapper">
+            {{ $riwayat->links() }}
+        </div>
     </div>
 </div>
 @endsection
