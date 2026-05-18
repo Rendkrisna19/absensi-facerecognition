@@ -12,5 +12,14 @@ class Absensi extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    protected $fillable = [
+    'user_id',
+    'tanggal',
+    'jam_masuk',
+    'jam_pulang', // <-- Tambahkan ini
+    'status',
+    'menit_terlambat'
+];
     
 }

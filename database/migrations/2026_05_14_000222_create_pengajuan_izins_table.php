@@ -13,23 +13,18 @@ return new class extends Migration
     {
         Schema::create('pengajuan_izins', function (Blueprint $table) {
             $table->id();
-            
-            // Relasi ke tabel users (yang mengajukan)
+
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            
             $table->enum('jenis', ['Sakit', 'Izin', 'Cuti']);
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
             $table->text('alasan');
             $table->string('file_bukti')->nullable();
-            
             $table->enum('status', ['Pending', 'Disetujui', 'Ditolak'])->default('Pending');
             $table->text('catatan_penolakan')->nullable();
-            
-            // Relasi ke tabel users (Admin/Kepala yang menyetujui)
             $table->foreignId('disetujui_oleh')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('direspon_pada')->nullable();
-            
+
             $table->timestamps();
         });
     }

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-   public function index(Request $request)
+    public function index(Request $request)
     {
         $query = User::latest();
 
@@ -34,6 +34,12 @@ class UserController extends Controller
         $users = $query->paginate($perPage)->withQueryString(); 
 
         return view('admin.user.index', compact('users'));
+    }
+
+    // ---> TAMBAHAN: Method create untuk menampilkan form tambah pengguna <---
+    public function create()
+    {
+        return view('admin.user.create');
     }
 
     public function store(Request $request)

@@ -10,7 +10,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Menggunakan raw statement agar lebih aman untuk tipe ENUM di MySQL
         DB::statement("ALTER TABLE absensis MODIFY COLUMN status ENUM('Hadir', 'Terlambat', 'Alpa', 'Sakit', 'Izin', 'Cuti') NOT NULL DEFAULT 'Alpa'");
     }
 
@@ -19,7 +18,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Kembalikan ke struktur awal jika di-rollback
         DB::statement("ALTER TABLE absensis MODIFY COLUMN status ENUM('Hadir', 'Terlambat', 'Alpa') NOT NULL DEFAULT 'Alpa'");
     }
 };

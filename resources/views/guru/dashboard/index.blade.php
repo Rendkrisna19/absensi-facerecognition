@@ -53,37 +53,61 @@
             <div class="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
             
             <div class="relative z-10">
-                <div class="mb-6">
+                <div class="mb-5">
                     <p class="text-sm text-blue-200 font-medium mb-1">Status Kehadiran Anda</p>
-                    <h2 class="text-3xl font-bold flex items-center gap-2">
-                        @if($absenHariIni)
-                            <i class="fa-solid fa-circle-check text-green-400"></i> Selesai
+                    
+                    <h2 class="text-2xl font-bold flex items-center gap-2">
+                        @if(!$absenHariIni)
+                            <i class="fa-solid fa-circle-exclamation text-orange-400"></i> Belum Absen Masuk
+                        @elseif(empty($absenHariIni->jam_pulang))
+                            <i class="fa-solid fa-spinner fa-spin text-yellow-300"></i> Menunggu Waktu Pulang
                         @else
-                            <i class="fa-solid fa-circle-exclamation text-orange-400"></i> Belum Absen
+                            <i class="fa-solid fa-circle-check text-green-400"></i> Kehadiran Selesai
                         @endif
                     </h2>
                 </div>
 
-                @if($absenHariIni)
-                    <div class="bg-white/10 rounded-xl p-4 flex items-center justify-between backdrop-blur-md border border-white/10">
-                        <div>
-                            <p class="text-xs text-blue-200 mb-0.5">Jam Masuk</p>
-                            <p class="font-bold text-lg font-mono">{{ \Carbon\Carbon::parse($absenHariIni->jam_masuk)->format('H:i') }} WIB</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xs text-blue-200 mb-0.5">Status</p>
+                @if(!$absenHariIni)
+                    <a href="{{ route('guru.scan') }}" class="flex items-center justify-center gap-3 w-full bg-orange-400 hover:bg-orange-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-md active:scale-95">
+                        <i class="fa-solid fa-right-to-bracket text-xl"></i> Scan Absen Masuk
+                    </a>
+                    <p class="text-center text-xs text-blue-200 mt-3"><i class="fa-solid fa-circle-info mr-1"></i> Pastikan Anda terhubung dengan WiFi sekolah.</p>
+
+                @else
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div class="bg-white/10 rounded-xl p-3 backdrop-blur-md border border-white/10">
+                            <p class="text-[10px] text-blue-200 mb-1 uppercase tracking-wider">Jam Masuk</p>
+                            <p class="font-bold text-lg font-mono">{{ \Carbon\Carbon::parse($absenHariIni->jam_masuk)->format('H:i') }}</p>
                             @if($absenHariIni->status == 'Terlambat')
-                                <span class="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded">Terlambat</span>
+                                <span class="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 inline-block">Terlambat</span>
                             @else
-                                <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">Hadir Tepat</span>
+                                <span class="bg-green-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 inline-block">Tepat Waktu</span>
+                            @endif
+                        </div>
+                        
+                        <div class="bg-white/10 rounded-xl p-3 backdrop-blur-md border border-white/10">
+                            <p class="text-[10px] text-blue-200 mb-1 uppercase tracking-wider">Jam Pulang</p>
+                            @if(!empty($absenHariIni->jam_pulang))
+                                <p class="font-bold text-lg font-mono">{{ \Carbon\Carbon::parse($absenHariIni->jam_pulang)->format('H:i') }}</p>
+                                <span class="bg-green-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 inline-block">Selesai</span>
+                            @else
+                                <p class="font-bold text-lg font-mono text-gray-400">--:--</p>
+                                <span class="bg-yellow-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 inline-block">Menunggu</span>
                             @endif
                         </div>
                     </div>
-                @else
-                    <a href="{{ route('guru.scan') }}" class="flex items-center justify-center gap-3 w-full bg-orange-400 hover:bg-orange-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-md active:scale-95">
-                        <i class="fa-solid fa-camera text-xl"></i> Buka Kamera Absensi
-                    </a>
-                    <p class="text-center text-xs text-blue-200 mt-3"><i class="fa-solid fa-circle-info mr-1"></i> Pastikan Anda terhubung dengan WiFi sekolah.</p>
+
+                    @if(empty($absenHariIni->jam_pulang))
+                        <div class="bg-blue-900/40 rounded-xl p-3 border border-blue-400/30 text-center mb-4">
+                            <p class="text-xs text-blue-100">
+                                <i class="fa-solid fa-clock mr-1"></i> Absensi Pulang akan dibuka pukul <strong class="text-white">{{ \Carbon\Carbon::parse($jamPulang)->format('H:i') }} WIB</strong>.
+                            </p>
+                        </div>
+                        
+                        <a href="{{ route('guru.scan') }}" class="flex items-center justify-center gap-2 w-full bg-white text-[#002D8B] font-bold py-3.5 rounded-xl transition-all shadow-md active:scale-95">
+                            <i class="fa-solid fa-person-walking-arrow-right text-lg"></i> Scan Absen Pulang
+                        </a>
+                    @endif
                 @endif
             </div>
         </div>
@@ -160,13 +184,10 @@
 
 @push('scripts')
 <script>
-    // Script Jam Realtime
     function updateClock() {
         const date = new Date();
         const hours = date.getHours().toString().padStart(2, '0');
         const minutes = date.getMinutes().toString().padStart(2, '0');
-        
-        // Animasi titik dua berkedip
         const separator = date.getSeconds() % 2 === 0 ? ':' : '<span class="opacity-50">:</span>';
         
         document.getElementById('realtime-clock').innerHTML = 

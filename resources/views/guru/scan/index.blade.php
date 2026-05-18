@@ -1,4 +1,6 @@
-@extends('layouts.mobile') @section('title', 'Kamera Absensi')
+@extends('layouts.mobile') 
+
+@section('title', 'Kamera Absensi')
 @section('subtitle', 'Absensi Harian')
 @section('page_title', 'Scan Wajah')
 
@@ -30,11 +32,15 @@
             if (\Illuminate\Support\Str::contains($pesanLower, ['izin', 'pengajuan', 'sakit', 'cuti'])) {
                 $icon = 'fa-envelope-open-text';
                 $title = 'Status Izin Aktif';
-                $color = 'amber'; // Warna kuning/oranye untuk izin
+                $color = 'amber';
             } elseif (\Illuminate\Support\Str::contains($pesanLower, ['libur', 'ditutup'])) {
                 $icon = 'fa-calendar-day';
                 $title = 'Pemberitahuan Libur';
-                $color = 'teal'; // Warna tosca untuk libur
+                $color = 'teal';
+            } elseif (\Illuminate\Support\Str::contains($pesanLower, ['pulang', 'selesai', 'istirahat'])) {
+                $icon = 'fa-house-chimney-user';
+                $title = 'Kehadiran Selesai';
+                $color = 'green';
             }
         @endphp
 
@@ -62,8 +68,24 @@
 
     {{-- 4. TAMPILAN KAMERA ABSENSI (Jika Semua Validasi Lolos) --}}
     @else
+        @php
+            // Cek apakah guru sedang mau absen Masuk atau absen Pulang
+            $absenHariIni = \App\Models\Absensi::where('user_id', auth()->id())
+                                ->where('tanggal', \Carbon\Carbon::now()->format('Y-m-d'))
+                                ->first();
+            
+            $jenisAbsen = !$absenHariIni ? 'MASUK' : 'PULANG';
+            $badgeColor = !$absenHariIni ? 'bg-green-100 text-green-700 border-green-200' : 'bg-blue-100 text-[#002D8B] border-blue-200';
+            $iconAbsen  = !$absenHariIni ? 'fa-right-to-bracket' : 'fa-person-walking-arrow-right';
+        @endphp
+
         <div class="w-full bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-6 text-center">
-            <p class="text-xs text-gray-500 font-semibold mb-3 uppercase tracking-wider">Arahkan wajah Anda ke kamera</p>
+            
+            <div class="mb-4">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border shadow-sm {{ $badgeColor }}">
+                    <i class="fa-solid {{ $iconAbsen }}"></i> SCAN ABSEN {{ $jenisAbsen }}
+                </span>
+            </div>
             
             <div class="relative w-full max-w-[280px] mx-auto aspect-[3/4] bg-gray-900 rounded-2xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.12)] border-4 border-gray-50 flex items-center justify-center">
                 
@@ -107,7 +129,6 @@
     let isMatched = false;
     const modelUrl = '{{ asset("models") }}';
 
-    // 1. MENGGUNAKAN MODEL YANG JAUH LEBIH RINGAN (TinyFaceDetector)
     Promise.all([
         faceapi.nets.tinyFaceDetector.loadFromUri(modelUrl),
         faceapi.nets.faceLandmark68Net.loadFromUri(modelUrl),
@@ -118,7 +139,6 @@
     });
 
     function startVideo() {
-        // Resolusi ideal dikurangi sedikit agar proses rendering di HP tidak membebani RAM
         navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 480 }, height: { ideal: 640 } } })
             .then(stream => {
                 video.srcObject = stream;
@@ -134,11 +154,9 @@
         const displaySize = { width: video.videoWidth, height: video.videoHeight };
         faceapi.matchDimensions(overlay, displaySize);
 
-        // 2. MENGGANTI setInterval DENGAN REKURSIF AGAR HP TIDAK PANAS
         async function prosesScan() {
             if(isMatched) return;
 
-            // Menggunakan TinyFaceDetectorOptions dengan inputSize kecil agar super cepat
             const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 224 }))
                 .withFaceLandmarks()
                 .withFaceDescriptor();
@@ -149,15 +167,12 @@
             if (detection) {
                 const resizedDetections = faceapi.resizeResults(detection, displaySize);
                 
-                // Gambar Box Pengenalan
                 const box = resizedDetections.detection.box;
                 const drawBox = new faceapi.draw.DrawBox(box, { label: userName, boxColor: 'rgba(0, 45, 139, 0.8)' });
                 drawBox.draw(overlay);
 
-                // Hitung kemiripan (Euclidean Distance)
                 const distance = faceapi.euclideanDistance(detection.descriptor, storedDescriptor);
                 
-                // Semakin kecil distance, semakin mirip (0.45 adalah batas toleransi ideal)
                 if (distance < 0.45) {
                     isMatched = true; 
                     statusText.innerHTML = '<span class="text-green-600 font-bold"><i class="fa-solid fa-check-circle text-lg mr-1"></i> Wajah Cocok! Menyimpan...</span>';
@@ -193,9 +208,9 @@
                         console.error('Error saat simpan absen:', error);
                         Swal.fire('Error', 'Terjadi kesalahan jaringan saat menyimpan data absensi.', 'error');
                         isMatched = false; 
-                        setTimeout(prosesScan, 1000); // Lanjut scan kalau misal server error sementara
+                        setTimeout(prosesScan, 1000);
                     });
-                    return; // Hentikan loop sementara proses request selesai
+                    return; 
                 } else {
                     statusText.innerHTML = '<span class="text-red-500 font-semibold"><i class="fa-solid fa-xmark-circle mr-1"></i> Wajah tidak cocok. Coba posisikan lebih terang.</span>';
                 }
@@ -203,11 +218,9 @@
                 statusText.innerHTML = '<span class="text-[#002D8B]"><i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Mencari wajah...</span>';
             }
 
-            // Jeda 400ms sebelum memproses frame berikutnya (Sangat penting agar browser bisa bernapas dan tidak freeze)
             setTimeout(prosesScan, 400);
         }
 
-        // Mulai scanning berulang
         prosesScan();
     });
 </script>

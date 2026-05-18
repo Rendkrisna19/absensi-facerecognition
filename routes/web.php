@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\PengaturanAbsensiController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\LiburSemesterController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\RiwayatAbsensiController;
+
 //import role kepala-yayasan
 use App\Http\Controllers\KepalaYayasan\DashboardYayasanController;
 use App\Http\Controllers\KepalaYayasan\LaporanAbsensiController;
@@ -67,6 +69,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/pengajuan-izin', [App\Http\Controllers\Admin\PengajuanIzinController::class, 'index'])->name('admin.pengajuan-izin.index');
     Route::post('/pengajuan-izin/{id}/status', [App\Http\Controllers\Admin\PengajuanIzinController::class, 'updateStatus'])->name('admin.pengajuan-izin.status');
     Route::post('/pengaturan-lan/toggle/{id}', [\App\Http\Controllers\Admin\PengaturanLanController::class, 'toggleStatus'])->name('admin.pengaturan-lan.toggle');
+    Route::get('/riwayat-absensi', [RiwayatAbsensiController::class, 'index'])->name('admin.riwayat-absensi.index');
 });
 
 // 4. Group Routes: KEPALA YAYASAN
@@ -82,18 +85,11 @@ Route::middleware(['auth', 'role:kepala_yayasan'])->prefix('yayasan')->group(fun
 
 // 5. Group Routes: GURU
 Route::middleware(['auth', 'role:guru'])->prefix('guru')->group(function () {
-    // Dashboard
     Route::get('/dashboard', [GuruDashboardController::class, 'index'])->name('guru.dashboard');
-
-    // Scan Absensi
     Route::get('/scan-absensi', [ScanAbsensiController::class, 'index'])->name('guru.scan');
     Route::post('/scan-absensi/store', [ScanAbsensiController::class, 'store'])->name('guru.scan.store');
-
-    // Riwayat & Denda
     Route::get('/riwayat', [RiwayatController::class, 'index'])->name('guru.riwayat');
     Route::get('/denda', [DendaController::class, 'index'])->name('guru.denda');
-
-    // Pengaturan
     Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('guru.pengaturan');
     Route::post('/pengaturan/update-profil', [PengaturanController::class, 'updateProfil'])->name('guru.pengaturan.update');
     Route::get('/pengajuan-izin', [PengajuanIzinController::class, 'index'])->name('guru.pengajuan-izin.index');

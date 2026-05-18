@@ -13,7 +13,7 @@ return new class extends Migration
 {
     Schema::create('libur_semesters', function (Blueprint $table) {
         $table->id();
-        $table->string('nama_semester'); // Cth: Semester Ganjil 2025/2026
+        $table->string('nama_semester'); 
         $table->date('tanggal_mulai');
         $table->date('tanggal_selesai');
         $table->text('keterangan')->nullable();

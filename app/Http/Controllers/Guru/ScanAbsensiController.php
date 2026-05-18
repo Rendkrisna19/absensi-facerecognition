@@ -10,38 +10,25 @@ use App\Models\PengajuanIzin;
 use App\Models\PengaturanAbsensi;
 use App\Models\LiburSemester; 
 use Carbon\Carbon;
-use Illuminate\Support\Str; // <-- WAJIB DITAMBAHKAN UNTUK BACA POLA WIFI (SUBNET)
+use Illuminate\Support\Str;
 
 class ScanAbsensiController extends Controller
 {
-    /**
-     * FUNGSI BANTUAN: Mengecek apakah IP HP Guru termasuk dalam WiFi yang didaftarkan Admin
-     */
     private function cekJaringanWifi($ipUser)
     {
-        // Ambil semua IP yang berstatus Aktif di database
         $allowedIps = IpLokal::where('is_active', true)->pluck('ip_address');
-
         foreach ($allowedIps as $allowedIp) {
-            // Ubah format '%' dari Admin menjadi '*' agar bisa dibaca fungsi Str::is Laravel
             $pattern = str_replace('%', '*', $allowedIp);
-            
-            // Cek apakah IP HP cocok dengan pola WiFi (Misal: 192.168.1.* cocok dengan 192.168.1.45)
-            if (Str::is($pattern, $ipUser)) {
-                return true; // Valid, Guru konek ke WiFi sekolah
-            }
+            if (Str::is($pattern, $ipUser)) return true;
         }
-        
-        return false; // Tidak Valid, Guru pakai paket data / WiFi luar
+        return false;
     }
 
     public function index()
     {
         $user = auth()->user();
-        
         $wajahTerdaftar = !empty($user->face_descriptor);
         
-        // Cek Jaringan WIFI Guru Saat Ini
         $ipUser = request()->ip();
         $ipValid = $this->cekJaringanWifi($ipUser);
 
@@ -52,54 +39,68 @@ class ScanAbsensiController extends Controller
         $isWaktuAbsen = true;
         $pesanWaktu = '';
 
-        // ---> VALIDASI 1: Cek WiFi Sekolah <---
+        // ---> VALIDASI JARINGAN & LIBUR & IZIN <---
         if (!$ipValid) {
             $isWaktuAbsen = false;
-            $pesanWaktu = 'Anda tidak terhubung ke jaringan WiFi sekolah. Silakan hubungkan perangkat Anda ke WiFi sekolah terlebih dahulu.';
+            $pesanWaktu = 'Anda tidak terhubung ke jaringan WiFi sekolah.';
             return view('guru.scan.index', compact('wajahTerdaftar', 'ipValid', 'ipUser', 'pengaturan', 'isWaktuAbsen', 'pesanWaktu'));
         }
 
-        // ---> VALIDASI 2: Cek Libur Semester <---
         $liburSemester = LiburSemester::where('is_active', true)
                             ->whereDate('tanggal_mulai', '<=', $hariIni)
                             ->whereDate('tanggal_selesai', '>=', $hariIni)
                             ->first();
-
         if ($liburSemester) {
             $isWaktuAbsen = false;
             $pesanWaktu = 'Saat ini sedang masa ' . $liburSemester->nama_semester . '. Sistem absensi ditutup.';
             return view('guru.scan.index', compact('wajahTerdaftar', 'ipValid', 'ipUser', 'pengaturan', 'isWaktuAbsen', 'pesanWaktu'));
         }
 
-        // ---> VALIDASI 3: CEK PENGAJUAN IZIN HARI INI <---
         $izinHariIni = PengajuanIzin::where('user_id', $user->id)
                             ->whereDate('tanggal_mulai', '<=', $hariIni)
                             ->whereDate('tanggal_selesai', '>=', $hariIni)
                             ->whereIn('status', ['Pending', 'Disetujui'])
                             ->first();
-
         if ($izinHariIni) {
             $isWaktuAbsen = false;
-            $pesanWaktu = 'Anda memiliki pengajuan ' . $izinHariIni->jenis . ' (' . $izinHariIni->status . ') hari ini. Anda tidak dapat melakukan absensi.';
+            $pesanWaktu = 'Anda memiliki pengajuan ' . $izinHariIni->jenis . ' hari ini. Anda tidak dapat melakukan absensi.';
             return view('guru.scan.index', compact('wajahTerdaftar', 'ipValid', 'ipUser', 'pengaturan', 'isWaktuAbsen', 'pesanWaktu'));
         }
 
-        // ---> VALIDASI 4: CEK WAKTU <---
         if (!$pengaturan) {
             $isWaktuAbsen = false;
             $pesanWaktu = 'Pengaturan jadwal absensi belum dikonfigurasi.';
             return view('guru.scan.index', compact('wajahTerdaftar', 'ipValid', 'ipUser', 'pengaturan', 'isWaktuAbsen', 'pesanWaktu'));
         }
 
+        // ---> LOGIKA STATUS ABSENSI (MASUK / PULANG) <---
+        $absenHariIni = Absensi::where('user_id', $user->id)->where('tanggal', $hariIni)->first();
+        
         $jamBukaAbsen = $pengaturan->jam_buka_absen ?? '00:00:00'; 
-        $jamTutupAbsen = $pengaturan->jam_tutup_absen ?? '23:59:59';
+        $jamPulang    = $pengaturan->jam_pulang ?? '14:00:00';
 
-        if ($jamSekarang < $jamBukaAbsen) {
-            $isWaktuAbsen = false;
-            $pesanWaktu = 'Absensi baru bisa dimulai pukul ' . Carbon::parse($jamBukaAbsen)->format('H:i') . ' WIB.';
-        } elseif ($jamSekarang > $jamTutupAbsen) {
-            $isWaktuAbsen = false;
-            $pesanWaktu = 'Batas waktu absensi masuk telah habis (Tutup ' . Carbon::parse($jamTutupAbsen)->format('H:i') . ' WIB).';
+        if (!$absenHariIni) {
+            // BELUM ABSEN MASUK
+            if ($jamSekarang < $jamBukaAbsen) {
+                $isWaktuAbsen = false;
+                $pesanWaktu = 'Absensi MASUK belum dibuka. Silakan kembali pada pukul ' . Carbon::parse($jamBukaAbsen)->format('H:i') . ' WIB.';
+            } elseif ($jamSekarang >= $jamPulang) {
+                $isWaktuAbsen = false;
+                $pesanWaktu = 'Batas waktu absensi MASUK hari ini sudah ditutup karena sudah masuk jam pulang.';
+            }
+        } else {
+            // SUDAH ABSEN MASUK
+            if (empty($absenHariIni->jam_pulang)) {
+                // BELUM ABSEN PULANG
+                if ($jamSekarang < $jamPulang) {
+                    $isWaktuAbsen = false;
+                    $pesanWaktu = 'Anda sudah Absen Masuk. Absensi PULANG baru akan dibuka pukul ' . Carbon::parse($jamPulang)->format('H:i') . ' WIB.';
+                }
+            } else {
+                // SUDAH ABSEN PULANG
+                $isWaktuAbsen = false;
+                $pesanWaktu = 'Anda telah menyelesaikan Absensi Masuk dan Pulang hari ini. Selamat beristirahat!';
+            }
         }
 
         return view('guru.scan.index', compact('wajahTerdaftar', 'ipValid', 'ipUser', 'pengaturan', 'isWaktuAbsen', 'pesanWaktu'));
@@ -111,104 +112,84 @@ class ScanAbsensiController extends Controller
         $hariIni = Carbon::now()->format('Y-m-d');
         $jamSekarang = Carbon::now()->format('H:i:s');
         
-        // ---> VALIDASI API 1: Cek WIFI Sekolah <---
         $ipUser = request()->ip();
         if (!$this->cekJaringanWifi($ipUser)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal! Anda tidak terhubung ke jaringan WiFi sekolah. (IP Perangkat Anda: '.$ipUser.')'
-            ]);
+            return response()->json(['success' => false, 'message' => 'Gagal! Anda tidak terhubung ke WiFi sekolah.']);
         }
 
-        // ---> VALIDASI API 2: Cek Libur Semester <---
-        $liburSemester = LiburSemester::where('is_active', true)
-                            ->whereDate('tanggal_mulai', '<=', $hariIni)
-                            ->whereDate('tanggal_selesai', '>=', $hariIni)
-                            ->first();
-
-        if ($liburSemester) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal! Saat ini sedang masa ' . $liburSemester->nama_semester . '. Sistem ditutup.'
-            ]);
-        }
-
-        // ---> VALIDASI API 3: Cek Pengajuan Izin Hari Ini <---
-        $izinHariIni = PengajuanIzin::where('user_id', $user->id)
-                            ->whereDate('tanggal_mulai', '<=', $hariIni)
-                            ->whereDate('tanggal_selesai', '>=', $hariIni)
-                            ->whereIn('status', ['Pending', 'Disetujui'])
-                            ->first();
-
-        if ($izinHariIni) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal! Anda memiliki pengajuan ' . $izinHariIni->jenis . ' (' . $izinHariIni->status . ') untuk hari ini.'
-            ]);
-        }
-
-        // ---> VALIDASI API 4: Jadwal Buka / Tutup Absen <---
         $pengaturan = PengaturanAbsensi::first();
-
         if (!$pengaturan) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal! Pengaturan jadwal absensi belum dikonfigurasi.'
-            ]);
+            return response()->json(['success' => false, 'message' => 'Gagal! Pengaturan jadwal absensi belum ada.']);
         }
 
         $jamBukaAbsen = $pengaturan->jam_buka_absen ?? '00:00:00'; 
-        $jamTutupAbsen = $pengaturan->jam_tutup_absen ?? '23:59:59';
-        $batasMasuk    = $pengaturan->batas_jam_masuk ?? '07:15:00';
+        $batasMasuk   = $pengaturan->batas_jam_masuk ?? '07:15:00';
+        $jamPulang    = $pengaturan->jam_pulang ?? '14:00:00';
         
-        if ($jamSekarang < $jamBukaAbsen) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Absensi belum dibuka. Silakan kembali pada pukul ' . Carbon::parse($jamBukaAbsen)->format('H:i') . ' WIB.'
+        $absenHariIni = Absensi::where('user_id', $user->id)->where('tanggal', $hariIni)->first();
+
+        // ========================================================
+        // EKSEKUSI PENYIMPANAN DATA (MASUK ATAU PULANG)
+        // ========================================================
+        if (!$absenHariIni) {
+            
+            // 1. PROSES ABSEN MASUK
+            if ($jamSekarang < $jamBukaAbsen) {
+                return response()->json(['success' => false, 'message' => 'Absensi masuk belum dibuka.']);
+            }
+            if ($jamSekarang >= $jamPulang) {
+                return response()->json(['success' => false, 'message' => 'Batas waktu absen masuk sudah ditutup.']);
+            }
+
+            $status = 'Hadir';
+            $menitTerlambat = 0;
+
+            if ($jamSekarang > $batasMasuk) {
+                $status = 'Terlambat';
+                $waktuBatas = Carbon::parse($batasMasuk);
+                $waktuMasuk = Carbon::parse($jamSekarang);
+                $menitTerlambat = $waktuBatas->diffInMinutes($waktuMasuk);
+            }
+
+            Absensi::create([
+                'user_id' => $user->id,
+                'tanggal' => $hariIni,
+                'jam_masuk' => $jamSekarang,
+                'status' => $status,
+                'menit_terlambat' => $menitTerlambat
             ]);
-        }
 
-        if ($jamSekarang > $jamTutupAbsen) {
             return response()->json([
-                'success' => false,
-                'message' => 'Batas waktu absensi untuk hari ini sudah ditutup.'
+                'success' => true,
+                'message' => 'Absensi MASUK berhasil dicatat pada ' . Carbon::parse($jamSekarang)->format('H:i') . ' WIB.'
             ]);
+
+        } else {
+            
+            // 2. PROSES ABSEN PULANG
+            if (!empty($absenHariIni->jam_pulang)) {
+                return response()->json(['success' => false, 'message' => 'Anda sudah melakukan Absen Pulang hari ini.']);
+            }
+
+            if ($jamSekarang < $jamPulang) {
+                return response()->json(['success' => false, 'message' => 'Belum waktunya pulang! Tunggu hingga pukul ' . Carbon::parse($jamPulang)->format('H:i')]);
+            }
+
+            try {
+                // MENGGUNAKAN METODE SAVE() UNTUK MEMAKSA UPDATE DATABASE
+                $absenHariIni->jam_pulang = $jamSekarang;
+                $absenHariIni->save();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Absensi PULANG berhasil dicatat. Hati-hati di jalan! (' . Carbon::parse($jamSekarang)->format('H:i') . ' WIB)'
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal mencatat! Pastikan Anda sudah menjalankan migration untuk menambah kolom "jam_pulang" di tabel "absensis".'
+                ]);
+            }
         }
-        
-        // ---> VALIDASI API 5: Cek Sudah Absen / Belum <---
-        $sudahAbsen = Absensi::where('user_id', $user->id)
-                             ->where('tanggal', $hariIni)
-                             ->exists();
-
-        if ($sudahAbsen) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Anda sudah melakukan absensi hari ini.'
-            ]);
-        }
-
-        // ---> SIMPAN KE DATABASE <---
-        $status = 'Hadir';
-        $menitTerlambat = 0;
-
-        if ($jamSekarang > $batasMasuk) {
-            $status = 'Terlambat';
-            $waktuBatas = Carbon::parse($batasMasuk);
-            $waktuMasuk = Carbon::parse($jamSekarang);
-            $menitTerlambat = $waktuBatas->diffInMinutes($waktuMasuk);
-        }
-
-        Absensi::create([
-            'user_id' => $user->id,
-            'tanggal' => $hariIni,
-            'jam_masuk' => $jamSekarang,
-            'status' => $status,
-            'menit_terlambat' => $menitTerlambat
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Absensi berhasil dicatat sebagai ' . $status . ' pada ' . Carbon::parse($jamSekarang)->format('H:i') . ' WIB.'
-        ]);
     }
 }

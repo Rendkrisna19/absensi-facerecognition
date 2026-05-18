@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Absensi;
 use App\Models\PengaturanAbsensi;
 use App\Models\LiburSemester; 
-use App\Models\PengajuanIzin; // <-- JANGAN LUPA TAMBAHKAN INI
+use App\Models\PengajuanIzin;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 
@@ -16,27 +16,30 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
         
-        // Atur bahasa waktu ke Indonesia
         Carbon::setLocale('id');
         $hariIni = Carbon::now();
         $bulanIni = $hariIni->month;
         $tahunIni = $hariIni->year;
         $tanggalFormat = $hariIni->translatedFormat('l, d F Y');
         
-        // 1. Cek apakah sudah absen HARI INI
+        // 1. AMBIL PENGATURAN ABSENSI (Untuk tahu jam pulang)
+        $pengaturan = PengaturanAbsensi::first();
+        $jamPulang = $pengaturan ? $pengaturan->jam_pulang : '14:00:00';
+        $nominalDendaFlat = $pengaturan ? $pengaturan->denda_terlambat : 0;
+
+        // 2. CEK STATUS ABSEN HARI INI
         $absenHariIni = Absensi::where('user_id', $user->id)
                                ->where('tanggal', $hariIni->format('Y-m-d'))
                                ->first();
 
-        // 2. CEK PENGAJUAN IZIN HARI INI
-        // (Jika ada izin Pending/Disetujui yang mencakup hari ini)
+        // 3. CEK PENGAJUAN IZIN HARI INI
         $izinHariIni = PengajuanIzin::where('user_id', $user->id)
                             ->whereDate('tanggal_mulai', '<=', $hariIni->format('Y-m-d'))
                             ->whereDate('tanggal_selesai', '>=', $hariIni->format('Y-m-d'))
                             ->whereIn('status', ['Pending', 'Disetujui'])
                             ->first();
 
-        // 3. LOGIKA HARI LIBUR
+        // 4. LOGIKA HARI LIBUR
         $isLibur = false;
         $keteranganLibur = '';
 
@@ -64,20 +67,15 @@ class DashboardController extends Controller
                         }
                     }
                 }
-            } catch (\Exception $e) {
-                // Abaikan jika API mati
-            }
+            } catch (\Exception $e) {}
         }
 
-        // 4. AMBIL DATA REAL UNTUK KARTU INFORMASI (Bulan Ini)
+        // 5. STATISTIK BULAN INI
         $totalHadirBulanIni = Absensi::where('user_id', $user->id)
             ->whereMonth('tanggal', $bulanIni)
             ->whereYear('tanggal', $tahunIni)
             ->where('status', '!=', 'Alpa')
             ->count();
-
-        $pengaturan = PengaturanAbsensi::first();
-        $nominalDendaFlat = $pengaturan ? $pengaturan->denda_terlambat : 0;
 
         $totalTelatBulanIni = Absensi::where('user_id', $user->id)
             ->whereMonth('tanggal', $bulanIni)
@@ -87,10 +85,10 @@ class DashboardController extends Controller
 
         $totalDendaBulanIni = $totalTelatBulanIni * $nominalDendaFlat;
 
-        // 5. RIWAYAT PENGAJUAN IZIN (PAGINATION UNTUK DASHBOARD)
+        // 6. RIWAYAT PENGAJUAN IZIN
         $riwayatIzin = PengajuanIzin::where('user_id', $user->id)
                             ->orderBy('created_at', 'desc')
-                            ->paginate(3); // Ditampilkan 3 per halaman agar tampilan HP tidak terlalu panjang
+                            ->paginate(3);
 
         return view('guru.dashboard.index', compact(
             'absenHariIni', 
@@ -100,7 +98,8 @@ class DashboardController extends Controller
             'keteranganLibur',
             'totalHadirBulanIni',
             'totalDendaBulanIni',
-            'riwayatIzin'
+            'riwayatIzin',
+            'jamPulang' // <-- Passing jam pulang ke view
         ));
     }
 }

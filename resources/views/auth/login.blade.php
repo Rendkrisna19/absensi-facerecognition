@@ -118,10 +118,19 @@
                 <div x-data="{ 
                         activeSlide: 0, 
                         slides: [
-                            { title: 'Absensi Mudah', desc: 'Menganalisis absensi harian kini lebih mudah dengan sistem otomatis.' },
-                            { title: 'Pantau Real-time', desc: 'Lihat data kehadiran staf dan siswa secara langsung dari dashboard.' },
-                            { title: 'Keamanan Data', desc: 'Data tersimpan dengan aman menggunakan enkripsi standar industri.' }
-                        ] 
+    { 
+        title: 'Presisi Wajah AI', 
+        desc: 'Verifikasi kehadiran guru lebih akurat dengan teknologi pemindaian biometrik wajah yang mencegah manipulasi data.' 
+    },
+    { 
+        title: 'Keamanan Jaringan WiFi', 
+        desc: 'Absensi hanya dapat dilakukan jika guru terhubung ke jaringan WiFi sekolah untuk memastikan kehadiran fisik di lokasi.' 
+    },
+    { 
+        title: 'Manajemen Izin Terpadu', 
+        desc: 'Pengajuan sakit, izin, atau cuti dapat dilakukan langsung dari aplikasi dan terintegrasi otomatis dengan laporan kehadiran.' 
+    }
+]
                     }" 
                     x-init="setInterval(() => { activeSlide = activeSlide === slides.length - 1 ? 0 : activeSlide + 1 }, 4000)"
                     class="text-center min-h-[100px]">
