@@ -28,6 +28,7 @@
                     
                     <!-- Input Email/NIK -->
                     <div>
+                        <label for="nik" class="block mb-2 text-xs font-semibold text-gray-600 ml-1">NIK</label>
                         <div class="relative flex items-center">
                             <div class="absolute left-4 text-gray-400">
                                 <i class="fa-regular fa-user"></i>
@@ -45,6 +46,7 @@
 
                     <!-- Input Password -->
                     <div x-data="{ show: false }">
+                        <label for="password" class="block mb-2 text-xs font-semibold text-gray-600 ml-1">Password</label>
                         <div class="relative flex items-center">
                             <div class="absolute left-4 text-gray-400">
                                 <i class="fa-solid fa-lock text-sm"></i>

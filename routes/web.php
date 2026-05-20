@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 
@@ -28,10 +29,16 @@ use App\Http\Controllers\Guru\DendaController;
 use App\Http\Controllers\Guru\PengaturanController;
 use App\Http\Controllers\Guru\PengajuanIzinController;
 
+Route::get('/setup-storage', function () {
+    Artisan::call('storage:link');
+    return 'Storage berhasil dilink!';
+});
 
 
 
 Route::redirect('/', '/login');
+
+
 
 // 2. Route Authentication
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
