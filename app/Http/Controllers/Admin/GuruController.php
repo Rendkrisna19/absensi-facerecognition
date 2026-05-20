@@ -36,10 +36,11 @@ class GuruController extends Controller
             'name' => 'required|string|max:255',
             'nik' => 'required|numeric|unique:users,nik',
             'password' => 'required|min:6',
-            'jabatan' => 'required|in:guru,kepala_sekolah', 
-            'unit_sekolah' => 'required|in:SD,SMP',
-            'jenis_kelamin' => 'required|in:L,P',
-            'no_hp' => 'required|numeric',
+            'jabatan' => 'nullable|in:guru,kepala_sekolah', 
+            'unit_sekolah' => 'nullable|array',
+            'unit_sekolah.*' => 'in:SD,SMP',
+            'jenis_kelamin' => 'nullable|in:L,P',
+            'no_hp' => 'nullable|numeric',
             'foto_profil' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
@@ -56,8 +57,8 @@ class GuruController extends Controller
                     'username' => $request->nik, 
                     'password' => Hash::make($request->password),
                     'role' => 'guru',
-                    'jabatan' => $request->jabatan,
-                    'unit_sekolah' => $request->unit_sekolah,
+                    'jabatan' => $request->jabatan ?? 'guru',
+                    'unit_sekolah' => is_array($request->unit_sekolah) ? implode(', ', $request->unit_sekolah) : null,
                     'foto_profil' => $fotoPath, 
                 ]);
 
@@ -98,10 +99,11 @@ class GuruController extends Controller
             'name' => 'required|string|max:255',
             'nik' => 'required|numeric|unique:users,nik,' . $guru->id,
             'password' => 'nullable|min:6', 
-            'jabatan' => 'required|in:guru,kepala_sekolah', 
-            'unit_sekolah' => 'required|in:SD,SMP',
-            'jenis_kelamin' => 'required|in:L,P',
-            'no_hp' => 'required|numeric',
+            'jabatan' => 'nullable|in:guru,kepala_sekolah', 
+            'unit_sekolah' => 'nullable|array',
+            'unit_sekolah.*' => 'in:SD,SMP',
+            'jenis_kelamin' => 'nullable|in:L,P',
+            'no_hp' => 'nullable|numeric',
             'foto_profil' => 'nullable|image|mimes:jpeg,png,jpg|max:2048' 
         ]);
 
@@ -111,8 +113,8 @@ class GuruController extends Controller
                     'name' => $request->name,
                     'username' => $request->nik, 
                     'nik' => $request->nik,
-                    'jabatan' => $request->jabatan,
-                    'unit_sekolah' => $request->unit_sekolah,
+                    'jabatan' => $request->jabatan ?? $guru->jabatan,
+                    'unit_sekolah' => is_array($request->unit_sekolah) ? implode(', ', $request->unit_sekolah) : null,
                 ];
 
                 if ($request->filled('password')) {

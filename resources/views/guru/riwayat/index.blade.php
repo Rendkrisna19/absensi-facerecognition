@@ -62,35 +62,55 @@
                     </div>
                 </div>
                 
-                <!-- Bagian Kanan: Jam Masuk & Badge Status -->
-                <div class="text-right">
+                <!-- Bagian Kanan: Jam Masuk & Jam Pulang -->
+                <div class="flex-1 flex flex-col justify-center gap-2 pl-4">
                     @if($absen->status == 'Alpa')
-                        <p class="text-sm font-bold text-gray-400">--:-- WIB</p>
-                        <span class="inline-block mt-1 px-2.5 py-1 bg-gray-100 text-gray-500 rounded-md text-[10px] font-bold">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-semibold text-gray-400">Masuk</span>
+                            <p class="text-sm font-bold text-gray-400">--:-- WIB</p>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-semibold text-gray-400">Pulang</span>
+                            <p class="text-sm font-bold text-gray-400">--:-- WIB</p>
+                        </div>
+                        <span class="inline-block mt-1 px-2.5 py-1 bg-gray-100 text-gray-500 rounded-md text-[10px] font-bold text-center w-full">
                             Tidak Hadir
                         </span>
                     @else
-                        <p class="text-sm font-bold text-gray-800 font-mono">{{ \Carbon\Carbon::parse($absen->jam_masuk)->format('H:i') }} WIB</p>
-                        
-                        @if($absen->status == 'Terlambat')
-                            <!-- LOGIKA UBAH MENIT KE JAM & MENIT -->
-                            @php
-                                $jam = floor($absen->menit_terlambat / 60);
-                                $menit = $absen->menit_terlambat % 60;
-                                $teksTelat = '';
-                                if($jam > 0) $teksTelat .= $jam . ' Jam ';
-                                if($menit > 0) $teksTelat .= $menit . ' Mnt';
-                                if($jam == 0 && $menit == 0) $teksTelat = '0 Mnt';
-                            @endphp
+                        <!-- Baris Masuk -->
+                        <div class="flex justify-between items-center bg-gray-50 px-2 py-1.5 rounded-lg border border-gray-100">
+                            <span class="text-[10px] font-semibold text-gray-500 w-12">Masuk</span>
+                            <div class="flex flex-col items-end">
+                                <p class="text-xs font-bold text-gray-800 font-mono">{{ \Carbon\Carbon::parse($absen->jam_masuk)->format('H:i') }} WIB</p>
+                                @if($absen->status == 'Terlambat')
+                                    @php
+                                        $jam = floor($absen->menit_terlambat / 60);
+                                        $menit = $absen->menit_terlambat % 60;
+                                        $teksTelat = '';
+                                        if($jam > 0) $teksTelat .= $jam . ' Jam ';
+                                        if($menit > 0) $teksTelat .= $menit . ' Mnt';
+                                        if($jam == 0 && $menit == 0) $teksTelat = '0 Mnt';
+                                    @endphp
+                                    <span class="text-[9px] font-bold text-red-500">Telat {{ $teksTelat }}</span>
+                                @else
+                                    <span class="text-[9px] font-bold text-green-500">Tepat Waktu</span>
+                                @endif
+                            </div>
+                        </div>
 
-                            <span class="inline-flex items-center mt-1 px-2.5 py-1 bg-red-50 text-red-600 rounded-md text-[10px] font-bold border border-red-100">
-                                <i class="fa-solid fa-triangle-exclamation mr-1"></i> Telat {{ $teksTelat }}
-                            </span>
-                        @else
-                            <span class="inline-flex items-center mt-1 px-2.5 py-1 bg-green-50 text-green-600 rounded-md text-[10px] font-bold border border-green-100">
-                                <i class="fa-solid fa-check mr-1"></i> Tepat Waktu
-                            </span>
-                        @endif
+                        <!-- Baris Pulang -->
+                        <div class="flex justify-between items-center bg-gray-50 px-2 py-1.5 rounded-lg border border-gray-100">
+                            <span class="text-[10px] font-semibold text-gray-500 w-12">Pulang</span>
+                            <div class="flex flex-col items-end">
+                                @if(!empty($absen->jam_pulang))
+                                    <p class="text-xs font-bold text-gray-800 font-mono">{{ \Carbon\Carbon::parse($absen->jam_pulang)->format('H:i') }} WIB</p>
+                                    <span class="text-[9px] font-bold text-green-500">Selesai</span>
+                                @else
+                                    <p class="text-xs font-bold text-gray-400 font-mono">--:-- WIB</p>
+                                    <span class="text-[9px] font-bold text-yellow-500">Menunggu</span>
+                                @endif
+                            </div>
+                        </div>
                     @endif
                 </div>
                 

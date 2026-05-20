@@ -55,12 +55,18 @@
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Unit Sekolah <span class="text-red-500">*</span></label>
-                <select name="unit_sekolah" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#24429b] focus:border-[#24429b] bg-white outline-none">
-                    <option value="" disabled hidden>Pilih Unit Sekolah</option>
-                    <option value="SD" {{ old('unit_sekolah', $guru->unit_sekolah) == 'SD' ? 'selected' : '' }}>SD (Sekolah Dasar)</option>
-                    <option value="SMP" {{ old('unit_sekolah', $guru->unit_sekolah) == 'SMP' ? 'selected' : '' }}>SMP (Sekolah Menengah Pertama)</option>
-                </select>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Unit Sekolah</label>
+                <div class="flex gap-4 items-center h-[42px] px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                    @php $unitSekolahArray = old('unit_sekolah', explode(', ', $guru->unit_sekolah ?? '')); @endphp
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="unit_sekolah[]" value="SD" {{ (is_array($unitSekolahArray) && in_array('SD', $unitSekolahArray)) ? 'checked' : '' }} class="w-4 h-4 text-[#24429b] border-gray-300 rounded focus:ring-[#24429b]">
+                        <span class="text-sm text-gray-700 font-medium">SD</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer ml-4">
+                        <input type="checkbox" name="unit_sekolah[]" value="SMP" {{ (is_array($unitSekolahArray) && in_array('SMP', $unitSekolahArray)) ? 'checked' : '' }} class="w-4 h-4 text-[#24429b] border-gray-300 rounded focus:ring-[#24429b]">
+                        <span class="text-sm text-gray-700 font-medium">SMP</span>
+                    </label>
+                </div>
             </div>
         </div>
 

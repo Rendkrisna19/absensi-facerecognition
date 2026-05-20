@@ -13,6 +13,18 @@
 @section('content')
 <div class="space-y-8 font-poppins pb-8">
     
+    <!-- Banner Section -->
+    <div class="w-full h-[300px] rounded-3xl shadow-sm border border-gray-100 overflow-hidden relative group">
+        <img 
+            src="{{ asset('images/banner1.png') }}" 
+            alt="Banner Dashboard" 
+            class="w-full h-48 md:h-64 lg:h-80 object-cover group-hover:scale-105 transition-transform duration-1000 ease-in-out"
+        >
+        <!-- Opsional: Gradient Overlay jika banner terlalu terang agar tidak silau -->
+        <div class="absolute inset-0 bg-gradient-to-t from-gray-900/20 to-transparent pointer-events-none"></div>
+    </div>
+
+    <!-- Welcome Section -->
     <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
         <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 opacity-50 blur-3xl"></div>
         
@@ -30,6 +42,7 @@
         </div>
     </div>
 
+    <!-- Statistics Section -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         
         <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm relative overflow-hidden group hover:bg-gradient-to-br hover:from-blue-600 hover:to-blue-800 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-2 transition-all duration-300 ease-in-out cursor-pointer">
@@ -74,6 +87,7 @@
 
     </div>
 
+    <!-- Recent Activity Table Section -->
     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-gray-100 pb-5 gap-4">
             <div>

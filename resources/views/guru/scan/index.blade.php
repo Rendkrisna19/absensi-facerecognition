@@ -92,8 +92,8 @@
                 <div id="loading" class="absolute inset-0 flex flex-col items-center justify-center bg-gray-800 z-20 text-white">
                     <i class="fa-solid fa-spinner fa-spin text-4xl mb-4 text-[#002D8B]"></i>
                     <p class="text-xs font-medium text-center px-4 leading-relaxed">
-                        Menyiapkan AI Scanner...<br>
-                        <span class="text-[10px] text-gray-400 font-normal mt-1 block">Pastikan pencahayaan cukup terang</span>
+                        Menyiapkan Pemindai Wajah...<br>
+                        <span class="text-[10px] text-gray-400 font-normal mt-1 block">Pastikan pencahayaan cukup dan wajah tidak tertutup</span>
                     </p>
                 </div>
 
@@ -175,7 +175,7 @@
                 
                 if (distance < 0.45) {
                     isMatched = true; 
-                    statusText.innerHTML = '<span class="text-green-600 font-bold"><i class="fa-solid fa-check-circle text-lg mr-1"></i> Wajah Cocok! Menyimpan...</span>';
+                    statusText.innerHTML = '<span class="text-green-600 font-bold"><i class="fa-solid fa-check-circle text-lg mr-1"></i> Verifikasi Berhasil! Menyimpan data kehadiran...</span>';
                     
                     fetch("{{ route('guru.scan.store') }}", {
                         method: 'POST',
@@ -206,16 +206,16 @@
                     })
                     .catch(error => {
                         console.error('Error saat simpan absen:', error);
-                        Swal.fire('Error', 'Terjadi kesalahan jaringan saat menyimpan data absensi.', 'error');
+                        Swal.fire('Error Jaringan', 'Terjadi kendala jaringan saat menyimpan absensi.', 'error');
                         isMatched = false; 
                         setTimeout(prosesScan, 1000);
                     });
                     return; 
                 } else {
-                    statusText.innerHTML = '<span class="text-red-500 font-semibold"><i class="fa-solid fa-xmark-circle mr-1"></i> Wajah tidak cocok. Coba posisikan lebih terang.</span>';
+                    statusText.innerHTML = '<span class="text-red-500 font-semibold"><i class="fa-solid fa-xmark-circle mr-1"></i> Wajah belum terverifikasi. Pastikan pencahayaan cukup dan wajah terlihat jelas.</span>';
                 }
             } else {
-                statusText.innerHTML = '<span class="text-[#002D8B]"><i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Mencari wajah...</span>';
+                statusText.innerHTML = '<span class="text-[#002D8B]"><i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Memindai posisi wajah...</span>';
             }
 
             setTimeout(prosesScan, 400);
