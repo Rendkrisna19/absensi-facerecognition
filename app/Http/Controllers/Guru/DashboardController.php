@@ -56,15 +56,12 @@ class DashboardController extends Controller
             $keteranganLibur = 'Libur Akhir Pekan (Minggu)';
         } else {
             try {
-                $response = Http::timeout(3)->get('https://dayoffapi.vercel.app/api?month=' . $hariIni->month . '&year=' . $hariIni->year);
+                $response = Http::timeout(3)->get('https://libur.deno.dev/api?year=' . $hariIni->year . '&month=' . $hariIni->month . '&day=' . $hariIni->day);
                 if ($response->successful()) {
-                    $liburNasional = $response->json();
-                    foreach ($liburNasional as $libur) {
-                        if ($libur['tanggal'] === $hariIni->format('Y-m-d') && $libur['is_cuti'] === false) {
-                            $isLibur = true;
-                            $keteranganLibur = $libur['keterangan'];
-                            break;
-                        }
+                    $data = $response->json();
+                    if (isset($data['is_holiday']) && $data['is_holiday']) {
+                        $isLibur = true;
+                        $keteranganLibur = !empty($data['holiday_list']) ? $data['holiday_list'][0] : 'Libur Nasional / Cuti Bersama';
                     }
                 }
             } catch (\Exception $e) {}
@@ -99,7 +96,7 @@ class DashboardController extends Controller
             'totalHadirBulanIni',
             'totalDendaBulanIni',
             'riwayatIzin',
-            'jamPulang' // <-- Passing jam pulang ke view
+            'jamPulang' 
         ));
     }
 }

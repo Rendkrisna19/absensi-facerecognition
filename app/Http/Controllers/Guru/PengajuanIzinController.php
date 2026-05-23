@@ -39,7 +39,9 @@ class PengajuanIzinController extends Controller
             'tanggal_mulai' => 'required|date|after_or_equal:today',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'alasan' => 'required|string|max:1000',
-            'file_bukti' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048', // Maks 2MB
+            'file_bukti' => $request->jenis == 'Sakit' ? 'required|file|mimes:pdf,jpg,jpeg,png|max:2048' : 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ], [
+            'file_bukti.required' => 'Dokumen bukti wajib diunggah untuk pengajuan Sakit.',
         ]);
 
         $pathBukti = null;

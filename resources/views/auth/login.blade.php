@@ -74,9 +74,7 @@
                             <input type="checkbox" id="remember" class="w-4 h-4 rounded border-gray-300 text-[#002D8B] focus:ring-[#002D8B]/30 transition-shadow cursor-pointer">
                             <label for="remember" class="ml-2 text-xs text-gray-500 font-medium cursor-pointer">Ingat saya</label>
                         </div>
-                        <button type="button" @click="showModal = true" class="text-xs font-semibold text-[#002D8B] hover:underline focus:outline-none">
-                            Lupa Password?
-                        </button>
+                    
                     </div>
 
                     <!-- Button Login -->

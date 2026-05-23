@@ -11,6 +11,7 @@ use App\Models\PengaturanAbsensi;
 use App\Models\LiburSemester; 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
 
 class ScanAbsensiController extends Controller
 {
@@ -54,6 +55,23 @@ class ScanAbsensiController extends Controller
             $isWaktuAbsen = false;
             $pesanWaktu = 'Saat ini sedang masa ' . $liburSemester->nama_semester . '. Sistem absensi ditutup.';
             return view('guru.scan.index', compact('wajahTerdaftar', 'ipValid', 'ipUser', 'pengaturan', 'isWaktuAbsen', 'pesanWaktu'));
+        } elseif (Carbon::now()->isSunday()) {
+            $isWaktuAbsen = false;
+            $pesanWaktu = 'Hari ini adalah hari Minggu (Libur Akhir Pekan). Sistem absensi ditutup.';
+            return view('guru.scan.index', compact('wajahTerdaftar', 'ipValid', 'ipUser', 'pengaturan', 'isWaktuAbsen', 'pesanWaktu'));
+        } else {
+            try {
+                $response = Http::timeout(3)->get('https://libur.deno.dev/api?year=' . Carbon::now()->year . '&month=' . Carbon::now()->month . '&day=' . Carbon::now()->day);
+                if ($response->successful()) {
+                    $data = $response->json();
+                    if (isset($data['is_holiday']) && $data['is_holiday']) {
+                        $isWaktuAbsen = false;
+                        $ketLibur = !empty($data['holiday_list']) ? $data['holiday_list'][0] : 'Libur Nasional';
+                        $pesanWaktu = 'Hari ini adalah ' . $ketLibur . '. Sistem absensi ditutup.';
+                        return view('guru.scan.index', compact('wajahTerdaftar', 'ipValid', 'ipUser', 'pengaturan', 'isWaktuAbsen', 'pesanWaktu'));
+                    }
+                }
+            } catch (\Exception $e) {}
         }
 
         $izinHariIni = PengajuanIzin::where('user_id', $user->id)
@@ -84,9 +102,6 @@ class ScanAbsensiController extends Controller
             if ($jamSekarang < $jamBukaAbsen) {
                 $isWaktuAbsen = false;
                 $pesanWaktu = 'Absensi MASUK belum dibuka. Silakan kembali pada pukul ' . Carbon::parse($jamBukaAbsen)->format('H:i') . ' WIB.';
-            } elseif ($jamSekarang >= $jamPulang) {
-                $isWaktuAbsen = false;
-                $pesanWaktu = 'Batas waktu absensi MASUK hari ini sudah ditutup karena sudah masuk jam pulang.';
             }
         } else {
             // SUDAH ABSEN MASUK
@@ -117,6 +132,25 @@ class ScanAbsensiController extends Controller
             return response()->json(['success' => false, 'message' => 'Gagal! Anda tidak terhubung ke WiFi sekolah.']);
         }
 
+        // Cek Libur
+        $liburSemester = LiburSemester::where('is_active', true)
+                            ->whereDate('tanggal_mulai', '<=', $hariIni)
+                            ->whereDate('tanggal_selesai', '>=', $hariIni)
+                            ->first();
+        if ($liburSemester || Carbon::now()->isSunday()) {
+            return response()->json(['success' => false, 'message' => 'Sistem absensi ditutup karena hari libur.']);
+        }
+
+        try {
+            $response = Http::timeout(3)->get('https://libur.deno.dev/api?year=' . Carbon::now()->year . '&month=' . Carbon::now()->month . '&day=' . Carbon::now()->day);
+            if ($response->successful()) {
+                $data = $response->json();
+                if (isset($data['is_holiday']) && $data['is_holiday']) {
+                    return response()->json(['success' => false, 'message' => 'Sistem absensi ditutup karena hari libur nasional.']);
+                }
+            }
+        } catch (\Exception $e) {}
+
         $pengaturan = PengaturanAbsensi::first();
         if (!$pengaturan) {
             return response()->json(['success' => false, 'message' => 'Gagal! Pengaturan jadwal absensi belum ada.']);
@@ -136,9 +170,6 @@ class ScanAbsensiController extends Controller
             // 1. PROSES ABSEN MASUK
             if ($jamSekarang < $jamBukaAbsen) {
                 return response()->json(['success' => false, 'message' => 'Absensi masuk belum dibuka.']);
-            }
-            if ($jamSekarang >= $jamPulang) {
-                return response()->json(['success' => false, 'message' => 'Batas waktu absen masuk sudah ditutup.']);
             }
 
             $status = 'Hadir';

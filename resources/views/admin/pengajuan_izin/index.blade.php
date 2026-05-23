@@ -119,9 +119,9 @@
                             {{ $item->jenis }}
                         </span>
                         @if($item->file_bukti)
-                            <a href="{{ asset('storage/' . $item->file_bukti) }}" target="_blank" class="block mt-1.5 text-[11px] text-blue-600 hover:underline">
-                                <i class="fa-solid fa-paperclip"></i> Lihat Lampiran
-                            </a>
+                            <button type="button" @click="$dispatch('open-image-modal', '{{ asset('storage/' . $item->file_bukti) }}')" class="block mt-1.5 text-[11px] text-blue-600 hover:underline text-left">
+                                <i class="fa-solid fa-image"></i> Lihat Bukti
+                            </button>
                         @else
                             <p class="mt-1.5 text-[11px] text-gray-400"><i class="fa-solid fa-xmark"></i> Tdk ada file</p>
                         @endif
@@ -204,6 +204,28 @@
             Menampilkan <span id="infoStart" class="font-bold text-gray-900">0</span> sampai <span id="infoEnd" class="font-bold text-gray-900">0</span> dari <span id="infoTotal" class="font-bold text-gray-900">0</span> data
         </div>
         <div class="inline-flex rounded-md shadow-sm" id="paginationButtons"></div>
+    </div>
+</div>
+
+<!-- Modal Gambar Alpine -->
+<div x-data="{ open: false, imageUrl: '' }" 
+     @open-image-modal.window="open = true; imageUrl = $event.detail"
+     x-show="open" 
+     style="display: none;" 
+     class="fixed inset-0 z-[110] flex items-center justify-center p-4">
+    
+    <div x-show="open" x-transition.opacity @click="open = false" class="absolute inset-0 bg-black bg-opacity-70 backdrop-blur-sm"></div>
+    
+    <div x-show="open" x-transition.scale.origin.center class="relative z-10 max-w-3xl w-full">
+        <div class="absolute -top-12 right-0 flex gap-3">
+            <a :href="imageUrl" download="Bukti_Izin.jpg" class="text-white bg-blue-600 hover:bg-blue-700 rounded-full w-10 h-10 flex items-center justify-center focus:outline-none transition shadow-lg" title="Download Bukti">
+                <i class="fa-solid fa-download"></i>
+            </a>
+            <button @click="open = false" class="text-white hover:text-gray-300 focus:outline-none w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full backdrop-blur-sm transition shadow-lg" title="Tutup">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        <img :src="imageUrl" class="w-full h-auto max-h-[85vh] object-contain rounded-lg shadow-2xl bg-white/5" alt="Bukti Lampiran">
     </div>
 </div>
 

@@ -46,6 +46,10 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/profil-saya', [ProfileController::class, 'index'])->name('profile.index');
 Route::put('/profil-saya', [ProfileController::class, 'update'])->name('profile.update');
+Route::get('/notifications/read-all', function() {
+    \Illuminate\Support\Facades\DB::table('notifications')->update(['is_read' => 1]);
+    return back();
+})->name('notifications.readAll');
 
 // 3. Group Routes: ADMIN
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {

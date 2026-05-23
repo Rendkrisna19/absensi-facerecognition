@@ -17,12 +17,12 @@
             </div>
         @endif
 
-        <form action="{{ route('guru.pengajuan-izin.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('guru.pengajuan-izin.store') }}" method="POST" enctype="multipart/form-data" x-data="{ jenis: '{{ old('jenis', '') }}' }">
             @csrf
             
             <div class="mb-4">
                 <label class="block text-xs font-semibold text-gray-700 mb-1.5">Jenis Pengajuan <span class="text-red-500">*</span></label>
-                <select name="jenis" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:ring-[#002D8B] focus:border-[#002D8B] block p-2.5 outline-none transition-colors">
+                <select name="jenis" x-model="jenis" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:ring-[#002D8B] focus:border-[#002D8B] block p-2.5 outline-none transition-colors">
                     <option value="" disabled selected>-- Pilih Jenis --</option>
                     <option value="Sakit" {{ old('jenis') == 'Sakit' ? 'selected' : '' }}>Sakit</option>
                     <option value="Izin" {{ old('jenis') == 'Izin' ? 'selected' : '' }}>Izin Keperluan</option>
@@ -48,8 +48,12 @@
             </div>
 
             <div class="mb-6">
-                <label class="block text-xs font-semibold text-gray-700 mb-1.5">Lampiran Bukti (Opsional)</label>
-                <input type="file" name="file_bukti" accept=".jpg,.jpeg,.png,.pdf" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#002D8B] hover:file:bg-blue-100">
+                <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                    Lampiran Bukti 
+                    <span x-show="jenis == 'Sakit'" class="text-red-500">*</span>
+                    <span x-show="jenis != 'Sakit'" class="font-normal text-gray-500">(Opsional)</span>
+                </label>
+                <input type="file" name="file_bukti" :required="jenis == 'Sakit'" accept=".jpg,.jpeg,.png,.pdf" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#002D8B] hover:file:bg-blue-100">
                 <p class="text-[10px] text-gray-400 mt-1">Format: JPG, PNG, PDF (Maks 2MB). Wajib untuk Sakit.</p>
             </div>
 

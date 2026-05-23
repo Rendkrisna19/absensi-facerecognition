@@ -23,11 +23,21 @@
             LAN Aktif
         </div>
 
+        @php
+            $notifications = \Illuminate\Support\Facades\DB::table('notifications')
+                ->orderBy('created_at', 'desc')
+                ->limit(10)
+                ->get();
+            $unreadCount = $notifications->where('is_read', 0)->count();
+        @endphp
+
         <div class="relative" x-data="{ notifOpen: false }" @click.away="notifOpen = false">
             <button @click="notifOpen = !notifOpen" class="relative text-gray-400 hover:text-[#002D8B] transition-colors focus:outline-none mt-1">
                 <i class="fa-regular fa-bell text-xl"></i>
+                @if($unreadCount > 0)
                 <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 border border-white rounded-full animate-ping"></span>
                 <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 border border-white rounded-full"></span>
+                @endif
             </button>
             
             <div x-show="notifOpen" 
@@ -35,21 +45,29 @@
                  class="absolute right-0 top-full mt-3 w-80 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50" style="display: none;">
                 <div class="p-4 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
                     <span class="text-sm font-bold text-gray-800">Notifikasi Sistem</span>
-                    <span class="text-[10px] bg-[#002D8B] text-white px-2 py-0.5 rounded-full font-bold tracking-wider">BARU</span>
+                    @if($unreadCount > 0)
+                    <span class="text-[10px] bg-[#002D8B] text-white px-2 py-0.5 rounded-full font-bold tracking-wider">{{ $unreadCount }} BARU</span>
+                    @endif
                 </div>
                 <div class="max-h-72 overflow-y-auto">
-                    <div class="p-4 border-b border-gray-50 hover:bg-blue-50/50 transition flex gap-3 items-start cursor-pointer">
+                    @forelse($notifications as $notif)
+                    <div class="p-4 border-b border-gray-50 hover:bg-blue-50/50 transition flex gap-3 items-start cursor-pointer {{ $notif->is_read ? 'opacity-60' : '' }}">
                         <div class="w-9 h-9 rounded-full bg-blue-100 text-[#002D8B] flex items-center justify-center shrink-0">
-                            <i class="fa-solid fa-right-to-bracket text-sm"></i>
+                            <i class="fa-solid {{ $notif->icon ?? 'fa-bell' }} text-sm"></i>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-gray-800"><span class="text-[#002D8B]">{{ auth()->user()->name ?? 'User' }}</span> baru saja login.</p>
-                            <p class="text-[10px] text-gray-400 mt-1 font-medium"><i class="fa-regular fa-clock mr-1"></i> Baru saja</p>
+                            <p class="text-xs text-gray-800">{!! $notif->message !!}</p>
+                            <p class="text-[10px] text-gray-400 mt-1 font-medium"><i class="fa-regular fa-clock mr-1"></i> {{ \Carbon\Carbon::parse($notif->created_at)->diffForHumans() }}</p>
                         </div>
                     </div>
+                    @empty
+                    <div class="p-4 text-center text-gray-500 text-xs">
+                        Belum ada notifikasi
+                    </div>
+                    @endforelse
                 </div>
                 <div class="p-3 text-center bg-gray-50 hover:bg-gray-100 transition border-t border-gray-100">
-                    <a href="#" class="text-xs font-bold text-[#002D8B]">Tandai Semua Dibaca</a>
+                    <a href="{{ route('notifications.readAll') }}" class="text-xs font-bold text-[#002D8B]">Tandai Semua Dibaca</a>
                 </div>
             </div>
         </div>
