@@ -26,24 +26,25 @@ class ScanAbsensiController extends Controller
             $pattern = str_replace('%', '*', $allowedIp);
             if (Str::is($pattern, $ipUser)) return true;
 
-            // 2. Auto-Subnet IPv4 (Memeriksa 3 blok angka pertama)
-            // Contoh: Jika terdaftar 192.168.1.5, maka 192.168.1.20 diizinkan.
+            // 2. Auto-Subnet IPv4 (Memeriksa 2 blok angka pertama)
+            // Karena IP Publik ISP di Indonesia (seperti Telkomsel/Indihome) sangat dinamis (contoh: 114.10.84.193 bisa berubah jadi 114.10.85.10)
             $partsAllowed = explode('.', $allowedIp);
             $partsUser = explode('.', $ipUser);
             
             if (count($partsAllowed) === 4 && count($partsUser) === 4) {
+                // Hanya periksa 2 blok pertama (misal: 114.10.x.x)
                 if ($partsAllowed[0] === $partsUser[0] && 
-                    $partsAllowed[1] === $partsUser[1] && 
-                    $partsAllowed[2] === $partsUser[2]) {
+                    $partsAllowed[1] === $partsUser[1]) {
                     return true;
                 }
             }
 
-            // 3. Auto-Subnet IPv6 (Opsional, mencocokkan blok awal)
+            // 3. Auto-Subnet IPv6 (Opsional, mencocokkan blok awal saja)
             $ipv6Allowed = explode(':', $allowedIp);
             $ipv6User = explode(':', $ipUser);
             if (count($ipv6Allowed) > 2 && count($ipv6User) > 2) {
-                if ($ipv6Allowed[0] === $ipv6User[0] && $ipv6Allowed[1] === $ipv6User[1]) {
+                // Hanya cek 1 blok pertama untuk IPv6 karena sangat dinamis
+                if ($ipv6Allowed[0] === $ipv6User[0]) {
                     return true;
                 }
             }
