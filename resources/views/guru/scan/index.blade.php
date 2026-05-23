@@ -13,10 +13,7 @@
             <div class="absolute -right-4 -top-4 w-24 h-24 bg-red-100 rounded-full blur-xl opacity-50"></div>
             <i class="fa-solid fa-network-wired text-5xl mb-4 text-red-400 relative z-10"></i>
             <h3 class="text-lg font-bold mb-2 relative z-10">Akses Ditolak</h3>
-            <p class="text-sm mb-4 relative z-10">Anda tidak terhubung dengan jaringan WiFi Sekolah. Absensi tidak dapat dilakukan dari luar jangkauan.</p>
-            <p class="text-xs font-mono bg-white px-3 py-1.5 rounded-lg border border-red-100 inline-block relative z-10 shadow-sm">
-                IP Perangkat: <span class="font-bold">{{ $ipUser }}</span>
-            </p>
+            <p class="text-sm relative z-10">Anda tidak terhubung dengan jaringan WiFi Sekolah. Harap matikan data seluler dan pastikan Anda menggunakan koneksi WiFi Sekolah yang terdaftar untuk dapat melakukan absensi.</p>
         </div>
 
     {{-- 2. VALIDASI WAKTU, LIBUR, DAN IZIN (DYNAMIC UI) --}}
