@@ -81,6 +81,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::delete('/libur-semester/{libur}', [LiburSemesterController::class, 'destroy'])->name('admin.libur.destroy');
     Route::get('/pengajuan-izin', [App\Http\Controllers\Admin\PengajuanIzinController::class, 'index'])->name('admin.pengajuan-izin.index');
     Route::post('/pengajuan-izin/{id}/status', [App\Http\Controllers\Admin\PengajuanIzinController::class, 'updateStatus'])->name('admin.pengajuan-izin.status');
+    Route::post('/pengaturan-lan/toggle-master', [\App\Http\Controllers\Admin\PengaturanLanController::class, 'toggleMasterValidation'])->name('admin.pengaturan-lan.toggle-master');
     Route::post('/pengaturan-lan/toggle/{id}', [\App\Http\Controllers\Admin\PengaturanLanController::class, 'toggleStatus'])->name('admin.pengaturan-lan.toggle');
     Route::get('/riwayat-absensi', [RiwayatAbsensiController::class, 'index'])->name('admin.riwayat-absensi.index');
     Route::get('/riwayat-absensi/pdf', [RiwayatAbsensiController::class, 'exportPdf'])->name('admin.riwayat-absensi.pdf');

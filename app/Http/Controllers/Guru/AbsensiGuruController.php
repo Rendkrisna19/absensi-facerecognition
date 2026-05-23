@@ -102,6 +102,34 @@ class AbsensiGuruController extends Controller
         ));
     }
 
+    private function cekJaringanWifi($ipUser)
+    {
+        $allowedIps = IpLokal::where('is_active', true)->pluck('ip_address');
+        foreach ($allowedIps as $allowedIp) {
+            $pattern = str_replace('%', '*', $allowedIp);
+            if (\Illuminate\Support\Str::is($pattern, $ipUser)) return true;
+
+            $partsAllowed = explode('.', $allowedIp);
+            $partsUser = explode('.', $ipUser);
+            
+            if (count($partsAllowed) === 4 && count($partsUser) === 4) {
+                if ($partsAllowed[0] === $partsUser[0] && 
+                    $partsAllowed[1] === $partsUser[1]) {
+                    return true;
+                }
+            }
+
+            $ipv6Allowed = explode(':', $allowedIp);
+            $ipv6User = explode(':', $ipUser);
+            if (count($ipv6Allowed) > 2 && count($ipv6User) > 2) {
+                if ($ipv6Allowed[0] === $ipv6User[0]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     // Menampilkan Halaman Kamera & Validasi IP
     public function scan()
     {
@@ -112,7 +140,7 @@ class AbsensiGuruController extends Controller
 
         // 2. Validasi: Cek IP Jaringan
         $ipUser = request()->ip();
-        $ipValid = IpLokal::where('ip_address', $ipUser)->where('is_active', true)->exists();
+        $ipValid = $this->cekJaringanWifi($ipUser);
 
         $pengaturan = PengaturanAbsensi::first();
         $jamSekarang = Carbon::now()->format('H:i:s');
@@ -248,6 +276,15 @@ class AbsensiGuruController extends Controller
         $user = auth()->user();
         $hariIni = Carbon::now()->format('Y-m-d');
         $jamSekarang = Carbon::now()->format('H:i:s');
+        
+        // ---> TAMBAHAN JARINGAN WIFI <---
+        $ipUser = request()->ip();
+        if (!$this->cekJaringanWifi($ipUser)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal! Anda tidak terhubung ke WiFi sekolah.'
+            ]);
+        }
         
         // ---> TAMBAHAN 4: Kunci API Backend Jika Libur Semester <---
         $liburSemester = LiburSemester::where('is_active', true)

@@ -10,7 +10,12 @@ class PengaturanLanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = IpLokal::latest();
+        // Pengecualian untuk record master (BYPASS) agar tidak muncul di tabel
+        $query = IpLokal::where('ip_address', '!=', '*')->latest();
+
+        // Cari record master bypass
+        $master = IpLokal::where('ip_address', '*')->first();
+        $isBypassed = $master ? $master->is_active : false;
 
         // Filter Pencarian (Nama Jaringan / IP)
         if ($request->filled('search')) {
@@ -30,7 +35,7 @@ class PengaturanLanController extends Controller
         $perPage = $request->input('per_page', 10);
         $ips = $query->paginate($perPage)->withQueryString();
 
-        return view('admin.pengaturan_lan.index', compact('ips'));
+        return view('admin.pengaturan_lan.index', compact('ips', 'isBypassed'));
     }
 
     // Fungsi AJAX Toggle Switch (Aktif / Non-aktifkan IP)
@@ -50,6 +55,32 @@ class PengaturanLanController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengubah status.'
+            ], 500);
+        }
+    }
+
+    // Fungsi AJAX Toggle Master Validasi WiFi
+    public function toggleMasterValidation(Request $request)
+    {
+        try {
+            // Kita gunakan record khusus dengan IP '*' sebagai master switch
+            $master = IpLokal::firstOrCreate(
+                ['ip_address' => '*'],
+                ['nama_jaringan' => 'BYPASS_MASTER_WIFI', 'is_active' => false, 'keterangan' => 'Sistem Auto Bypass (Jangan Dihapus)']
+            );
+
+            $master->is_active = !$master->is_active;
+            $master->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => $master->is_active ? 'Validasi WiFi Berhasil DIMATIKAN! (Semua Guru Bebas Absen)' : 'Validasi WiFi Berhasil DIAKTIFKAN kembali!',
+                'is_bypassed' => $master->is_active
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengubah status master.'
             ], 500);
         }
     }

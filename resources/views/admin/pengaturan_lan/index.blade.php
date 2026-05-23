@@ -18,9 +18,26 @@
             <h3 class="text-xl font-bold text-gray-800">Daftar IP Jaringan Lokal</h3>
             <p class="text-sm text-gray-500 mt-1">Hanya guru yang terhubung ke jaringan (IP) aktif di bawah ini yang dapat melakukan absensi.</p>
         </div>
-        <a href="{{ route('admin.pengaturan-lan.create') }}" class="bg-[#1e3b8b] hover:bg-[#152b69] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm whitespace-nowrap flex items-center gap-2">
-            <i class="fa-solid fa-plus"></i> Tambah Jaringan
-        </a>
+        
+        <div class="flex flex-col md:flex-row items-center gap-4">
+            <!-- MASTER TOGGLE -->
+            <div class="flex items-center gap-3 bg-{{ $isBypassed ? 'red' : 'green' }}-50 px-4 py-2 rounded-xl border border-{{ $isBypassed ? 'red' : 'green' }}-200 transition-colors" id="master-toggle-container">
+                <div class="text-right">
+                    <p class="text-xs font-bold text-gray-600 uppercase tracking-wider mb-0.5">Validasi WiFi</p>
+                    <p class="text-[10px] font-semibold text-{{ $isBypassed ? 'red' : 'green' }}-600" id="master-toggle-text">
+                        {{ $isBypassed ? 'NON-AKTIF (BEBAS ABSEN)' : 'AKTIF (WAJIB WIFI)' }}
+                    </p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="toggle-master" class="sr-only peer" {{ !$isBypassed ? 'checked' : '' }}>
+                    <div class="w-11 h-6 bg-red-400 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500 shadow-inner"></div>
+                </label>
+            </div>
+
+            <a href="{{ route('admin.pengaturan-lan.create') }}" class="bg-[#1e3b8b] hover:bg-[#152b69] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm whitespace-nowrap flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i> Tambah Jaringan
+            </a>
+        </div>
     </div>
 
     @if(session('success'))
@@ -170,14 +187,13 @@
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                // Submit form dengan ID yang spesifik
                 document.getElementById('delete-form-' + id).submit();
             }
         });
     }
 
-    // --- AJAX Toggle Switch Aktif/Non-Aktif ---
     document.addEventListener('DOMContentLoaded', function() {
+        // --- AJAX Toggle Switch Aktif/Non-Aktif (Setiap IP) ---
         const toggleCheckboxes = document.querySelectorAll('.toggle-status');
         
         toggleCheckboxes.forEach(checkbox => {
@@ -186,10 +202,8 @@
                 const isChecked = this.checked;
                 const labelStatus = document.querySelector(`.status-label-${ipId}`);
 
-                // Tampilkan loading berputar
                 labelStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-gray-400"></i>';
 
-                // HARAP PASTIKAN URL PREFIX (admin) SESUAI DENGAN ROUTE WEB.PHP ANDA
                 fetch(`/admin/pengaturan-lan/toggle/${ipId}`, {
                     method: 'POST',
                     headers: {
@@ -204,24 +218,17 @@
                 })
                 .then(data => {
                     if(data.success) {
-                        // Update teks label dan warnanya
                         labelStatus.innerText = data.is_active ? 'AKTIF' : 'NON-AKTIF';
                         labelStatus.className = data.is_active 
                             ? `mt-1 status-label-${ipId} text-[10px] font-semibold text-green-500` 
                             : `mt-1 status-label-${ipId} text-[10px] font-semibold text-gray-400`;
                         
-                        // Notifikasi sukses
                         Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'success',
+                            toast: true, position: 'top-end', icon: 'success',
                             title: '<span class="font-poppins text-sm">' + data.message + '</span>',
-                            showConfirmButton: false,
-                            timer: 2000,
-                            timerProgressBar: true,
+                            showConfirmButton: false, timer: 2000, timerProgressBar: true,
                         });
                     } else {
-                        // Jika gagal dari server, balikkan posisi toggle
                         this.checked = !isChecked;
                         labelStatus.innerText = !isChecked ? 'AKTIF' : 'NON-AKTIF';
                         Swal.fire('Error', 'Gagal merubah status', 'error');
@@ -229,17 +236,58 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    // Jika jaringan putus atau route tidak ditemukan (404/500), balikkan posisi toggle
                     this.checked = !isChecked;
                     labelStatus.innerText = !isChecked ? 'AKTIF' : 'NON-AKTIF';
-                    
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Terjadi kesalahan sistem atau rute (URL) tidak ditemukan! Pastikan Route toggleStatus sudah ditambahkan di web.php.',
-                    });
+                    Swal.fire('Oops...', 'Terjadi kesalahan sistem atau rute tidak ditemukan!', 'error');
                 });
             });
         });
+
+        // --- AJAX Toggle Master Validation ---
+        const masterToggle = document.getElementById('toggle-master');
+        if (masterToggle) {
+            masterToggle.addEventListener('change', function() {
+                const isChecked = this.checked;
+                const container = document.getElementById('master-toggle-container');
+                const textElement = document.getElementById('master-toggle-text');
+
+                fetch(`{{ route('admin.pengaturan-lan.toggle-master') }}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        const isBypassed = data.is_bypassed;
+                        if (isBypassed) {
+                            textElement.innerText = 'NON-AKTIF (BEBAS ABSEN)';
+                            textElement.className = 'text-[10px] font-semibold text-red-600';
+                            container.className = 'flex items-center gap-3 bg-red-50 px-4 py-2 rounded-xl border border-red-200 transition-colors';
+                        } else {
+                            textElement.innerText = 'AKTIF (WAJIB WIFI)';
+                            textElement.className = 'text-[10px] font-semibold text-green-600';
+                            container.className = 'flex items-center gap-3 bg-green-50 px-4 py-2 rounded-xl border border-green-200 transition-colors';
+                        }
+                        Swal.fire({
+                            toast: true, position: 'top-end', icon: isBypassed ? 'warning' : 'success',
+                            title: '<span class="font-poppins text-sm">' + data.message + '</span>',
+                            showConfirmButton: false, timer: 3000, timerProgressBar: true,
+                        });
+                    } else {
+                        this.checked = !isChecked;
+                        Swal.fire('Error', 'Gagal merubah status master', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    this.checked = !isChecked;
+                    Swal.fire('Error', 'Terjadi kesalahan sistem atau jaringan', 'error');
+                });
+            });
+        }
     });
 </script>

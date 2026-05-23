@@ -17,9 +17,6 @@ class ScanAbsensiController extends Controller
 {
     private function cekJaringanWifi($ipUser)
     {
-        // 0. Bypass untuk localhost saat testing development
-        if ($ipUser === '127.0.0.1' || $ipUser === '::1') return true;
-
         $allowedIps = IpLokal::where('is_active', true)->pluck('ip_address');
         foreach ($allowedIps as $allowedIp) {
             // 1. Cek Exact Match atau pola Wildcard bawaan (%)

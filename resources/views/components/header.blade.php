@@ -18,9 +18,14 @@
             <span class="text-xs text-gray-500" x-text="date"></span>
         </div>
 
-        <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-600 border border-green-200 rounded-full text-xs font-bold">
-            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            LAN Aktif
+        @php
+            $masterBypass = \App\Models\IpLokal::where('ip_address', '*')->first();
+            $isBypassed = $masterBypass ? $masterBypass->is_active : false;
+        @endphp
+
+        <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 {{ $isBypassed ? 'bg-red-50 text-red-600 border-red-200' : 'bg-green-50 text-green-600 border-green-200' }} border rounded-full text-xs font-bold">
+            <div class="w-2 h-2 {{ $isBypassed ? 'bg-red-500' : 'bg-green-500' }} rounded-full animate-pulse"></div>
+            {{ $isBypassed ? 'Validasi WiFi: OFF' : 'Validasi WiFi: ON' }}
         </div>
 
         @php
