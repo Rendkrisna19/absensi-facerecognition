@@ -17,10 +17,36 @@ class ScanAbsensiController extends Controller
 {
     private function cekJaringanWifi($ipUser)
     {
+        // 0. Bypass untuk localhost saat testing development
+        if ($ipUser === '127.0.0.1' || $ipUser === '::1') return true;
+
         $allowedIps = IpLokal::where('is_active', true)->pluck('ip_address');
         foreach ($allowedIps as $allowedIp) {
+            // 1. Cek Exact Match atau pola Wildcard bawaan (%)
             $pattern = str_replace('%', '*', $allowedIp);
             if (Str::is($pattern, $ipUser)) return true;
+
+            // 2. Auto-Subnet IPv4 (Memeriksa 3 blok angka pertama)
+            // Contoh: Jika terdaftar 192.168.1.5, maka 192.168.1.20 diizinkan.
+            $partsAllowed = explode('.', $allowedIp);
+            $partsUser = explode('.', $ipUser);
+            
+            if (count($partsAllowed) === 4 && count($partsUser) === 4) {
+                if ($partsAllowed[0] === $partsUser[0] && 
+                    $partsAllowed[1] === $partsUser[1] && 
+                    $partsAllowed[2] === $partsUser[2]) {
+                    return true;
+                }
+            }
+
+            // 3. Auto-Subnet IPv6 (Opsional, mencocokkan blok awal)
+            $ipv6Allowed = explode(':', $allowedIp);
+            $ipv6User = explode(':', $ipUser);
+            if (count($ipv6Allowed) > 2 && count($ipv6User) > 2) {
+                if ($ipv6Allowed[0] === $ipv6User[0] && $ipv6Allowed[1] === $ipv6User[1]) {
+                    return true;
+                }
+            }
         }
         return false;
     }
