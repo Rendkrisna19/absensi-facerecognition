@@ -6,6 +6,42 @@
 @section('content')
 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
     
+    <!-- Summary Cards -->
+    @php
+        $totalGuru = $gurus->count();
+        $totalSD = $gurus->filter(fn($g) => str_contains($g->unit_sekolah, 'SD'))->count();
+        $totalSMP = $gurus->filter(fn($g) => str_contains($g->unit_sekolah, 'SMP'))->count();
+    @endphp
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl p-5 text-white shadow-lg flex items-center justify-between transform transition duration-300 hover:scale-[1.02]">
+            <div>
+                <p class="text-blue-100 text-sm font-medium mb-1 uppercase tracking-wide">Total Keseluruhan</p>
+                <h4 class="text-4xl font-extrabold">{{ $totalGuru }} <span class="text-lg font-normal opacity-80">Pegawai</span></h4>
+            </div>
+            <div class="bg-white/20 p-4 rounded-2xl backdrop-blur-sm">
+                <i class="fa-solid fa-users text-3xl"></i>
+            </div>
+        </div>
+        <div class="bg-gradient-to-br from-red-400 to-red-600 rounded-2xl p-5 text-white shadow-lg flex items-center justify-between transform transition duration-300 hover:scale-[1.02]">
+            <div>
+                <p class="text-red-100 text-sm font-medium mb-1 uppercase tracking-wide">Guru Unit SD</p>
+                <h4 class="text-4xl font-extrabold">{{ $totalSD }} <span class="text-lg font-normal opacity-80">Orang</span></h4>
+            </div>
+            <div class="bg-white/20 p-4 rounded-2xl backdrop-blur-sm">
+                <i class="fa-solid fa-school text-3xl"></i>
+            </div>
+        </div>
+        <div class="bg-gradient-to-br from-[#002D8B] to-blue-900 rounded-2xl p-5 text-white shadow-lg flex items-center justify-between transform transition duration-300 hover:scale-[1.02]">
+            <div>
+                <p class="text-blue-100 text-sm font-medium mb-1 uppercase tracking-wide">Guru Unit SMP</p>
+                <h4 class="text-4xl font-extrabold">{{ $totalSMP }} <span class="text-lg font-normal opacity-80">Orang</span></h4>
+            </div>
+            <div class="bg-white/20 p-4 rounded-2xl backdrop-blur-sm">
+                <i class="fa-solid fa-building-columns text-3xl"></i>
+            </div>
+        </div>
+    </div>
+
     <!-- Header & Action Buttons -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
@@ -46,12 +82,11 @@
         </div>
 
         <div class="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto">
-            <!-- Filter Status Dropdown -->
-            <select id="filterStatus" class="border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 w-full md:w-40">
-                <option value="all">Semua Status</option>
-                <option value="tetap">Pegawai Tetap</option>
-                <option value="honorer">Honorer</option>
-                <option value="belum diatur">Belum Diatur</option>
+            <!-- Filter Unit Dropdown -->
+            <select id="filterUnit" class="border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 w-full md:w-40">
+                <option value="all">Semua Unit</option>
+                <option value="sd">Unit SD</option>
+                <option value="smp">Unit SMP</option>
             </select>
             
             <!-- Search Bar -->
@@ -70,7 +105,7 @@
             <thead>
                 <tr class="bg-blue-800 text-white text-sm border-b border-blue-700 cursor-pointer select-none">
                     <th class="p-3 font-semibold hover:bg-blue-700 transition" onclick="sortTable(0)">Nama & Profil <i class="fa-solid fa-sort ml-1 text-blue-300"></i></th>
-                    <th class="p-3 font-semibold hover:bg-blue-700 transition" onclick="sortTable(1)">Jabatan & Status <i class="fa-solid fa-sort ml-1 text-blue-300"></i></th>
+                    <th class="p-3 font-semibold hover:bg-blue-700 transition" onclick="sortTable(1)">Jabatan & Unit <i class="fa-solid fa-sort ml-1 text-blue-300"></i></th>
                     <th class="p-3 font-semibold">Kontak</th>
                     <th class="p-3 font-semibold hover:bg-blue-700 transition" onclick="sortTable(3)">Status Wajah <i class="fa-solid fa-sort ml-1 text-blue-300"></i></th>
                     <th class="p-3 font-semibold text-center">Aksi</th>
@@ -92,14 +127,13 @@
 
                     // Foto Profil Safe URL
                     $fotoUrl = $item->foto_profil ? asset('storage/' . $item->foto_profil) : asset('images/default-avatar.png');
-                    $statusPegawai = strtolower($item->guru?->status_pegawai ?? 'belum diatur');
                 @endphp
 
                 <!-- Data attribute digunakan oleh Javascript untuk filter & search DOM -->
                 <tr class="data-row border-b border-gray-100 hover:bg-blue-50 transition-colors" 
                     x-data="{ detailOpen: false, photoOpen: false }"
                     data-search="{{ strtolower($item->name . ' ' . $item->nik . ' ' . $item->jabatan) }}"
-                    data-status="{{ $statusPegawai }}"
+                    data-unit="{{ strtolower($item->unit_sekolah ?? '') }}"
                 >
                     <!-- Col 1: Profil -->
                     <td class="p-3">
@@ -113,34 +147,30 @@
                         </div>
                     </td>
 
-                    <!-- Col 2: Jabatan & Status -->
+                    <!-- Col 2: Jabatan & Unit -->
                     <td class="p-3">
-                        <div class="flex flex-col gap-1.5 items-start">
-                            <div class="flex flex-wrap gap-1.5">
-                                <span class="inline-block text-[11px] px-2 py-0.5 rounded-md font-semibold border {{ $badgeJabatan }}">
-                                    {{ strtoupper($item->jabatan) }}
-                                </span>
-                                
-                                <!-- Badge Unit Sekolah -->
-                                @if($item->unit_sekolah === 'SD')
-                                    <span class="inline-block text-[11px] px-2 py-0.5 rounded-md font-semibold border bg-red-50 text-red-600 border-red-200">
-                                        Unit SD
-                                    </span>
-                                @elseif($item->unit_sekolah === 'SMP')
-                                    <span class="inline-block text-[11px] px-2 py-0.5 rounded-md font-semibold border bg-[#002D8B]/10 text-[#002D8B] border-[#002D8B]/20">
-                                        Unit SMP
-                                    </span>
-                                @else
-                                    <span class="inline-block text-[11px] px-2 py-0.5 rounded-md font-semibold border bg-gray-50 text-gray-600 border-gray-200">
-                                        Umum
+                        <div class="flex flex-col gap-2 items-start">
+                            <span class="inline-block text-[11px] px-2.5 py-1 rounded-md font-bold border tracking-wide {{ $badgeJabatan }}">
+                                {{ strtoupper($item->jabatan) }}
+                            </span>
+                            
+                            <!-- Badge Unit Sekolah -->
+                            <div class="flex gap-1 flex-wrap">
+                                @if(str_contains($item->unit_sekolah, 'SD'))
+                                    <span class="inline-block text-[11px] px-2.5 py-1 rounded-md font-bold border bg-red-50 text-red-600 border-red-200">
+                                        UNIT SD
                                     </span>
                                 @endif
-                            </div>
-                            
-                            <div>
-                                <span class="text-[11px] px-2 py-0.5 rounded-full font-medium {{ ($item->guru?->status_pegawai == 'Tetap') ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700' }}">
-                                    Status: {{ $item->guru?->status_pegawai ?? 'Belum Diatur' }}
-                                </span>
+                                @if(str_contains($item->unit_sekolah, 'SMP'))
+                                    <span class="inline-block text-[11px] px-2.5 py-1 rounded-md font-bold border bg-[#002D8B]/10 text-[#002D8B] border-[#002D8B]/20">
+                                        UNIT SMP
+                                    </span>
+                                @endif
+                                @if(!$item->unit_sekolah)
+                                    <span class="inline-block text-[11px] px-2.5 py-1 rounded-md font-bold border bg-gray-50 text-gray-600 border-gray-200">
+                                        UMUM
+                                    </span>
+                                @endif
                             </div>
                         </div>
                     </td>
@@ -242,7 +272,17 @@
                                     <div class="flex flex-col items-center justify-center mb-6">
                                         <img src="{{ $fotoUrl }}" class="w-32 h-32 rounded-full object-cover border-4 border-blue-100 shadow-lg mb-3">
                                         <h4 class="text-xl font-bold text-gray-800">{{ $item->name }}</h4>
-                                        <span class="inline-block mt-1 text-xs px-3 py-1 rounded-full border {{ $badgeJabatan }}">{{ strtoupper($item->jabatan) }}</span>
+                                        <span class="inline-block mt-1 text-xs px-3 py-1 rounded-full border font-bold {{ $badgeJabatan }}">{{ strtoupper($item->jabatan) }}</span>
+                                        
+                                        <!-- Badge Unit Sekolah -->
+                                        <div class="flex gap-1 mt-2">
+                                            @if(str_contains($item->unit_sekolah, 'SD'))
+                                                <span class="inline-block text-[11px] px-2 py-0.5 rounded-md font-bold border bg-red-50 text-red-600 border-red-200">UNIT SD</span>
+                                            @endif
+                                            @if(str_contains($item->unit_sekolah, 'SMP'))
+                                                <span class="inline-block text-[11px] px-2 py-0.5 rounded-md font-bold border bg-blue-50 text-blue-800 border-blue-200">UNIT SMP</span>
+                                            @endif
+                                        </div>
                                     </div>
 
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-6 text-sm bg-gray-50 p-5 rounded-xl border border-gray-100">
@@ -400,7 +440,7 @@
         const rows = Array.from(document.querySelectorAll('.data-row'));
         const searchInput = document.getElementById('searchInput');
         const perPageSelect = document.getElementById('perPage');
-        const filterStatusSelect = document.getElementById('filterStatus');
+        const filterUnitSelect = document.getElementById('filterUnit');
         
         let currentPage = 1;
         let perPage = parseInt(perPageSelect.value);
@@ -410,17 +450,21 @@
         // Fungsi Induk untuk Update Tampilan Tabel
         function updateTable() {
             const searchTerm = searchInput.value.toLowerCase();
-            const statusFilter = filterStatusSelect.value.toLowerCase();
+            const unitFilter = filterUnitSelect.value.toLowerCase();
 
             // 1. Lakukan Filter & Search
             filteredRows = rows.filter(row => {
                 const textData = row.getAttribute('data-search');
-                const rowStatus = row.getAttribute('data-status');
+                const rowUnit = row.getAttribute('data-unit');
                 
                 const matchSearch = textData.includes(searchTerm);
-                const matchStatus = (statusFilter === 'all') || (rowStatus === statusFilter);
+                let matchUnit = true;
                 
-                return matchSearch && matchStatus;
+                if (unitFilter !== 'all') {
+                    matchUnit = rowUnit.includes(unitFilter);
+                }
+                
+                return matchSearch && matchUnit;
             });
 
             // 2. Kalkulasi Pagination
@@ -482,7 +526,7 @@
 
         // Listener untuk Input & Select
         searchInput.addEventListener('input', () => { currentPage = 1; updateTable(); });
-        filterStatusSelect.addEventListener('change', () => { currentPage = 1; updateTable(); });
+        filterUnitSelect.addEventListener('change', () => { currentPage = 1; updateTable(); });
         perPageSelect.addEventListener('change', (e) => { 
             perPage = parseInt(e.target.value); 
             currentPage = 1; 
