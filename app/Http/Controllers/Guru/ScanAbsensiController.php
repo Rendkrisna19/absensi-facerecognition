@@ -36,12 +36,16 @@ class ScanAbsensiController extends Controller
                 }
             }
 
-            // 3. Auto-Subnet IPv6 (Opsional, mencocokkan blok awal saja)
+            // 3. Auto-Subnet IPv6 (Mencocokkan 4 blok awal / Prefix ISP)
             $ipv6Allowed = explode(':', $allowedIp);
             $ipv6User = explode(':', $ipUser);
-            if (count($ipv6Allowed) > 2 && count($ipv6User) > 2) {
-                // Hanya cek 1 blok pertama untuk IPv6 karena sangat dinamis
-                if ($ipv6Allowed[0] === $ipv6User[0]) {
+            if (count($ipv6Allowed) >= 4 && count($ipv6User) >= 4) {
+                // Cek 4 blok pertama (Prefix IPv6 yang diberikan ISP ke Router Sekolah)
+                // Ini mencegah HP dari rumah dengan provider yang sama (awalan 2001:) ikut lolos
+                if ($ipv6Allowed[0] === $ipv6User[0] && 
+                    $ipv6Allowed[1] === $ipv6User[1] && 
+                    $ipv6Allowed[2] === $ipv6User[2] &&
+                    $ipv6Allowed[3] === $ipv6User[3]) {
                     return true;
                 }
             }
