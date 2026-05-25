@@ -69,32 +69,58 @@
     </div>
 
     <!-- Filter, Search & Pagination Info (No Reload Controls) -->
-    <div class="flex flex-col md:flex-row justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-100 mb-4 gap-4">
-        <div class="flex items-center gap-3 w-full md:w-auto">
-            <span class="text-sm text-gray-600 font-medium">Tampilkan</span>
-            <select id="perPage" class="border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 w-20">
+    <div class="flex flex-col lg:flex-row justify-between items-center bg-white p-4 rounded-xl border border-gray-200 mb-6 gap-4 shadow-sm">
+        <div class="flex items-center gap-3 w-full lg:w-auto">
+            <span class="text-sm text-gray-500 font-medium">Tampilkan</span>
+            <select id="perPage" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 w-20 p-2.5">
                 <option value="5">5</option>
                 <option value="10" selected>10</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
             </select>
-            <span class="text-sm text-gray-600 font-medium">Data</span>
+            <span class="text-sm text-gray-500 font-medium">Data</span>
         </div>
 
-        <div class="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto">
+        <div class="flex flex-col md:flex-row items-center gap-3 w-full lg:w-auto">
+            
+            <!-- Filter Role Dropdown -->
+            <div class="relative w-full md:w-44">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <i class="fa-solid fa-user-tie text-blue-600"></i>
+                </div>
+                <select id="filterJabatan" class="bg-blue-50 border border-blue-200 text-blue-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 font-bold cursor-pointer transition hover:bg-blue-100 appearance-none">
+                    <option value="all">Semua Jabatan</option>
+                    <option value="guru">Guru</option>
+                    <option value="kepala sekolah">Kepala Sekolah</option>
+                    <option value="staff">Staff/Lainnya</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <i class="fa-solid fa-chevron-down text-blue-600 text-xs"></i>
+                </div>
+            </div>
+
             <!-- Filter Unit Dropdown -->
-            <select id="filterUnit" class="border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 w-full md:w-40">
-                <option value="all">Semua Unit</option>
-                <option value="sd">Unit SD</option>
-                <option value="smp">Unit SMP</option>
-            </select>
+            <div class="relative w-full md:w-44">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <i class="fa-solid fa-layer-group text-purple-600"></i>
+                </div>
+                <select id="filterUnit" class="bg-purple-50 border border-purple-200 text-purple-800 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full pl-10 p-2.5 font-bold cursor-pointer transition hover:bg-purple-100 appearance-none">
+                    <option value="all">Semua Unit</option>
+                    <option value="sd">Hanya SD</option>
+                    <option value="smp">Hanya SMP</option>
+                    <option value="umum">Umum (Non-Unit)</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <i class="fa-solid fa-chevron-down text-purple-600 text-xs"></i>
+                </div>
+            </div>
             
             <!-- Search Bar -->
             <div class="relative w-full md:w-64">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                 </div>
-                <input type="text" id="searchInput" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5" placeholder="Cari nama atau NIK...">
+                <input type="text" id="searchInput" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 transition hover:bg-gray-100" placeholder="Cari nama atau NIK...">
             </div>
         </div>
     </div>
@@ -132,7 +158,8 @@
                 <!-- Data attribute digunakan oleh Javascript untuk filter & search DOM -->
                 <tr class="data-row border-b border-gray-100 hover:bg-blue-50 transition-colors" 
                     x-data="{ detailOpen: false, photoOpen: false }"
-                    data-search="{{ strtolower($item->name . ' ' . $item->nik . ' ' . $item->jabatan) }}"
+                    data-search="{{ strtolower($item->name . ' ' . $item->nik) }}"
+                    data-jabatan="{{ strtolower($item->jabatan) }}"
                     data-unit="{{ strtolower($item->unit_sekolah ?? '') }}"
                 >
                     <!-- Col 1: Profil -->
@@ -441,6 +468,7 @@
         const searchInput = document.getElementById('searchInput');
         const perPageSelect = document.getElementById('perPage');
         const filterUnitSelect = document.getElementById('filterUnit');
+        const filterJabatanSelect = document.getElementById('filterJabatan');
         
         let currentPage = 1;
         let perPage = parseInt(perPageSelect.value);
@@ -451,20 +479,35 @@
         function updateTable() {
             const searchTerm = searchInput.value.toLowerCase();
             const unitFilter = filterUnitSelect.value.toLowerCase();
+            const jabatanFilter = filterJabatanSelect.value.toLowerCase();
 
             // 1. Lakukan Filter & Search
             filteredRows = rows.filter(row => {
                 const textData = row.getAttribute('data-search');
                 const rowUnit = row.getAttribute('data-unit');
+                const rowJabatan = row.getAttribute('data-jabatan');
                 
                 const matchSearch = textData.includes(searchTerm);
-                let matchUnit = true;
                 
+                let matchUnit = true;
                 if (unitFilter !== 'all') {
-                    matchUnit = rowUnit.includes(unitFilter);
+                    if (unitFilter === 'umum') {
+                        matchUnit = (rowUnit === '');
+                    } else {
+                        matchUnit = rowUnit.includes(unitFilter);
+                    }
+                }
+
+                let matchJabatan = true;
+                if (jabatanFilter !== 'all') {
+                    if (jabatanFilter === 'staff') {
+                        matchJabatan = !rowJabatan.includes('guru') && !rowJabatan.includes('kepala');
+                    } else {
+                        matchJabatan = rowJabatan.includes(jabatanFilter);
+                    }
                 }
                 
-                return matchSearch && matchUnit;
+                return matchSearch && matchUnit && matchJabatan;
             });
 
             // 2. Kalkulasi Pagination
@@ -527,6 +570,7 @@
         // Listener untuk Input & Select
         searchInput.addEventListener('input', () => { currentPage = 1; updateTable(); });
         filterUnitSelect.addEventListener('change', () => { currentPage = 1; updateTable(); });
+        filterJabatanSelect.addEventListener('change', () => { currentPage = 1; updateTable(); });
         perPageSelect.addEventListener('change', (e) => { 
             perPage = parseInt(e.target.value); 
             currentPage = 1; 
