@@ -13,9 +13,9 @@
         $totalSMP = $gurus->filter(fn($g) => str_contains($g->unit_sekolah, 'SMP'))->count();
     @endphp
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl p-5 text-white shadow-lg flex items-center justify-between transform transition duration-300 hover:scale-[1.02]">
+        <div class="bg-gradient-to-br from-orange-500 to-orange-700 rounded-2xl p-5 text-white shadow-lg flex items-center justify-between transform transition duration-300 hover:scale-[1.02]">
             <div>
-                <p class="text-blue-100 text-sm font-medium mb-1 uppercase tracking-wide">Total Keseluruhan</p>
+                <p class="text-orange-100 text-sm font-medium mb-1 uppercase tracking-wide">Total Keseluruhan</p>
                 <h4 class="text-4xl font-extrabold">{{ $totalGuru }} <span class="text-lg font-normal opacity-80">Pegawai</span></h4>
             </div>
             <div class="bg-white/20 p-4 rounded-2xl backdrop-blur-sm">
@@ -31,9 +31,9 @@
                 <i class="fa-solid fa-school text-3xl"></i>
             </div>
         </div>
-        <div class="bg-gradient-to-br from-[#002D8B] to-blue-900 rounded-2xl p-5 text-white shadow-lg flex items-center justify-between transform transition duration-300 hover:scale-[1.02]">
+        <div class="bg-gradient-to-br from-[#F97316] to-orange-900 rounded-2xl p-5 text-white shadow-lg flex items-center justify-between transform transition duration-300 hover:scale-[1.02]">
             <div>
-                <p class="text-blue-100 text-sm font-medium mb-1 uppercase tracking-wide">Guru Unit SMP</p>
+                <p class="text-orange-100 text-sm font-medium mb-1 uppercase tracking-wide">Guru Unit SMP</p>
                 <h4 class="text-4xl font-extrabold">{{ $totalSMP }} <span class="text-lg font-normal opacity-80">Orang</span></h4>
             </div>
             <div class="bg-white/20 p-4 rounded-2xl backdrop-blur-sm">
@@ -62,7 +62,7 @@
                 <i class="fa-solid fa-file-import"></i> Import Excel
             </button>
             <!-- Tombol Tambah -->
-            <a href="{{ route('admin.guru.create') }}" class="bg-blue-800 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-sm flex items-center gap-2">
+            <a href="{{ route('admin.guru.create') }}" class="bg-orange-800 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-sm flex items-center gap-2">
                 <i class="fa-solid fa-plus"></i> Tambah Data
             </a>
         </div>
@@ -72,7 +72,7 @@
     <div class="flex flex-col lg:flex-row justify-between items-center bg-white p-4 rounded-xl border border-gray-200 mb-6 gap-4 shadow-sm">
         <div class="flex items-center gap-3 w-full lg:w-auto">
             <span class="text-sm text-gray-500 font-medium">Tampilkan</span>
-            <select id="perPage" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 w-20 p-2.5">
+            <select id="perPage" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 w-20 p-2.5">
                 <option value="5">5</option>
                 <option value="10" selected>10</option>
                 <option value="25">25</option>
@@ -86,16 +86,16 @@
             <!-- Filter Role Dropdown -->
             <div class="relative w-full md:w-44">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <i class="fa-solid fa-user-tie text-blue-600"></i>
+                    <i class="fa-solid fa-user-tie text-orange-600"></i>
                 </div>
-                <select id="filterJabatan" class="bg-blue-50 border border-blue-200 text-blue-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 font-bold cursor-pointer transition hover:bg-blue-100 appearance-none">
+                <select id="filterJabatan" class="bg-orange-50 border border-orange-200 text-orange-800 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full pl-10 p-2.5 font-bold cursor-pointer transition hover:bg-orange-100 appearance-none">
                     <option value="all">Semua Jabatan</option>
                     <option value="guru">Guru</option>
                     <option value="kepala sekolah">Kepala Sekolah</option>
                     <option value="staff">Staff/Lainnya</option>
                 </select>
                 <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <i class="fa-solid fa-chevron-down text-blue-600 text-xs"></i>
+                    <i class="fa-solid fa-chevron-down text-orange-600 text-xs"></i>
                 </div>
             </div>
 
@@ -120,7 +120,7 @@
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                 </div>
-                <input type="text" id="searchInput" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 transition hover:bg-gray-100" placeholder="Cari nama atau NIK...">
+                <input type="text" id="searchInput" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full pl-10 p-2.5 transition hover:bg-gray-100" placeholder="Cari nama atau NIK...">
             </div>
         </div>
     </div>
@@ -129,11 +129,11 @@
     <div class="overflow-x-auto rounded-xl border border-gray-200">
         <table class="w-full text-left border-collapse" id="dataTable">
             <thead>
-                <tr class="bg-blue-800 text-white text-sm border-b border-blue-700 cursor-pointer select-none">
-                    <th class="p-3 font-semibold hover:bg-blue-700 transition" onclick="sortTable(0)">Nama & Profil <i class="fa-solid fa-sort ml-1 text-blue-300"></i></th>
-                    <th class="p-3 font-semibold hover:bg-blue-700 transition" onclick="sortTable(1)">Jabatan & Unit <i class="fa-solid fa-sort ml-1 text-blue-300"></i></th>
+                <tr class="bg-orange-800 text-white text-sm border-b border-orange-700 cursor-pointer select-none">
+                    <th class="p-3 font-semibold hover:bg-orange-700 transition" onclick="sortTable(0)">Nama & Profil <i class="fa-solid fa-sort ml-1 text-orange-300"></i></th>
+                    <th class="p-3 font-semibold hover:bg-orange-700 transition" onclick="sortTable(1)">Jabatan & Unit <i class="fa-solid fa-sort ml-1 text-orange-300"></i></th>
                     <th class="p-3 font-semibold">Kontak</th>
-                    <th class="p-3 font-semibold hover:bg-blue-700 transition" onclick="sortTable(3)">Status Wajah <i class="fa-solid fa-sort ml-1 text-blue-300"></i></th>
+                    <th class="p-3 font-semibold hover:bg-orange-700 transition" onclick="sortTable(3)">Status Wajah <i class="fa-solid fa-sort ml-1 text-orange-300"></i></th>
                     <th class="p-3 font-semibold text-center">Aksi</th>
                 </tr>
             </thead>
@@ -142,7 +142,7 @@
                 @php
                     // Logika penentuan warna badge jabatan
                     $jabatanRaw = strtolower($item->jabatan);
-                    $badgeJabatan = 'bg-blue-100 text-blue-700 border-blue-200'; // Default
+                    $badgeJabatan = 'bg-orange-100 text-orange-700 border-orange-200'; // Default
                     if (str_contains($jabatanRaw, 'kepala')) {
                         $badgeJabatan = 'bg-purple-100 text-purple-700 border-purple-200';
                     } elseif (str_contains($jabatanRaw, 'satpam') || str_contains($jabatanRaw, 'security')) {
@@ -156,7 +156,7 @@
                 @endphp
 
                 <!-- Data attribute digunakan oleh Javascript untuk filter & search DOM -->
-                <tr class="data-row border-b border-gray-100 hover:bg-blue-50 transition-colors" 
+                <tr class="data-row border-b border-gray-100 hover:bg-orange-50 transition-colors" 
                     x-data="{ detailOpen: false, photoOpen: false }"
                     data-search="{{ strtolower($item->name . ' ' . $item->nik) }}"
                     data-jabatan="{{ strtolower($item->jabatan) }}"
@@ -189,7 +189,7 @@
                                     </span>
                                 @endif
                                 @if(str_contains($item->unit_sekolah, 'SMP'))
-                                    <span class="inline-block text-[11px] px-2.5 py-1 rounded-md font-bold border bg-[#002D8B]/10 text-[#002D8B] border-[#002D8B]/20">
+                                    <span class="inline-block text-[11px] px-2.5 py-1 rounded-md font-bold border bg-[#F97316]/10 text-[#F97316] border-[#F97316]/20">
                                         UNIT SMP
                                     </span>
                                 @endif
@@ -235,7 +235,7 @@
                             </a>
                             
                             <!-- Tombol Edit -->
-                            <a href="{{ route('admin.guru.edit', $item->id) }}" class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-800 rounded-lg hover:bg-blue-800 hover:text-white transition shadow-sm" title="Edit Data">
+                            <a href="{{ route('admin.guru.edit', $item->id) }}" class="w-8 h-8 flex items-center justify-center bg-orange-50 text-orange-800 rounded-lg hover:bg-orange-800 hover:text-white transition shadow-sm" title="Edit Data">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
                             
@@ -283,11 +283,11 @@
                             <div x-show="detailOpen" x-transition.scale.origin.bottom class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden z-10 flex flex-col max-h-[90vh]">
                                 
                                 <!-- Header Modal (Biru) -->
-                                <div class="px-6 py-4 border-b flex justify-between items-center bg-blue-800 text-white">
+                                <div class="px-6 py-4 border-b flex justify-between items-center bg-orange-800 text-white">
                                     <h3 class="text-lg font-bold flex items-center gap-2">
                                         <i class="fa-solid fa-address-card"></i> Profil Detail Pegawai
                                     </h3>
-                                    <button @click="detailOpen = false" class="text-blue-100 hover:text-white transition-colors">
+                                    <button @click="detailOpen = false" class="text-orange-100 hover:text-white transition-colors">
                                         <i class="fa-solid fa-xmark text-2xl"></i>
                                     </button>
                                 </div>
@@ -297,7 +297,7 @@
                                     
                                     <!-- Foto Profil Besar di Modal -->
                                     <div class="flex flex-col items-center justify-center mb-6">
-                                        <img src="{{ $fotoUrl }}" class="w-32 h-32 rounded-full object-cover border-4 border-blue-100 shadow-lg mb-3">
+                                        <img src="{{ $fotoUrl }}" class="w-32 h-32 rounded-full object-cover border-4 border-orange-100 shadow-lg mb-3">
                                         <h4 class="text-xl font-bold text-gray-800">{{ $item->name }}</h4>
                                         <span class="inline-block mt-1 text-xs px-3 py-1 rounded-full border font-bold {{ $badgeJabatan }}">{{ strtoupper($item->jabatan) }}</span>
                                         
@@ -307,7 +307,7 @@
                                                 <span class="inline-block text-[11px] px-2 py-0.5 rounded-md font-bold border bg-red-50 text-red-600 border-red-200">UNIT SD</span>
                                             @endif
                                             @if(str_contains($item->unit_sekolah, 'SMP'))
-                                                <span class="inline-block text-[11px] px-2 py-0.5 rounded-md font-bold border bg-blue-50 text-blue-800 border-blue-200">UNIT SMP</span>
+                                                <span class="inline-block text-[11px] px-2 py-0.5 rounded-md font-bold border bg-orange-50 text-orange-800 border-orange-200">UNIT SMP</span>
                                             @endif
                                         </div>
                                     </div>
@@ -364,7 +364,7 @@
                                     <a href="{{ route('admin.guru.print', $item->id) }}" target="_blank" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition" title="Cetak Data">
                                         <i class="fa-solid fa-print mr-1"></i> Cetak
                                     </a>
-                                    <button @click="detailOpen = false" type="button" class="px-4 py-2 bg-blue-800 rounded-lg text-sm font-semibold text-white hover:bg-blue-700 transition">
+                                    <button @click="detailOpen = false" type="button" class="px-4 py-2 bg-orange-800 rounded-lg text-sm font-semibold text-white hover:bg-orange-700 transition">
                                         Tutup
                                     </button>
                                 </div>
@@ -553,7 +553,7 @@
             for (let i = 1; i <= totalPages; i++) {
                 const btnPage = document.createElement('button');
                 btnPage.innerText = i;
-                btnPage.className = `px-3 py-2 text-sm font-medium border-t border-b border-gray-300 ${currentPage === i ? 'bg-blue-50 text-blue-800 border-l border-r z-10' : 'bg-white text-gray-700 hover:bg-gray-50 border-l'}`;
+                btnPage.className = `px-3 py-2 text-sm font-medium border-t border-b border-gray-300 ${currentPage === i ? 'bg-orange-50 text-orange-800 border-l border-r z-10' : 'bg-white text-gray-700 hover:bg-gray-50 border-l'}`;
                 btnPage.onclick = () => { currentPage = i; updateTable(); };
                 container.appendChild(btnPage);
             }

@@ -37,14 +37,14 @@
                 <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
                     Nama Lengkap <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="name" id="name" value="{{ old('name') }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all placeholder-gray-400" required placeholder="Contoh: Budi Santoso, S.Pd">
+                <input type="text" name="name" id="name" value="{{ old('name') }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#F08600] focus:border-[#F08600] outline-none transition-all placeholder-gray-400" required placeholder="Contoh: Budi Santoso, S.Pd">
             </div>
 
             <div>
                 <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">
                     Username / NIK <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="username" id="username" value="{{ old('username') }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all placeholder-gray-400" required placeholder="Masukkan NIK atau Username unik">
+                <input type="text" name="username" id="username" value="{{ old('username') }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#F08600] focus:border-[#F08600] outline-none transition-all placeholder-gray-400" required placeholder="Masukkan NIK atau Username unik">
             </div>
 
             <div>
@@ -52,7 +52,7 @@
                     Hak Akses (Role) <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
-                    <select name="role" id="role" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all appearance-none bg-white" required>
+                    <select name="role" id="role" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#F08600] focus:border-[#F08600] outline-none transition-all appearance-none bg-white" required>
                         <option value="" disabled selected>Pilih Hak Akses</option>
                         <option value="guru" {{ old('role') == 'guru' ? 'selected' : '' }}>Guru</option>
                         <option value="kepala_yayasan" {{ old('role') == 'kepala_yayasan' ? 'selected' : '' }}>Kepala Yayasan</option>
@@ -68,7 +68,7 @@
                 <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
                     Password <span class="text-red-500">*</span>
                 </label>
-                <input type="password" name="password" id="password" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all placeholder-gray-400" required placeholder="Masukkan password (minimal 6 karakter)">
+                <input type="password" name="password" id="password" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#F08600] focus:border-[#F08600] outline-none transition-all placeholder-gray-400" required placeholder="Masukkan password (minimal 6 karakter)">
             </div>
             
         </div>
@@ -77,7 +77,7 @@
             <a href="{{ route('admin.user.index') }}" class="w-full md:w-auto px-6 py-2.5 rounded-xl text-gray-600 bg-gray-100 hover:bg-gray-200 font-semibold text-sm transition-colors text-center">
                 Batal
             </a>
-            <button type="submit" class="w-full md:w-auto px-6 py-2.5 rounded-xl text-white bg-[#1e3b8b] hover:bg-[#152b69] font-semibold text-sm transition-colors shadow-sm flex justify-center items-center gap-2">
+            <button type="submit" class="w-full md:w-auto px-6 py-2.5 rounded-xl text-white bg-[#F08600] hover:bg-[#152b69] font-semibold text-sm transition-colors shadow-sm flex justify-center items-center gap-2">
                 <i class="fa-solid fa-plus"></i> Tambah Akun
             </button>
         </div>

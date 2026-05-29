@@ -18,7 +18,7 @@
         <div class="p-5 md:p-6 border-b border-gray-100 flex justify-between items-center bg-white">
             <div>
                 <h3 class="text-lg md:text-xl font-bold text-gray-800">Perekaman Wajah</h3>
-                <p class="text-sm font-medium text-[#1e3b8b] mt-0.5">{{ $guru->name }} <span class="text-gray-400 font-normal">| NIK: {{ $guru->nik ?? $guru->username }}</span></p>
+                <p class="text-sm font-medium text-[#F08600] mt-0.5">{{ $guru->name }} <span class="text-gray-400 font-normal">| NIK: {{ $guru->nik ?? $guru->username }}</span></p>
             </div>
             <a href="{{ route('admin.face.index') }}" class="flex items-center justify-center w-10 h-10 bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-800 rounded-xl transition-colors shadow-sm" title="Kembali">
                 <i class="fa-solid fa-arrow-left"></i>
@@ -47,7 +47,7 @@
                     </p>
                 </div>
                 
-                <button id="capture-btn" disabled class="w-full bg-[#1e3b8b] hover:bg-[#152b69] text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-sm disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed flex items-center justify-center text-sm uppercase tracking-wider">
+                <button id="capture-btn" disabled class="w-full bg-[#F08600] hover:bg-[#152b69] text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-sm disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed flex items-center justify-center text-sm uppercase tracking-wider">
                     <i class="fa-solid fa-expand mr-2 text-lg"></i> Rekam & Simpan Wajah
                 </button>
             </div>
@@ -116,12 +116,12 @@
                 faceapi.draw.drawFaceLandmarks(overlay, resizedDetections);
                 
                 captureBtn.disabled = false;
-                captureBtn.classList.replace('bg-gray-200', 'bg-[#1e3b8b]');
+                captureBtn.classList.replace('bg-gray-200', 'bg-[#F08600]');
                 captureBtn.classList.remove('disabled:text-gray-400');
                 statusText.innerHTML = '<span class="text-green-600 font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-face-smile text-lg"></i> Wajah terdeteksi! Silakan klik rekam.</span>';
             } else {
                 captureBtn.disabled = true;
-                captureBtn.classList.replace('bg-[#1e3b8b]', 'bg-gray-200');
+                captureBtn.classList.replace('bg-[#F08600]', 'bg-gray-200');
                 captureBtn.classList.add('disabled:text-gray-400');
                 statusText.innerHTML = '<span class="text-orange-500 flex items-center justify-center gap-2"><i class="fa-solid fa-spinner fa-spin"></i> Mencari wajah...</span>';
             }
@@ -140,7 +140,7 @@
                 title: '<span class="font-poppins">Gagal</span>',
                 html: '<span class="font-poppins text-sm">Wajah tidak terdeteksi dengan jelas. Ulangi kembali.</span>',
                 icon: 'error',
-                confirmButtonColor: '#1e3b8b'
+                confirmButtonColor: '#F08600'
             });
             captureBtn.innerHTML = '<i class="fa-solid fa-expand mr-2 text-lg"></i> Rekam & Simpan Wajah';
             return;
@@ -182,7 +182,7 @@
                     title: '<span class="font-poppins">Error</span>',
                     html: `<span class="font-poppins text-sm">${data.message}</span>`,
                     icon: 'error',
-                    confirmButtonColor: '#1e3b8b'
+                    confirmButtonColor: '#F08600'
                 });
             }
         })
@@ -192,7 +192,7 @@
                 title: '<span pclass="font-poppins">Error</span>',
                 html: '<span class="font-poppins text-sm">Terjadi kesalahan jaringan.</span>',
                 icon: 'error',
-                confirmButtonColor: '#1e3b8b'
+                confirmButtonColor: '#F08600'
             });
         })
         .finally(() => {

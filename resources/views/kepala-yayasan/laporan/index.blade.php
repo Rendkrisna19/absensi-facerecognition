@@ -10,7 +10,7 @@
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="bg-gray-50/50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <h4 class="font-bold text-gray-800 flex items-center gap-2">
-                <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
+                <div class="w-8 h-8 rounded-lg bg-orange-100 text-orange-700 flex items-center justify-center">
                     <i class="fa-solid fa-filter"></i>
                 </div>
                 Filter Laporan (Pilih Rentang Waktu)
@@ -28,7 +28,7 @@
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
                                 <i class="fa-regular fa-calendar"></i>
                             </div>
-                            <input type="date" name="start_date" value="{{ $startDate }}" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm">
+                            <input type="date" name="start_date" value="{{ $startDate }}" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all text-sm">
                         </div>
                     </div>
                     
@@ -39,7 +39,7 @@
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
                                 <i class="fa-regular fa-calendar-check"></i>
                             </div>
-                            <input type="date" name="end_date" value="{{ $endDate }}" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm">
+                            <input type="date" name="end_date" value="{{ $endDate }}" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all text-sm">
                         </div>
                     </div>
 
@@ -50,7 +50,7 @@
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
                                 <i class="fa-solid fa-building"></i>
                             </div>
-                            <select name="unit_sekolah" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm appearance-none">
+                            <select name="unit_sekolah" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all text-sm appearance-none">
                                 <option value="Semua" {{ request('unit_sekolah') == 'Semua' ? 'selected' : '' }}>Semua Unit</option>
                                 <option value="SD" {{ request('unit_sekolah') == 'SD' ? 'selected' : '' }}>SD</option>
                                 <option value="SMP" {{ request('unit_sekolah') == 'SMP' ? 'selected' : '' }}>SMP</option>
@@ -65,7 +65,7 @@
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
                                 <i class="fa-solid fa-chalkboard-user"></i>
                             </div>
-                            <select name="guru_id" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm appearance-none">
+                            <select name="guru_id" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all text-sm appearance-none">
                                 <option value="">-- Semua Guru --</option>
                                 @foreach($gurus as $guru)
                                     <option value="{{ $guru->id }}" {{ request('guru_id') == $guru->id ? 'selected' : '' }}>
@@ -78,7 +78,7 @@
 
                     <!-- Tombol Aksi -->
                     <div class="flex gap-2 h-[42px]">
-                        <button type="submit" class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 text-sm">
+                        <button type="submit" class="flex-1 bg-orange-700 hover:bg-orange-800 text-white font-semibold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 text-sm">
                             <i class="fa-solid fa-magnifying-glass"></i> Filter
                         </button>
                         <a href="{{ route('yayasan.laporan.index') }}" class="px-4 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-semibold rounded-xl transition-all flex items-center justify-center" title="Reset Filter">
@@ -93,8 +93,8 @@
     <!-- CARD REKAP ABSENSI -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <!-- Total Absen -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-blue-500">
-            <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-xl"><i class="fa-solid fa-clipboard-user"></i></div>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-orange-500">
+            <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center text-xl"><i class="fa-solid fa-clipboard-user"></i></div>
             <div>
                 <p class="text-sm text-gray-500 font-semibold">Total Data</p>
                 <h4 class="text-2xl font-bold text-gray-800">{{ $summary['total'] }}</h4>
@@ -133,7 +133,7 @@
         <div class="flex flex-col md:flex-row justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-100 mb-4 gap-4">
             <div class="flex items-center gap-3 w-full md:w-auto">
                 <span class="text-sm text-gray-600 font-medium">Tampilkan</span>
-                <select id="perPage" class="border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 w-20">
+                <select id="perPage" class="border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 w-20">
                     <option value="5">5</option>
                     <option value="10" selected>10</option>
                     <option value="25">25</option>
@@ -149,7 +149,7 @@
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                         <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                     </div>
-                    <input type="text" id="searchInput" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5" placeholder="Cari nama guru atau status...">
+                    <input type="text" id="searchInput" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full pl-10 p-2.5" placeholder="Cari nama guru atau status...">
                 </div>
                 
                 <!-- Export Buttons -->
@@ -168,7 +168,7 @@
         <div class="overflow-x-auto rounded-xl border border-gray-200">
             <table class="w-full text-left border-collapse" id="dataTable">
                 <thead>
-                    <tr class="bg-blue-800 text-white text-sm uppercase tracking-wider border-b border-blue-900">
+                    <tr class="bg-orange-800 text-white text-sm uppercase tracking-wider border-b border-orange-900">
                         <th class="px-6 py-4 font-semibold">Tanggal & Hari</th>
                         <th class="px-6 py-4 font-semibold">Profil Guru</th>
                         <th class="px-6 py-4 font-semibold text-center">Jam Masuk</th>
@@ -179,7 +179,7 @@
                 <tbody class="text-sm bg-white" id="tableBody">
                     @forelse($absensis as $absen)
                     <!-- data-search dipasang agar JS gampang memfilter teks -->
-                    <tr class="data-row border-b border-gray-50 hover:bg-blue-50/50 transition-colors group"
+                    <tr class="data-row border-b border-gray-50 hover:bg-orange-50/50 transition-colors group"
                         data-search="{{ strtolower($absen->user->name ?? '') }} {{ strtolower($absen->status) }} {{ \Carbon\Carbon::parse($absen->tanggal)->translatedFormat('d M Y') }}">
                         
                         <td class="px-6 py-4">
@@ -193,7 +193,7 @@
                                     $nameParts = explode(' ', $absen->user->name ?? 'U T');
                                     $initials = substr($nameParts[0], 0, 1) . (isset($nameParts[1]) ? substr($nameParts[1], 0, 1) : '');
                                 @endphp
-                                <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm border border-blue-200 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm border border-orange-200 group-hover:bg-orange-600 group-hover:text-white transition-colors">
                                     {{ strtoupper($initials) }}
                                 </div>
                                 <div>
@@ -348,7 +348,7 @@
 
                 const btnPage = document.createElement('button');
                 btnPage.innerText = i;
-                btnPage.className = `px-3 py-2 text-sm font-medium border-t border-b border-gray-300 ${currentPage === i ? 'bg-blue-100 text-blue-800 border-l border-r border-blue-300 z-10 font-bold' : 'bg-white text-gray-700 hover:bg-gray-50 border-l'}`;
+                btnPage.className = `px-3 py-2 text-sm font-medium border-t border-b border-gray-300 ${currentPage === i ? 'bg-orange-100 text-orange-800 border-l border-r border-orange-300 z-10 font-bold' : 'bg-white text-gray-700 hover:bg-gray-50 border-l'}`;
                 btnPage.onclick = () => { currentPage = i; updateTable(); };
                 container.appendChild(btnPage);
             }

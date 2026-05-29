@@ -8,42 +8,42 @@
 
 <div class="space-y-6">
     
-    <div class="bg-gradient-to-r from-[#002D8B] to-[#001f63] rounded-2xl shadow-lg p-6 md:p-8 text-white flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
+    <div class="bg-gradient-to-r from-[#F97316] to-[#EA580C] rounded-2xl shadow-lg p-6 md:p-8 text-white flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
         <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
         <div class="mb-4 md:mb-0 relative z-5">
             <h2 class="text-2xl font-bold">Ringkasan Manajemen Tri Jaya</h2>
-            <p class="text-blue-200 mt-1 text-sm md:text-base">Pantau kedisiplinan dan estimasi pemotongan gaji secara real-time.</p>
+            <p class="text-orange-200 mt-1 text-sm md:text-base">Pantau kedisiplinan dan estimasi pemotongan gaji secara real-time.</p>
         </div>
         
         <form method="GET" class="relative z-10 flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 p-2.5 rounded-xl">
-            <select name="bulan" class="bg-white/90 text-gray-800 text-sm font-bold rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-300 border-none shadow-inner">
+            <select name="bulan" class="bg-white/90 text-gray-800 text-sm font-bold rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-orange-300 border-none shadow-inner">
                 @foreach(range(1, 12) as $bln)
                     <option value="{{ $bln }}" {{ $bulanSelected == $bln ? 'selected' : '' }}>
                         {{ \Carbon\Carbon::create()->month($bln)->translatedFormat('F') }}
                     </option>
                 @endforeach
             </select>
-            <select name="tahun" class="bg-white/90 text-gray-800 text-sm font-bold rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-300 border-none shadow-inner">
+            <select name="tahun" class="bg-white/90 text-gray-800 text-sm font-bold rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-orange-300 border-none shadow-inner">
                 @foreach(range(date('Y')-2, date('Y')) as $thn)
                     <option value="{{ $thn }}" {{ $tahunSelected == $thn ? 'selected' : '' }}>{{ $thn }}</option>
                 @endforeach
             </select>
-            <select name="unit_sekolah" class="bg-white/90 text-gray-800 text-sm font-bold rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-300 border-none shadow-inner">
+            <select name="unit_sekolah" class="bg-white/90 text-gray-800 text-sm font-bold rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-orange-300 border-none shadow-inner">
                 <option value="all" {{ $unitSelected == 'all' ? 'selected' : '' }}>Semua Unit</option>
                 <option value="SD" {{ $unitSelected == 'SD' ? 'selected' : '' }}>Unit SD</option>
                 <option value="SMP" {{ $unitSelected == 'SMP' ? 'selected' : '' }}>Unit SMP</option>
             </select>
-            <button type="submit" class="bg-white text-[#002D8B] hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm">
+            <button type="submit" class="bg-white text-[#F97316] hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm">
                 <i class="fa-solid fa-filter"></i> Filter
             </button>
         </form>
     </div>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white rounded-2xl p-5 border-t-4 border-blue-500 shadow-md hover:shadow-xl hover:-translate-y-1 relative overflow-hidden group transition-all duration-300">
+        <div class="bg-white rounded-2xl p-5 border-t-4 border-orange-500 shadow-md hover:shadow-xl hover:-translate-y-1 relative overflow-hidden group transition-all duration-300">
             <p class="text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-1">Total Guru</p>
             <h3 class="text-3xl font-black text-gray-800">{{ $metrics['total_guru'] }}</h3>
-            <i class="fa-solid fa-users absolute -right-3 -bottom-3 text-6xl text-blue-50 group-hover:text-blue-100 group-hover:scale-110 transition-transform duration-300"></i>
+            <i class="fa-solid fa-users absolute -right-3 -bottom-3 text-6xl text-orange-50 group-hover:text-orange-100 group-hover:scale-110 transition-transform duration-300"></i>
         </div>
         <div class="bg-white rounded-2xl p-5 border-t-4 border-green-500 shadow-md hover:shadow-xl hover:-translate-y-1 relative overflow-hidden group transition-all duration-300">
             <p class="text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-1">Hadir Tepat (Hari Ini)</p>
@@ -65,7 +65,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 lg:col-span-2 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -mr-20 -mt-20"></div>
+            <div class="absolute top-0 right-0 w-64 h-64 bg-orange-50/50 rounded-full blur-3xl -mr-20 -mt-20"></div>
             <div class="flex justify-between items-center mb-6 relative z-10">
                 <div>
                     <h4 class="text-lg font-black text-gray-800 tracking-tight">Tren Kehadiran Harian</h4>

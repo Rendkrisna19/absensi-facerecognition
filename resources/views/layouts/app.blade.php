@@ -22,8 +22,8 @@
                     },
                     colors: {
                         brand: {
-                            DEFAULT: '#002D8B', 
-                            light: '#1A4BAF',
+                            DEFAULT: '#F97316', 
+                            light: '#FB923C',
                             dark: '#001A52',
                         }
                     }
@@ -34,12 +34,16 @@
             return {
                 time: '',
                 date: '',
+                mockTime: new Date('2026-05-29T07:00:00').getTime(),
                 init() {
                     this.updateClock();
-                    setInterval(() => this.updateClock(), 1000);
+                    setInterval(() => {
+                        this.mockTime += 1000;
+                        this.updateClock();
+                    }, 1000);
                 },
                 updateClock() {
-                    const now = new Date();
+                    const now = new Date(this.mockTime);
                     const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
                     const optionsTime = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
                     
@@ -68,7 +72,7 @@
 
             @include('components.footer')
         </div>
-    </div>
+    </div>  
 
     @if(session('success'))
 <script>

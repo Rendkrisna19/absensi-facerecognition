@@ -6,7 +6,7 @@
 
 @section('content')
     <div class="mb-6">
-        <a href="{{ route('guru.pengajuan-izin.create') }}" class="w-full flex items-center justify-center gap-2 bg-[#002D8B] text-white py-3.5 rounded-xl font-semibold shadow-md active:scale-95 transition-transform">
+        <a href="{{ route('guru.pengajuan-izin.create') }}" class="w-full flex items-center justify-center gap-2 bg-[#F97316] text-white py-3.5 rounded-xl font-semibold shadow-md active:scale-95 transition-transform">
             <i class="fa-solid fa-plus"></i> Ajukan Izin / Sakit Baru
         </a>
     </div>
@@ -37,7 +37,7 @@
 
                 <div class="pl-2 mt-3">
                     <div class="flex items-center text-sm text-gray-800 font-semibold mb-1">
-                        <i class="fa-regular fa-calendar text-[#002D8B] mr-2"></i>
+                        <i class="fa-regular fa-calendar text-[#F97316] mr-2"></i>
                         {{ \Carbon\Carbon::parse($izin->tanggal_mulai)->format('d M Y') }}
                         @if($izin->tanggal_mulai != $izin->tanggal_selesai)
                             - {{ \Carbon\Carbon::parse($izin->tanggal_selesai)->format('d M Y') }}

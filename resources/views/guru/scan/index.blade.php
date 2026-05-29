@@ -72,7 +72,7 @@
                                 ->first();
             
             $jenisAbsen = !$absenHariIni ? 'MASUK' : 'PULANG';
-            $badgeColor = !$absenHariIni ? 'bg-green-100 text-green-700 border-green-200' : 'bg-blue-100 text-[#002D8B] border-blue-200';
+            $badgeColor = !$absenHariIni ? 'bg-green-100 text-green-700 border-green-200' : 'bg-orange-100 text-[#F97316] border-orange-200';
             $iconAbsen  = !$absenHariIni ? 'fa-right-to-bracket' : 'fa-person-walking-arrow-right';
         @endphp
 
@@ -87,7 +87,7 @@
             <div class="relative w-full max-w-[280px] mx-auto aspect-[3/4] bg-gray-900 rounded-2xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.12)] border-4 border-gray-50 flex items-center justify-center">
                 
                 <div id="loading" class="absolute inset-0 flex flex-col items-center justify-center bg-gray-800 z-20 text-white">
-                    <i class="fa-solid fa-spinner fa-spin text-4xl mb-4 text-[#002D8B]"></i>
+                    <i class="fa-solid fa-spinner fa-spin text-4xl mb-4 text-[#F97316]"></i>
                     <p class="text-xs font-medium text-center px-4 leading-relaxed">
                         Menyiapkan Pemindai Wajah...<br>
                         <span class="text-[10px] text-gray-400 font-normal mt-1 block">Pastikan pencahayaan cukup dan wajah tidak tertutup</span>
@@ -102,7 +102,7 @@
                 </div>
             </div>
             
-            <p id="status-text" class="text-sm font-bold text-[#002D8B] mt-5 bg-blue-50 py-2.5 rounded-xl border border-blue-100 shadow-sm">
+            <p id="status-text" class="text-sm font-bold text-[#F97316] mt-5 bg-orange-50 py-2.5 rounded-xl border border-orange-100 shadow-sm">
                 <i class="fa-solid fa-circle-notch fa-spin mr-1.5"></i> Sedang mendeteksi wajah...
             </p>
         </div>
@@ -212,7 +212,7 @@
                     statusText.innerHTML = '<span class="text-red-500 font-semibold"><i class="fa-solid fa-xmark-circle mr-1"></i> Wajah belum terverifikasi. Pastikan pencahayaan cukup dan wajah terlihat jelas.</span>';
                 }
             } else {
-                statusText.innerHTML = '<span class="text-[#002D8B]"><i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Memindai posisi wajah...</span>';
+                statusText.innerHTML = '<span class="text-[#F97316]"><i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Memindai posisi wajah...</span>';
             }
 
             setTimeout(prosesScan, 400);

@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Carbon\Carbon;
 
-class LaporanAbsensiExport implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
+class LaporanAbsensiExport implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize  
 {
     protected $startDate, $endDate, $guruId, $unitSekolah;
 

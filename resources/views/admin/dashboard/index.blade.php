@@ -26,18 +26,18 @@
 
     <!-- Welcome Section -->
     <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
-        <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 opacity-50 blur-3xl"></div>
+        <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-gradient-to-br from-orange-50 to-orange-100 opacity-50 blur-3xl"></div>
         
         <div class="relative z-10">
-            <h3 class="text-3xl font-bold text-gray-800">Selamat Datang, <span class="text-[#1e3b8b]">{{ auth()->user()->name ?? 'Admin' }}</span>! 👋</h3>
+            <h3 class="text-3xl font-bold text-gray-800">Selamat Datang, <span class="text-[#F08600]">{{ auth()->user()->name ?? 'Admin' }}</span>! 👋</h3>
             <p class="text-gray-500 mt-2 text-sm md:text-base">Pantau presensi dan kedisiplinan guru hari ini secara real-time dengan mudah.</p>
         </div>
         <div class="w-full md:w-auto text-left md:text-right relative z-10">
             <div class="inline-flex items-center bg-white px-5 py-3 rounded-2xl font-bold border border-gray-200 shadow-sm transition-transform hover:scale-105">
-                <div class="bg-blue-100 p-2 rounded-xl mr-3">
+                <div class="bg-orange-100 p-2 rounded-xl mr-3">
                     <i class="fa-regular fa-calendar-check text-xl text-[#3b82f6]"></i> 
                 </div>
-                <span class="text-[#1e3b8b]">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
+                <span class="text-[#F08600]">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
             </div>
         </div>
     </div>
@@ -45,13 +45,13 @@
     <!-- Statistics Section -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         
-        <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm relative overflow-hidden group hover:bg-gradient-to-br hover:from-blue-600 hover:to-blue-800 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-2 transition-all duration-300 ease-in-out cursor-pointer">
-            <div class="absolute right-0 top-0 mt-6 mr-6 bg-blue-50 text-blue-600 p-4 rounded-2xl transition-all duration-300 group-hover:bg-white/20 group-hover:text-white group-hover:scale-110 group-hover:rotate-6">
+        <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm relative overflow-hidden group hover:bg-gradient-to-br hover:from-orange-600 hover:to-orange-800 hover:shadow-xl hover:shadow-orange-500/30 hover:-translate-y-2 transition-all duration-300 ease-in-out cursor-pointer">
+            <div class="absolute right-0 top-0 mt-6 mr-6 bg-orange-50 text-orange-600 p-4 rounded-2xl transition-all duration-300 group-hover:bg-white/20 group-hover:text-white group-hover:scale-110 group-hover:rotate-6">
                 <i class="fa-solid fa-users text-2xl"></i>
             </div>
-            <p class="text-gray-500 group-hover:text-blue-100 text-sm font-semibold uppercase tracking-wider transition-colors duration-300 mt-2">Total Guru</p>
+            <p class="text-gray-500 group-hover:text-orange-100 text-sm font-semibold uppercase tracking-wider transition-colors duration-300 mt-2">Total Guru</p>
             <h4 class="text-4xl font-bold text-gray-800 group-hover:text-white mt-3 transition-colors duration-300">
-                {{ $stats['total_guru'] }} <span class="text-base font-medium text-gray-400 group-hover:text-blue-200 normal-case tracking-normal transition-colors duration-300">orang</span>
+                {{ $stats['total_guru'] }} <span class="text-base font-medium text-gray-400 group-hover:text-orange-200 normal-case tracking-normal transition-colors duration-300">orang</span>
             </h4>
         </div>
 
@@ -94,7 +94,7 @@
                 <h4 class="text-xl font-bold text-gray-800">Aktivitas Masuk Terbaru</h4>
                 <p class="text-sm text-gray-500 mt-1">Daftar absensi terakhir hari ini.</p>
             </div>
-            <a href="#" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-[#1e3b8b] bg-blue-50 rounded-xl hover:bg-[#1e3b8b] hover:text-white transition-colors duration-300">
+            <a href="#" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-[#F08600] bg-orange-50 rounded-xl hover:bg-[#F08600] hover:text-white transition-colors duration-300">
                 Lihat Semua Data <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
             </a>
         </div>
@@ -112,11 +112,11 @@
                 </thead>
                 <tbody class="divide-y divide-gray-50">
                     @forelse($recent_absensi as $index => $absen)
-                    <tr class="hover:bg-blue-50/40 transition-colors duration-200 group">
+                    <tr class="hover:bg-orange-50/40 transition-colors duration-200 group">
                         <td class="p-5 text-gray-500 font-medium text-center">{{ $index + 1 }}</td>
                         <td class="p-5">
                             <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700 flex items-center justify-center font-bold text-sm shadow-inner group-hover:scale-105 transition-transform">
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-100 to-orange-200 text-orange-700 flex items-center justify-center font-bold text-sm shadow-inner group-hover:scale-105 transition-transform">
                                     {{ strtoupper(substr($absen->user->name ?? 'G', 0, 2)) }}
                                 </div>
                                 <div>

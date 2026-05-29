@@ -27,7 +27,7 @@
                     <p class="text-xs text-gray-500 font-medium">@yield('subtitle', 'Selamat Datang,')</p>
                     <h1 class="text-lg font-bold text-gray-800">@yield('page_title', auth()->user()->name)</h1>
                 </div>
-                <div class="w-10 h-10 rounded-full bg-[#002D8B]/10 text-[#002D8B] flex items-center justify-center font-bold border border-[#002D8B]/20 overflow-hidden shadow-sm">
+                <div class="w-10 h-10 rounded-full bg-[#F97316]/10 text-[#F97316] flex items-center justify-center font-bold border border-[#F97316]/20 overflow-hidden shadow-sm">
                     @if(auth()->user()->foto_profil)
                         <img src="{{ asset('storage/' . auth()->user()->foto_profil) }}" alt="Profil" class="w-full h-full object-cover">
                     @else
@@ -45,35 +45,35 @@
             <div class="bg-white rounded-3xl shadow-[0_-4px_25px_rgba(0,0,0,0.08)] px-2 py-2.5 flex items-center relative pointer-events-auto border border-gray-100">
                 
                 <div class="flex w-1/2 pr-7">
-                    <a href="{{ route('guru.dashboard') }}" class="flex-1 flex flex-col items-center justify-center text-[10px] sm:text-xs {{ request()->routeIs('guru.dashboard') ? 'text-[#002D8B] font-bold' : 'text-gray-400 font-medium' }}">
+                    <a href="{{ route('guru.dashboard') }}" class="flex-1 flex flex-col items-center justify-center text-[10px] sm:text-xs {{ request()->routeIs('guru.dashboard') ? 'text-[#F97316] font-bold' : 'text-gray-400 font-medium' }}">
                         <i class="fa-solid fa-house text-lg mb-1 {{ request()->routeIs('guru.dashboard') ? 'mb-0.5' : '' }}"></i>
                         <span>Beranda</span>
                     </a>
                     
-                    <a href="{{ route('guru.riwayat') }}" class="flex-1 flex flex-col items-center justify-center text-[10px] sm:text-xs {{ request()->routeIs('guru.riwayat') ? 'text-[#002D8B] font-bold' : 'text-gray-400 font-medium' }}">
+                    <a href="{{ route('guru.riwayat') }}" class="flex-1 flex flex-col items-center justify-center text-[10px] sm:text-xs {{ request()->routeIs('guru.riwayat') ? 'text-[#F97316] font-bold' : 'text-gray-400 font-medium' }}">
                         <i class="fa-solid fa-clock-rotate-left text-lg mb-1 {{ request()->routeIs('guru.riwayat') ? 'mb-0.5' : '' }}"></i>
                         <span>Riwayat</span>
                     </a>
                 </div>
 
                 <div class="absolute left-1/2 -translate-x-1/2 -top-6 z-30">
-                    <a href="{{ route('guru.scan') }}" class="flex items-center justify-center w-14 h-14 bg-[#002D8B] text-white rounded-full shadow-[0_8px_20px_rgba(0,45,139,0.4)] hover:scale-105 hover:bg-[#001f63] transition-transform border-4 border-white">
+                    <a href="{{ route('guru.scan') }}" class="flex items-center justify-center w-14 h-14 bg-[#F97316] text-white rounded-full shadow-[0_8px_20px_rgba(249,115,22,0.4)] hover:scale-105 hover:bg-[#EA580C] transition-transform border-4 border-white">
                         <i class="fa-solid fa-camera text-2xl"></i>
                     </a>
                 </div>
 
                 <div class="flex w-1/2 pl-7">
-                    <a href="{{ route('guru.pengajuan-izin.index') }}" class="flex-1 flex flex-col items-center justify-center text-[10px] sm:text-[11px] {{ request()->routeIs('guru.pengajuan-izin.*') ? 'text-[#002D8B] font-bold' : 'text-gray-400 font-medium' }}">
+                    <a href="{{ route('guru.pengajuan-izin.index') }}" class="flex-1 flex flex-col items-center justify-center text-[10px] sm:text-[11px] {{ request()->routeIs('guru.pengajuan-izin.*') ? 'text-[#F97316] font-bold' : 'text-gray-400 font-medium' }}">
                         <i class="fa-solid fa-envelope-open-text text-lg mb-1 {{ request()->routeIs('guru.pengajuan-izin.*') ? 'mb-0.5' : '' }}"></i>
                         <span>Izin</span>
                     </a>
 
-                    <a href="{{ route('guru.denda') }}" class="flex-1 flex flex-col items-center justify-center text-[10px] sm:text-[11px] {{ request()->routeIs('guru.denda') ? 'text-[#002D8B] font-bold' : 'text-gray-400 font-medium' }}">
+                    <a href="{{ route('guru.denda') }}" class="flex-1 flex flex-col items-center justify-center text-[10px] sm:text-[11px] {{ request()->routeIs('guru.denda') ? 'text-[#F97316] font-bold' : 'text-gray-400 font-medium' }}">
                         <i class="fa-solid fa-money-bill-wave text-lg mb-1 {{ request()->routeIs('guru.denda') ? 'mb-0.5' : '' }}"></i>
                         <span>Denda</span>
                     </a>
 
-                    <a href="{{ route('guru.pengaturan') }}" class="flex-1 flex flex-col items-center justify-center text-[10px] sm:text-[11px] {{ request()->routeIs('guru.pengaturan') ? 'text-[#002D8B] font-bold' : 'text-gray-400 font-medium' }}">
+                    <a href="{{ route('guru.pengaturan') }}" class="flex-1 flex flex-col items-center justify-center text-[10px] sm:text-[11px] {{ request()->routeIs('guru.pengaturan') ? 'text-[#F97316] font-bold' : 'text-gray-400 font-medium' }}">
                         <i class="fa-solid fa-gear text-lg mb-1 {{ request()->routeIs('guru.pengaturan') ? 'mb-0.5' : '' }}"></i>
                         <span>Akun</span>
                     </a>

@@ -5,13 +5,13 @@
     <title>Laporan Kehadiran</title>
     <style>
         body { font-family: sans-serif; font-size: 11px; color: #333; margin: 0; padding: 20px; }
-        .header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid #1e40af; padding-bottom: 10px; }
-        .header h2 { margin: 0; color: #1e40af; font-size: 20px; text-transform: uppercase; }
+        .header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid #FB923C; padding-bottom: 10px; }
+        .header h2 { margin: 0; color: #FB923C; font-size: 20px; text-transform: uppercase; }
         .header p { margin: 5px 0 0; font-size: 13px; color: #555; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #1e40af; color: #ffffff; text-transform: uppercase; font-size: 10px; }
+        th { background-color: #FB923C; color: #ffffff; text-transform: uppercase; font-size: 10px; }
         
         .text-center { text-align: center; }
         .font-bold { font-weight: bold; }

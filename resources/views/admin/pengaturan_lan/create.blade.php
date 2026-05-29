@@ -39,7 +39,7 @@
                 <label class="block text-sm font-semibold text-gray-700 mb-2">
                     Nama Jaringan / Lokasi <span class="text-red-500">*</span>
                 </label>
-                <input type="text" name="nama_jaringan" value="{{ old('nama_jaringan') }}" placeholder="Contoh: WiFi Ruang Guru Utama" required class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all placeholder-gray-400">
+                <input type="text" name="nama_jaringan" value="{{ old('nama_jaringan') }}" placeholder="Contoh: WiFi Ruang Guru Utama" required class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#F08600] focus:border-[#F08600] outline-none transition-all placeholder-gray-400">
             </div>
 
             <div>
@@ -49,8 +49,8 @@
                 
                 <div class="flex flex-col gap-2">
                     <div class="flex">
-                        <input type="text" id="ip_address" name="ip_address" value="{{ old('ip_address') }}" placeholder="Contoh: 103.144.xxx.xxx atau 192.168.1.%" required class="w-full font-mono border border-gray-300 rounded-l-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all placeholder-gray-400 text-blue-700">
-                        <button type="button" onclick="detectMyIp()" class="bg-[#1e3b8b] hover:bg-[#152b69] text-white px-4 py-3 rounded-r-xl transition-colors text-sm font-semibold whitespace-nowrap flex items-center gap-2">
+                        <input type="text" id="ip_address" name="ip_address" value="{{ old('ip_address') }}" placeholder="Contoh: 103.144.xxx.xxx atau 192.168.1.%" required class="w-full font-mono border border-gray-300 rounded-l-xl px-4 py-3 focus:ring-2 focus:ring-[#F08600] focus:border-[#F08600] outline-none transition-all placeholder-gray-400 text-orange-700">
+                        <button type="button" onclick="detectMyIp()" class="bg-[#F08600] hover:bg-[#152b69] text-white px-4 py-3 rounded-r-xl transition-colors text-sm font-semibold whitespace-nowrap flex items-center gap-2">
                             <i class="fa-solid fa-satellite-dish"></i> Deteksi IP
                         </button>
                     </div>
@@ -62,7 +62,7 @@
                     </div>
                     
                     <p class="text-xs text-gray-500 mt-1 leading-relaxed">
-                        <i class="fa-solid fa-circle-info mr-1 text-blue-500"></i> Jika aplikasi di-hosting online, deteksi IP di atas akan mengisi IP Publik sekolah. Jika aplikasi dijalankan offline (localhost), masukkan IP dengan tanda persen, contoh: <strong>192.168.1.%</strong> agar semua HP dengan WiFi yang sama bisa absen.
+                        <i class="fa-solid fa-circle-info mr-1 text-orange-500"></i> Jika aplikasi di-hosting online, deteksi IP di atas akan mengisi IP Publik sekolah. Jika aplikasi dijalankan offline (localhost), masukkan IP dengan tanda persen, contoh: <strong>192.168.1.%</strong> agar semua HP dengan WiFi yang sama bisa absen.
                     </p>
                 </div>
             </div>
@@ -70,7 +70,7 @@
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Status Jaringan</label>
                 <div class="relative">
-                    <select name="is_active" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all appearance-none bg-white">
+                    <select name="is_active" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#F08600] focus:border-[#F08600] outline-none transition-all appearance-none bg-white">
                         <option value="1" {{ old('is_active', '1') == '1' ? 'selected' : '' }}>Aktif (Diizinkan Absen)</option>
                         <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Non-Aktif (Diblokir)</option>
                     </select>
@@ -82,7 +82,7 @@
 
             <div class="md:col-span-2">
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Keterangan Tambahan <span class="text-gray-400 font-normal">(Opsional)</span></label>
-                <textarea name="keterangan" rows="3" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all placeholder-gray-400" placeholder="Tuliskan catatan khusus terkait jaringan ini jika ada...">{{ old('keterangan') }}</textarea>
+                <textarea name="keterangan" rows="3" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#F08600] focus:border-[#F08600] outline-none transition-all placeholder-gray-400" placeholder="Tuliskan catatan khusus terkait jaringan ini jika ada...">{{ old('keterangan') }}</textarea>
             </div>
         </div>
 
@@ -90,7 +90,7 @@
             <a href="{{ route('admin.pengaturan-lan.index') }}" class="w-full md:w-auto px-6 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-colors text-sm text-center">
                 Kembali
             </a>
-            <button type="submit" class="w-full md:w-auto px-6 py-2.5 rounded-xl bg-[#1e3b8b] hover:bg-[#152b69] text-white font-semibold transition-colors shadow-sm flex items-center justify-center gap-2 text-sm">
+            <button type="submit" class="w-full md:w-auto px-6 py-2.5 rounded-xl bg-[#F08600] hover:bg-[#152b69] text-white font-semibold transition-colors shadow-sm flex items-center justify-center gap-2 text-sm">
                 <i class="fa-solid fa-save"></i> Simpan Data
             </button>
         </div>

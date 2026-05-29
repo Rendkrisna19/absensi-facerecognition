@@ -55,7 +55,7 @@
     <div class="flex flex-col md:flex-row justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-100 mb-4 gap-4">
         <div class="flex items-center gap-3 w-full md:w-auto">
             <span class="text-sm text-gray-600 font-medium">Tampilkan</span>
-            <select id="perPage" class="border-gray-300 rounded-lg text-sm focus:ring-[#002D8B] focus:border-[#002D8B] w-20">
+            <select id="perPage" class="border-gray-300 rounded-lg text-sm focus:ring-[#F97316] focus:border-[#F97316] w-20">
                 <option value="5">5</option>
                 <option value="10" selected>10</option>
                 <option value="25">25</option>
@@ -65,7 +65,7 @@
         </div>
 
         <div class="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto">
-            <select id="filterStatus" class="border-gray-300 rounded-lg text-sm focus:ring-[#002D8B] focus:border-[#002D8B] w-full md:w-40">
+            <select id="filterStatus" class="border-gray-300 rounded-lg text-sm focus:ring-[#F97316] focus:border-[#F97316] w-full md:w-40">
                 <option value="all">Semua Status</option>
                 <option value="pending">Pending</option>
                 <option value="disetujui">Disetujui</option>
@@ -76,7 +76,7 @@
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                 </div>
-                <input type="text" id="searchInput" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#002D8B] focus:border-[#002D8B] block w-full pl-10 p-2.5" placeholder="Cari nama atau alasan...">
+                <input type="text" id="searchInput" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#F97316] focus:border-[#F97316] block w-full pl-10 p-2.5" placeholder="Cari nama atau alasan...">
             </div>
         </div>
     </div>
@@ -84,11 +84,11 @@
     <div class="overflow-x-auto rounded-xl border border-gray-200">
         <table class="w-full text-left border-collapse" id="dataTable">
             <thead>
-                <tr class="bg-[#002D8B] text-white text-sm border-b border-[#001f63] cursor-pointer select-none">
-                    <th class="p-3 font-semibold hover:bg-[#001f63] transition" onclick="sortTable(0)">Nama Pegawai <i class="fa-solid fa-sort ml-1 text-blue-300"></i></th>
-                    <th class="p-3 font-semibold hover:bg-[#001f63] transition" onclick="sortTable(1)">Jenis Izin <i class="fa-solid fa-sort ml-1 text-blue-300"></i></th>
+                <tr class="bg-[#F97316] text-white text-sm border-b border-[#EA580C] cursor-pointer select-none">
+                    <th class="p-3 font-semibold hover:bg-[#EA580C] transition" onclick="sortTable(0)">Nama Pegawai <i class="fa-solid fa-sort ml-1 text-orange-300"></i></th>
+                    <th class="p-3 font-semibold hover:bg-[#EA580C] transition" onclick="sortTable(1)">Jenis Izin <i class="fa-solid fa-sort ml-1 text-orange-300"></i></th>
                     <th class="p-3 font-semibold">Tanggal & Alasan</th>
-                    <th class="p-3 font-semibold hover:bg-[#001f63] transition" onclick="sortTable(3)">Status <i class="fa-solid fa-sort ml-1 text-blue-300"></i></th>
+                    <th class="p-3 font-semibold hover:bg-[#EA580C] transition" onclick="sortTable(3)">Status <i class="fa-solid fa-sort ml-1 text-orange-300"></i></th>
                     <th class="p-3 font-semibold text-center">Aksi</th>
                 </tr>
             </thead>
@@ -99,7 +99,7 @@
                     $fotoUrl = $item->user->foto_profil ? asset('storage/' . $item->user->foto_profil) : asset('images/default-avatar.png');
                 @endphp
 
-                <tr class="data-row border-b border-gray-100 hover:bg-blue-50 transition-colors" 
+                <tr class="data-row border-b border-gray-100 hover:bg-orange-50 transition-colors" 
                     x-data="{ actOpen: false }"
                     data-search="{{ strtolower($item->user->name . ' ' . $item->jenis . ' ' . $item->alasan) }}"
                     data-status="{{ strtolower($item->status) }}">
@@ -119,7 +119,7 @@
                             {{ $item->jenis }}
                         </span>
                         @if($item->file_bukti)
-                            <button type="button" @click="$dispatch('open-image-modal', '{{ asset('storage/' . $item->file_bukti) }}')" class="block mt-1.5 text-[11px] text-blue-600 hover:underline text-left">
+                            <button type="button" @click="$dispatch('open-image-modal', '{{ asset('storage/' . $item->file_bukti) }}')" class="block mt-1.5 text-[11px] text-orange-600 hover:underline text-left">
                                 <i class="fa-solid fa-image"></i> Lihat Bukti
                             </button>
                         @else
@@ -129,7 +129,7 @@
 
                     <td class="p-3">
                         <div class="font-semibold text-gray-800 text-xs mb-1">
-                            <i class="fa-regular fa-calendar text-[#002D8B] mr-1"></i>
+                            <i class="fa-regular fa-calendar text-[#F97316] mr-1"></i>
                             {{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}
                             @if($item->tanggal_mulai != $item->tanggal_selesai)
                                 s/d {{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d M Y') }}
@@ -149,7 +149,7 @@
 
                     <td class="p-3 text-center">
                         @if($item->status == 'Pending')
-                            <button @click="actOpen = true" class="px-3 py-1.5 bg-[#002D8B] text-white text-xs font-semibold rounded-lg hover:bg-[#001f63] transition shadow-sm">
+                            <button @click="actOpen = true" class="px-3 py-1.5 bg-[#F97316] text-white text-xs font-semibold rounded-lg hover:bg-[#EA580C] transition shadow-sm">
                                 Respon
                             </button>
                         @else
@@ -160,7 +160,7 @@
                             <div x-show="actOpen" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
                                 <div x-show="actOpen" x-transition.opacity @click="actOpen = false" class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div>
                                 <div x-show="actOpen" x-transition.scale.origin.bottom class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden z-10">
-                                    <div class="px-5 py-4 border-b bg-[#002D8B] text-white flex justify-between items-center">
+                                    <div class="px-5 py-4 border-b bg-[#F97316] text-white flex justify-between items-center">
                                         <h3 class="font-bold">Respon Pengajuan</h3>
                                         <button @click="actOpen = false" class="hover:text-gray-300"><i class="fa-solid fa-xmark text-xl"></i></button>
                                     </div>
@@ -168,7 +168,7 @@
                                         @csrf
                                         <div class="mb-4">
                                             <p class="text-sm text-gray-600 mb-1">Keputusan untuk izin <strong>{{ $item->user->name }}</strong>:</p>
-                                            <select name="status" x-model="statusRespon" class="w-full border-gray-300 rounded-xl text-sm focus:ring-[#002D8B]">
+                                            <select name="status" x-model="statusRespon" class="w-full border-gray-300 rounded-xl text-sm focus:ring-[#F97316]">
                                                 <option value="Disetujui">Setujui Pengajuan</option>
                                                 <option value="Ditolak">Tolak Pengajuan</option>
                                             </select>
@@ -218,7 +218,7 @@
     
     <div x-show="open" x-transition.scale.origin.center class="relative z-10 max-w-3xl w-full">
         <div class="absolute -top-12 right-0 flex gap-3">
-            <a :href="imageUrl" download="Bukti_Izin.jpg" class="text-white bg-blue-600 hover:bg-blue-700 rounded-full w-10 h-10 flex items-center justify-center focus:outline-none transition shadow-lg" title="Download Bukti">
+            <a :href="imageUrl" download="Bukti_Izin.jpg" class="text-white bg-orange-600 hover:bg-orange-700 rounded-full w-10 h-10 flex items-center justify-center focus:outline-none transition shadow-lg" title="Download Bukti">
                 <i class="fa-solid fa-download"></i>
             </a>
             <button @click="open = false" class="text-white hover:text-gray-300 focus:outline-none w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full backdrop-blur-sm transition shadow-lg" title="Tutup">
@@ -295,7 +295,7 @@
             for (let i = 1; i <= totalPages; i++) {
                 const btnPage = document.createElement('button');
                 btnPage.innerText = i;
-                btnPage.className = `px-3 py-2 text-sm font-medium border-t border-b border-gray-300 ${currentPage === i ? 'bg-[#002D8B] text-white border-l border-r z-10' : 'bg-white text-gray-700 hover:bg-gray-50 border-l'}`;
+                btnPage.className = `px-3 py-2 text-sm font-medium border-t border-b border-gray-300 ${currentPage === i ? 'bg-[#F97316] text-white border-l border-r z-10' : 'bg-white text-gray-700 hover:bg-gray-50 border-l'}`;
                 btnPage.onclick = () => { currentPage = i; updateTable(); };
                 container.appendChild(btnPage);
             }

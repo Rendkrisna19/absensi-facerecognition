@@ -18,15 +18,15 @@
             <h3 class="text-xl font-bold text-gray-800">Daftar Perekaman Wajah (Face Enrollment)</h3>
             <p class="text-sm text-gray-500 mt-1">Kelola dan perbarui data biometrik wajah para guru.</p>
         </div>
-        <div class="bg-blue-50 border border-blue-100 text-blue-700 px-4 py-3 rounded-xl text-sm flex items-center shadow-sm font-medium">
-            <i class="fa-solid fa-circle-info mr-2 text-blue-500 text-lg"></i>
+        <div class="bg-orange-50 border border-orange-100 text-orange-700 px-4 py-3 rounded-xl text-sm flex items-center shadow-sm font-medium">
+            <i class="fa-solid fa-circle-info mr-2 text-orange-500 text-lg"></i>
             <span>Pastikan pencahayaan terang dan stabil saat merekam wajah.</span>
         </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center gap-4">
-            <div class="w-14 h-14 rounded-full bg-blue-50 text-[#1e3b8b] flex items-center justify-center text-2xl shadow-inner">
+            <div class="w-14 h-14 rounded-full bg-orange-50 text-[#F08600] flex items-center justify-center text-2xl shadow-inner">
                 <i class="fa-solid fa-users"></i>
             </div>
             <div>
@@ -68,7 +68,7 @@
             
             <div class="flex items-center gap-2 text-sm text-gray-600">
                 <span>Tampilkan</span>
-                <select name="per_page" onchange="this.form.submit()" class="border border-gray-300 rounded-md px-2 py-1 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none">
+                <select name="per_page" onchange="this.form.submit()" class="border border-gray-300 rounded-md px-2 py-1 focus:ring-[#F08600] focus:border-[#F08600] outline-none">
                     <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
                     <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
                     <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
@@ -77,7 +77,7 @@
             </div>
             
             <div class="flex items-center gap-3 w-full md:w-auto">
-                <select name="status" onchange="this.form.submit()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none bg-white">
+                <select name="status" onchange="this.form.submit()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-[#F08600] focus:border-[#F08600] outline-none bg-white">
                     <option value="">Semua Status</option>
                     <option value="sudah" {{ request('status') == 'sudah' ? 'selected' : '' }}>Sudah Terdaftar</option>
                     <option value="belum" {{ request('status') == 'belum' ? 'selected' : '' }}>Belum Rekam</option>
@@ -87,10 +87,10 @@
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </div>
-                    <input type="text" name="search" value="{{ request('search') }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#1e3b8b] focus:border-[#1e3b8b] block w-full pl-10 p-2" placeholder="Cari nama atau NIK...">
+                    <input type="text" name="search" value="{{ request('search') }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#F08600] focus:border-[#F08600] block w-full pl-10 p-2" placeholder="Cari nama atau NIK...">
                 </div>
                 
-                <button type="submit" class="bg-[#1e3b8b] hover:bg-[#152b69] text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm">
+                <button type="submit" class="bg-[#F08600] hover:bg-[#152b69] text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm">
                     Cari
                 </button>
                 
@@ -104,7 +104,7 @@
 
         <div class="overflow-x-auto rounded-xl border border-gray-200">
             <table class="w-full text-left text-sm">
-                <thead class="bg-[#243c94] text-white">
+                <thead class="bg-[#F08600] text-white">
                     <tr>
                         <th class="px-5 py-4 font-semibold w-16">No</th>
                         <th class="px-5 py-4 font-semibold">Nama Guru & NIK</th>
@@ -115,7 +115,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 bg-white">
                     @forelse($gurus as $index => $item)
-                    <tr class="hover:bg-blue-50/50 transition-colors">
+                    <tr class="hover:bg-orange-50/50 transition-colors">
                         <td class="px-5 py-4 text-gray-600">{{ $gurus->firstItem() + $index }}</td>
                         <td class="px-5 py-4">
                             <div class="font-bold text-gray-800">{{ $item->name }}</div>
@@ -146,7 +146,7 @@
                                     <i class="fa-solid fa-camera-rotate mr-2"></i> Perbarui
                                 </a>
                             @else
-                                <a href="{{ route('admin.face.record', $item->id) }}" class="inline-flex items-center justify-center bg-[#1e3b8b] text-white hover:bg-[#152b69] px-4 py-2 rounded-lg transition-all text-xs font-bold w-full shadow-sm" title="Mulai Perekaman">
+                                <a href="{{ route('admin.face.record', $item->id) }}" class="inline-flex items-center justify-center bg-[#F08600] text-white hover:bg-[#152b69] px-4 py-2 rounded-lg transition-all text-xs font-bold w-full shadow-sm" title="Mulai Perekaman">
                                     <i class="fa-solid fa-camera mr-2"></i> Rekam Baru
                                 </a>
                             @endif

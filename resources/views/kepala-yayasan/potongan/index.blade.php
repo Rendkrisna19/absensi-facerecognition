@@ -10,7 +10,7 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <h2 class="text-xl font-bold text-gray-800">Laporan Potongan Gaji Pegawai</h2>
-                <p class="text-sm text-gray-500">Berdasarkan akumulasi keterlambatan bulan: <strong class="text-[#002D8B]">{{ $namaBulanTahun }}</strong></p>
+                <p class="text-sm text-gray-500">Berdasarkan akumulasi keterlambatan bulan: <strong class="text-[#F97316]">{{ $namaBulanTahun }}</strong></p>
             </div>
             
             <div class="flex items-center gap-3">
@@ -34,7 +34,7 @@
                             <option value="{{ $thn }}" {{ $tahunSelected == $thn ? 'selected' : '' }}>{{ $thn }}</option>
                         @endforeach
                     </select>
-                    <button type="submit" class="bg-[#002D8B] hover:bg-[#001f63] text-white px-4 py-1.5 rounded-md text-xs font-bold transition-colors shadow-sm">
+                    <button type="submit" class="bg-[#F97316] hover:bg-[#EA580C] text-white px-4 py-1.5 rounded-md text-xs font-bold transition-colors shadow-sm">
                         Filter Data
                     </button>
                 </form>
@@ -99,11 +99,11 @@
                         <td class="px-5 py-4 text-center text-gray-500 font-medium">{{ $index + 1 }}</td>
                         <td class="px-5 py-4">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-blue-50 text-[#002D8B] flex items-center justify-center font-bold shrink-0 border border-blue-100 overflow-hidden no-print">
+                                <div class="w-10 h-10 rounded-full bg-orange-50 text-[#F97316] flex items-center justify-center font-bold shrink-0 border border-orange-100 overflow-hidden no-print">
                                     @if($data->foto)
                                         <img src="{{ asset('storage/' . $data->foto) }}" alt="Profil" class="w-full h-full object-cover">
                                     @else
-                                        <i class="fa-solid fa-user text-blue-300"></i>
+                                        <i class="fa-solid fa-user text-orange-300"></i>
                                     @endif
                                 </div>
                                 <div>
@@ -141,7 +141,7 @@
                                         ];
                                     })
                                 ]) }}; modalOpen = true" 
-                                class="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 hover:bg-[#002D8B] hover:text-white flex items-center justify-center transition-all shadow-sm tooltip" title="Lihat Tanggal Telat">
+                                class="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 hover:bg-[#F97316] hover:text-white flex items-center justify-center transition-all shadow-sm tooltip" title="Lihat Tanggal Telat">
                                     <i class="fa-solid fa-eye text-xs"></i>
                                 </button>
                             @else
@@ -182,11 +182,11 @@
                  x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                  class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
                 
-                <div class="bg-[#002D8B] px-6 py-4 flex justify-between items-center">
+                <div class="bg-[#F97316] px-6 py-4 flex justify-between items-center">
                     <h3 class="text-lg leading-6 font-bold text-white" id="modal-title">
                         <i class="fa-solid fa-clock-rotate-left mr-2"></i> Rincian Keterlambatan
                     </h3>
-                    <button @click="modalOpen = false" class="text-blue-200 hover:text-white transition-colors">
+                    <button @click="modalOpen = false" class="text-orange-200 hover:text-white transition-colors">
                         <i class="fa-solid fa-xmark text-xl"></i>
                     </button>
                 </div>

@@ -34,7 +34,7 @@
                 </label>
             </div>
 
-            <a href="{{ route('admin.pengaturan-lan.create') }}" class="bg-[#1e3b8b] hover:bg-[#152b69] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm whitespace-nowrap flex items-center gap-2">
+            <a href="{{ route('admin.pengaturan-lan.create') }}" class="bg-[#F08600] hover:bg-[#152b69] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm whitespace-nowrap flex items-center gap-2">
                 <i class="fa-solid fa-plus"></i> Tambah Jaringan
             </a>
         </div>
@@ -52,7 +52,7 @@
             
             <div class="flex items-center gap-2 text-sm text-gray-600">
                 <span>Tampilkan</span>
-                <select name="per_page" onchange="this.form.submit()" class="border border-gray-300 rounded-md px-2 py-1 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none">
+                <select name="per_page" onchange="this.form.submit()" class="border border-gray-300 rounded-md px-2 py-1 focus:ring-[#F08600] focus:border-[#F08600] outline-none">
                     <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
                     <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
                     <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
@@ -61,7 +61,7 @@
             </div>
             
             <div class="flex items-center gap-3 w-full md:w-auto">
-                <select name="status" onchange="this.form.submit()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none bg-white">
+                <select name="status" onchange="this.form.submit()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-[#F08600] focus:border-[#F08600] outline-none bg-white">
                     <option value="">Semua Status</option>
                     <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Aktif</option>
                     <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Non-Aktif</option>
@@ -71,10 +71,10 @@
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </div>
-                    <input type="text" name="search" value="{{ request('search') }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#1e3b8b] focus:border-[#1e3b8b] block w-full pl-10 p-2" placeholder="Cari Jaringan atau IP...">
+                    <input type="text" name="search" value="{{ request('search') }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#F08600] focus:border-[#F08600] block w-full pl-10 p-2" placeholder="Cari Jaringan atau IP...">
                 </div>
                 
-                <button type="submit" class="bg-[#1e3b8b] hover:bg-[#152b69] text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm">
+                <button type="submit" class="bg-[#F08600] hover:bg-[#152b69] text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm">
                     Cari
                 </button>
             </div>
@@ -82,7 +82,7 @@
 
         <div class="overflow-x-auto rounded-xl border border-gray-200">
             <table class="w-full text-left text-sm border-collapse">
-                <thead class="bg-[#243c94] text-white">
+                <thead class="bg-[#F08600] text-white">
                     <tr>
                         <th class="px-5 py-4 font-semibold w-16">No</th>
                         <th class="px-5 py-4 font-semibold">Nama Jaringan</th>
@@ -94,18 +94,18 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 bg-white">
                     @forelse($ips as $index => $item)
-                    <tr class="hover:bg-blue-50/50 transition-colors">
+                    <tr class="hover:bg-orange-50/50 transition-colors">
                         <td class="px-5 py-4 text-gray-600">{{ $ips->firstItem() + $index }}</td>
                         <td class="px-5 py-4 font-bold text-gray-800">
                             <div class="flex items-center">
-                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3">
+                                <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mr-3">
                                     <i class="fa-solid fa-wifi"></i>
                                 </div>
                                 {{ $item->nama_jaringan }}
                             </div>
                         </td>
                         <td class="px-5 py-4">
-                            <span class="font-mono bg-gray-50 text-blue-700 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-bold tracking-wide">
+                            <span class="font-mono bg-gray-50 text-orange-700 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-bold tracking-wide">
                                 {{ $item->ip_address }}
                             </span>
                         </td>
@@ -123,7 +123,7 @@
 
                         <td class="px-5 py-4 text-center">
                             <div class="flex items-center justify-center gap-2">
-                                <a href="{{ route('admin.pengaturan-lan.edit', $item->id) }}" class="w-9 h-9 flex items-center justify-center bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-blue-100 hover:border-transparent" title="Edit">
+                                <a href="{{ route('admin.pengaturan-lan.edit', $item->id) }}" class="w-9 h-9 flex items-center justify-center bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-600 hover:text-white transition-all shadow-sm border border-orange-100 hover:border-transparent" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
                                 

@@ -5,14 +5,14 @@
     <title>Laporan Potongan Gaji</title>
     <style>
         body { font-family: sans-serif; font-size: 12px; color: #333; margin: 0; padding: 20px; }
-        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #1e40af; padding-bottom: 10px; }
-        .header h2 { margin: 0; color: #1e40af; font-size: 20px; text-transform: uppercase; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #FB923C; padding-bottom: 10px; }
+        .header h2 { margin: 0; color: #FB923C; font-size: 20px; text-transform: uppercase; }
         .header p { margin: 5px 0 0; font-size: 14px; color: #555; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         /* Warna Header Biru 800 */
-        th { background-color: #1e40af; color: #ffffff; text-transform: uppercase; font-size: 11px; }
+        th { background-color: #FB923C; color: #ffffff; text-transform: uppercase; font-size: 11px; }
         
         .text-center { text-align: center; }
         .text-right { text-align: right; }

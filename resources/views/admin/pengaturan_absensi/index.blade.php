@@ -33,11 +33,11 @@
     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
         
         <!-- Decorative Background Blob -->
-        <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 opacity-50 blur-3xl z-0 pointer-events-none"></div>
+        <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-gradient-to-br from-orange-50 to-orange-100 opacity-50 blur-3xl z-0 pointer-events-none"></div>
 
         <!-- Header Card -->
         <div class="bg-white/50 backdrop-blur-sm px-8 py-8 border-b border-gray-100 flex flex-col md:flex-row md:items-center gap-6 relative z-10">
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 text-[#1e3b8b] flex items-center justify-center text-3xl shadow-inner shrink-0 border border-blue-100/50">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100 text-[#F08600] flex items-center justify-center text-3xl shadow-inner shrink-0 border border-orange-100/50">
                 <i class="fa-solid fa-business-time"></i>
             </div>
             <div>
@@ -55,7 +55,7 @@
                 <!-- KIRI: Pengaturan Waktu (Mengambil 2 kolom di layar besar) -->
                 <div class="lg:col-span-2 space-y-6">
                     <h4 class="font-bold text-gray-800 text-lg flex items-center gap-3 pb-3 border-b border-gray-100">
-                        <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-[#1e3b8b] text-sm">
+                        <div class="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-[#F08600] text-sm">
                             <i class="fa-regular fa-clock"></i>
                         </div>
                         Pengaturan Waktu
@@ -94,18 +94,18 @@
                         </div>
 
                         <!-- Jam Pulang -->
-                        <div class="bg-blue-50/30 p-5 rounded-2xl border border-blue-100 hover:border-blue-300 transition-all duration-300 group hover:shadow-md hover:shadow-blue-100/50 relative overflow-hidden md:col-span-2">
-                            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-blue-50 opacity-50 group-hover:scale-110 transition-transform duration-300 pointer-events-none hidden sm:block">
+                        <div class="bg-orange-50/30 p-5 rounded-2xl border border-orange-100 hover:border-orange-300 transition-all duration-300 group hover:shadow-md hover:shadow-orange-100/50 relative overflow-hidden md:col-span-2">
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-orange-50 opacity-50 group-hover:scale-110 transition-transform duration-300 pointer-events-none hidden sm:block">
                                 <i class="fa-solid fa-person-walking-arrow-right text-6xl"></i>
                             </div>
                             <label class="block text-sm font-bold text-gray-700 mb-3 relative z-10">Jam Boleh Pulang</label>
                             <div class="relative w-full md:w-1/2 z-10">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-blue-500">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-orange-500">
                                     <i class="fa-solid fa-person-walking-arrow-right"></i>
                                 </div>
-                                <input type="time" name="jam_pulang" value="{{ \Carbon\Carbon::parse($pengaturan->jam_pulang)->format('H:i') }}" required class="w-full pl-11 pr-4 py-3 bg-white border-none ring-1 ring-blue-200 rounded-xl focus:ring-2 focus:ring-[#1e3b8b] focus:outline-none font-mono font-bold text-gray-700 shadow-sm transition-shadow">
+                                <input type="time" name="jam_pulang" value="{{ \Carbon\Carbon::parse($pengaturan->jam_pulang)->format('H:i') }}" required class="w-full pl-11 pr-4 py-3 bg-white border-none ring-1 ring-orange-200 rounded-xl focus:ring-2 focus:ring-[#F08600] focus:outline-none font-mono font-bold text-gray-700 shadow-sm transition-shadow">
                             </div>
-                            <p class="text-[11px] text-gray-500 font-medium mt-3 relative z-10"><i class="fa-solid fa-circle-info mr-1.5 text-blue-400"></i>Scanner absen pulang baru akan dibuka mulai jam ini.</p>
+                            <p class="text-[11px] text-gray-500 font-medium mt-3 relative z-10"><i class="fa-solid fa-circle-info mr-1.5 text-orange-400"></i>Scanner absen pulang baru akan dibuka mulai jam ini.</p>
                         </div>
                     </div>
                 </div>
@@ -147,7 +147,7 @@
 
             <!-- Area Tombol -->
             <div class="flex justify-end pt-8 mt-8 border-t border-gray-100">
-                <button type="submit" class="bg-[#1e3b8b] hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-xl transition-all duration-300 shadow-lg shadow-blue-900/20 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/30 flex items-center gap-2 group">
+                <button type="submit" class="bg-[#F08600] hover:bg-orange-800 text-white font-bold py-3 px-8 rounded-xl transition-all duration-300 shadow-lg shadow-orange-900/20 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-900/30 flex items-center gap-2 group">
                     <i class="fa-solid fa-floppy-disk group-hover:scale-110 transition-transform"></i> Simpan Pengaturan
                 </button>
             </div>

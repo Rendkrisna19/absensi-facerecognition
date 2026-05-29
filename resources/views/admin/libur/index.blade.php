@@ -22,10 +22,10 @@
     
     <!-- Header Section -->
     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
-        <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 opacity-50 blur-3xl z-0"></div>
+        <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-gradient-to-br from-orange-50 to-orange-100 opacity-50 blur-3xl z-0"></div>
         
         <div class="flex items-center gap-5 relative z-10">
-            <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-2xl text-blue-600 shadow-inner">
+            <div class="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-2xl text-orange-600 shadow-inner">
                 <i class="fa-solid fa-umbrella-beach text-3xl"></i>
             </div>
             <div>
@@ -35,7 +35,7 @@
         </div>
         
         <div class="relative z-10 w-full md:w-auto">
-            <button @click="openAdd = true" class="w-full md:w-auto inline-flex items-center justify-center bg-[#24429b] hover:bg-blue-800 text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 shadow-lg shadow-blue-900/20 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/30 gap-2">
+            <button @click="openAdd = true" class="w-full md:w-auto inline-flex items-center justify-center bg-[#24429b] hover:bg-orange-800 text-white px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 shadow-lg shadow-orange-900/20 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-900/30 gap-2">
                 <i class="fa-solid fa-calendar-plus bg-white/20 p-1.5 rounded-lg text-xs"></i> Tambah Libur
             </button>
         </div>
@@ -56,10 +56,10 @@
                 </thead>
                 <tbody class="divide-y divide-gray-50 bg-white">
                     @forelse($liburs as $l)
-                    <tr class="hover:bg-blue-50/40 transition-colors duration-200 group">
+                    <tr class="hover:bg-orange-50/40 transition-colors duration-200 group">
                         <td class="px-6 py-5">
                             <div class="flex items-start gap-3">
-                                <div class="mt-1 w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-xs border border-blue-100">
+                                <div class="mt-1 w-8 h-8 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center text-xs border border-orange-100">
                                     <i class="fa-solid fa-tag"></i>
                                 </div>
                                 <div>
@@ -148,9 +148,9 @@
             <div class="bg-[#24429b] p-6 text-white flex justify-between items-center">
                 <div>
                     <h3 class="text-xl font-bold">Tambah Rentang Libur</h3>
-                    <p class="text-blue-100 text-xs mt-1">Isi form di bawah untuk menjadwalkan libur baru</p>
+                    <p class="text-orange-100 text-xs mt-1">Isi form di bawah untuk menjadwalkan libur baru</p>
                 </div>
-                <button @click="openAdd = false" class="text-blue-200 hover:text-white transition-colors bg-white/10 w-8 h-8 rounded-full flex items-center justify-center">
+                <button @click="openAdd = false" class="text-orange-200 hover:text-white transition-colors bg-white/10 w-8 h-8 rounded-full flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -187,7 +187,7 @@
                 
                 <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-100">
                     <button type="button" @click="openAdd = false" class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
-                    <button type="submit" class="bg-[#24429b] hover:bg-blue-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-900/20 hover:-translate-y-0.5 transition-all flex items-center gap-2">
+                    <button type="submit" class="bg-[#24429b] hover:bg-orange-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-orange-900/20 hover:-translate-y-0.5 transition-all flex items-center gap-2">
                         <i class="fa-solid fa-floppy-disk"></i> Simpan Jadwal
                     </button>
                 </div>

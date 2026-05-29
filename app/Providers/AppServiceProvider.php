@@ -21,5 +21,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useTailwind();
+        \Carbon\Carbon::setTestNow('2026-05-29 07:00:00');
     }
 }

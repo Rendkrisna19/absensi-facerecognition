@@ -7,7 +7,7 @@
 <div x-data="{ showModal: false }" class="relative flex min-h-screen w-full bg-[#EEF2F6] font-sans items-center justify-center p-4 sm:p-8 overflow-hidden">
     
     <!-- Ornamen Lingkaran Melayang (Sesuai gambar referensi) -->
-    <div class="absolute top-[-5%] left-[-2%] w-48 h-48 sm:w-64 sm:h-64 bg-[#002D8B] rounded-full opacity-80 shadow-2xl"></div>
+    <div class="absolute top-[-5%] left-[-2%] w-48 h-48 sm:w-64 sm:h-64 bg-[#F97316] rounded-full opacity-80 shadow-2xl"></div>
     <div class="absolute bottom-[-5%] right-[-2%] w-48 h-48 sm:w-64 sm:h-64 bg-white rounded-full shadow-xl"></div>
 
     <!-- Main Card -->
@@ -34,7 +34,7 @@
                                 <i class="fa-regular fa-user"></i>
                             </div>
                             <input type="text" name="nik" id="nik" value="{{ old('nik') }}" required autofocus
-                                class="w-full pl-12 pr-4 py-3.5 bg-[#F3F6FA] border-none rounded-2xl focus:bg-white focus:ring-2 focus:ring-[#002D8B] outline-none transition-all duration-300 text-gray-800 text-sm font-medium {{ $errors->has('nik') ? 'ring-2 ring-red-500' : '' }}"
+                                class="w-full pl-12 pr-4 py-3.5 bg-[#F3F6FA] border-none rounded-2xl focus:bg-white focus:ring-2 focus:ring-[#F97316] outline-none transition-all duration-300 text-gray-800 text-sm font-medium {{ $errors->has('nik') ? 'ring-2 ring-red-500' : '' }}"
                                 placeholder="Email / NIK">
                         </div>
                         @error('nik')
@@ -52,12 +52,12 @@
                                 <i class="fa-solid fa-lock text-sm"></i>
                             </div>
                             <input :type="show ? 'text' : 'password'" name="password" id="password" required
-                                class="w-full pl-12 pr-12 py-3.5 bg-[#F3F6FA] border-none rounded-2xl focus:bg-white focus:ring-2 focus:ring-[#002D8B] outline-none transition-all duration-300 text-gray-800 text-sm font-medium tracking-widest placeholder:tracking-normal {{ $errors->has('password') ? 'ring-2 ring-red-500' : '' }}"
+                                class="w-full pl-12 pr-12 py-3.5 bg-[#F3F6FA] border-none rounded-2xl focus:bg-white focus:ring-2 focus:ring-[#F97316] outline-none transition-all duration-300 text-gray-800 text-sm font-medium tracking-widest placeholder:tracking-normal {{ $errors->has('password') ? 'ring-2 ring-red-500' : '' }}"
                                 placeholder="Password">
                             
                             <!-- Toggle Mata -->
                             <button type="button" @click="show = !show" 
-                                class="absolute right-4 text-gray-400 hover:text-[#002D8B] transition-colors focus:outline-none">
+                                class="absolute right-4 text-gray-400 hover:text-[#F97316] transition-colors focus:outline-none">
                                 <i class="fa-solid" :class="show ? 'fa-eye-slash' : 'fa-eye'"></i>
                             </button>
                         </div>
@@ -71,7 +71,7 @@
                     <!-- Remember Me & Forgot Password -->
                     <div class="flex items-center justify-between px-2">
                         <div class="flex items-center">
-                            <input type="checkbox" id="remember" class="w-4 h-4 rounded border-gray-300 text-[#002D8B] focus:ring-[#002D8B]/30 transition-shadow cursor-pointer">
+                            <input type="checkbox" id="remember" class="w-4 h-4 rounded border-gray-300 text-[#F97316] focus:ring-[#F97316]/30 transition-shadow cursor-pointer">
                             <label for="remember" class="ml-2 text-xs text-gray-500 font-medium cursor-pointer">Ingat saya</label>
                         </div>
                     
@@ -79,7 +79,7 @@
 
                     <!-- Button Login -->
                     <button type="submit" 
-                        class="w-full bg-[#002D8B] hover:bg-[#001A52] text-white font-semibold py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 mt-2 active:scale-95 text-sm uppercase tracking-wider">
+                        class="w-full bg-[#F97316] hover:bg-[#001A52] text-white font-semibold py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 mt-2 active:scale-95 text-sm uppercase tracking-wider">
                         Login Now
                     </button>
                 </form>
@@ -87,7 +87,7 @@
         </div>
 
         <!-- KANAN: Area Visual/Ilustrasi (Sesuai referensi gambar kanan) -->
-        <div class="hidden lg:flex lg:w-1/2 bg-[#002D8B] relative items-center justify-center p-12 overflow-hidden">
+        <div class="hidden lg:flex lg:w-1/2 bg-[#F97316] relative items-center justify-center p-12 overflow-hidden">
             
             <!-- Pola Garis Gelombang Latar Belakang (Mirip di referensi) -->
             <div class="absolute inset-0 opacity-20">
@@ -184,7 +184,7 @@
              class="relative bg-white rounded-[2rem] shadow-2xl p-8 w-full max-w-sm text-center z-10">
             
             <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-[#F3F6FA] mb-6">
-                <i class="fa-solid fa-shield-halved text-2xl text-[#002D8B]"></i>
+                <i class="fa-solid fa-shield-halved text-2xl text-[#F97316]"></i>
             </div>
             
             <h3 class="text-xl font-bold text-gray-900 mb-2">Lupa Password?</h3>
@@ -193,7 +193,7 @@
             </p>
             
             <button @click="showModal = false" 
-                class="w-full bg-[#002D8B] hover:bg-[#001A52] text-white font-bold py-3.5 rounded-2xl transition-colors duration-200 text-sm">
+                class="w-full bg-[#F97316] hover:bg-[#001A52] text-white font-bold py-3.5 rounded-2xl transition-colors duration-200 text-sm">
                 Mengerti
             </button>
         </div>

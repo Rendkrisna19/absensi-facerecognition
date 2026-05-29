@@ -28,13 +28,13 @@
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                 </div>
-                <input type="text" name="search" value="{{ request('search') }}" class="w-full bg-white border border-gray-300 text-sm rounded-lg focus:ring-[#002D8B] focus:border-[#002D8B] pl-10 p-2.5" placeholder="Nama atau NIK...">
+                <input type="text" name="search" value="{{ request('search') }}" class="w-full bg-white border border-gray-300 text-sm rounded-lg focus:ring-[#F97316] focus:border-[#F97316] pl-10 p-2.5" placeholder="Nama atau NIK...">
             </div>
         </div>
 
         <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Status Kehadiran</label>
-            <select name="status" class="w-full bg-white border border-gray-300 text-sm rounded-lg focus:ring-[#002D8B] focus:border-[#002D8B] p-2.5">
+            <select name="status" class="w-full bg-white border border-gray-300 text-sm rounded-lg focus:ring-[#F97316] focus:border-[#F97316] p-2.5">
                 <option value="all">Semua Status</option>
                 <option value="Hadir" {{ request('status') == 'Hadir' ? 'selected' : '' }}>Hadir Tepat Waktu</option>
                 <option value="Terlambat" {{ request('status') == 'Terlambat' ? 'selected' : '' }}>Terlambat</option>
@@ -47,7 +47,7 @@
 
         <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Unit Sekolah</label>
-            <select name="unit_sekolah" class="w-full bg-white border border-gray-300 text-sm rounded-lg focus:ring-[#002D8B] focus:border-[#002D8B] p-2.5">
+            <select name="unit_sekolah" class="w-full bg-white border border-gray-300 text-sm rounded-lg focus:ring-[#F97316] focus:border-[#F97316] p-2.5">
                 <option value="all">Semua Unit</option>
                 <option value="SD" {{ request('unit_sekolah') == 'SD' ? 'selected' : '' }}>SD</option>
                 <option value="SMP" {{ request('unit_sekolah') == 'SMP' ? 'selected' : '' }}>SMP</option>
@@ -57,7 +57,7 @@
         <div class="flex gap-2">
             <div class="w-1/2">
                 <label class="block text-xs font-semibold text-gray-600 mb-1.5">Bulan</label>
-                <select name="bulan" class="w-full bg-white border border-gray-300 text-sm rounded-lg focus:ring-[#002D8B] focus:border-[#002D8B] p-2.5">
+                <select name="bulan" class="w-full bg-white border border-gray-300 text-sm rounded-lg focus:ring-[#F97316] focus:border-[#F97316] p-2.5">
                     <option value="all">Semua</option>
                     @for($i=1; $i<=12; $i++)
                         <option value="{{ $i }}" {{ request('bulan') == $i ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
@@ -66,7 +66,7 @@
             </div>
             <div class="w-1/2">
                 <label class="block text-xs font-semibold text-gray-600 mb-1.5">Tahun</label>
-                <select name="tahun" class="w-full bg-white border border-gray-300 text-sm rounded-lg focus:ring-[#002D8B] focus:border-[#002D8B] p-2.5">
+                <select name="tahun" class="w-full bg-white border border-gray-300 text-sm rounded-lg focus:ring-[#F97316] focus:border-[#F97316] p-2.5">
                     <option value="all">Semua</option>
                     @for($y=date('Y'); $y>=date('Y')-3; $y--)
                         <option value="{{ $y }}" {{ request('tahun') == $y ? 'selected' : '' }}>{{ $y }}</option>
@@ -76,7 +76,7 @@
         </div>
 
         <div class="flex items-end gap-2">
-            <button type="submit" class="w-full bg-[#002D8B] hover:bg-[#001f63] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm h-[42px] flex items-center justify-center">
+            <button type="submit" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm h-[42px] flex items-center justify-center">
                 <i class="fa-solid fa-filter mr-1"></i> Filter
             </button>
             <a href="{{ route('admin.riwayat-absensi.index') }}" class="px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-semibold rounded-lg transition-all flex items-center justify-center h-[42px]" title="Reset Filter">
@@ -87,7 +87,7 @@
 
     <div class="overflow-x-auto rounded-xl border border-gray-200">
         <table class="w-full text-left text-sm border-collapse">
-            <thead class="bg-[#002D8B] text-white">
+            <thead class="bg-[#F97316] text-white">
                 <tr>
                     <th class="p-4 font-semibold w-16">No</th>
                     <th class="p-4 font-semibold">Pegawai</th>
@@ -99,11 +99,11 @@
             </thead>
             <tbody class="divide-y divide-gray-100 bg-white">
                 @forelse($riwayat as $index => $absen)
-                <tr class="hover:bg-blue-50/50 transition-colors">
+                <tr class="hover:bg-orange-50/50 transition-colors">
                     <td class="p-4 text-gray-600">{{ $riwayat->firstItem() + $index }}</td>
                     <td class="p-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs border border-blue-200 shrink-0">
+                            <div class="w-9 h-9 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-xs border border-orange-200 shrink-0">
                                 {{ strtoupper(substr($absen->user->name ?? 'U', 0, 1)) }}
                             </div>
                             <div>
@@ -111,7 +111,7 @@
                                 <div class="text-[11px] text-gray-500 font-mono tracking-wide">
                                     {{ $absen->user->nik ?? '-' }} 
                                     @if($absen->user)
-                                     • <span class="{{ $absen->user->unit_sekolah == 'SD' ? 'text-red-500' : 'text-blue-500' }} font-bold">Unit {{ $absen->user->unit_sekolah ?? 'Umum' }}</span>
+                                     • <span class="{{ $absen->user->unit_sekolah == 'SD' ? 'text-red-500' : 'text-orange-500' }} font-bold">Unit {{ $absen->user->unit_sekolah ?? 'Umum' }}</span>
                                     @endif
                                 </div>
                             </div>
@@ -150,7 +150,7 @@
                             if($absen->status == 'Hadir') $badgeClass = 'bg-green-100 text-green-700 border-green-200';
                             if($absen->status == 'Terlambat') $badgeClass = 'bg-orange-100 text-orange-700 border-orange-200';
                             if($absen->status == 'Alpa') $badgeClass = 'bg-red-100 text-red-700 border-red-200';
-                            if(in_array($absen->status, ['Sakit', 'Izin', 'Cuti'])) $badgeClass = 'bg-blue-100 text-blue-700 border-blue-200';
+                            if(in_array($absen->status, ['Sakit', 'Izin', 'Cuti'])) $badgeClass = 'bg-orange-100 text-orange-700 border-orange-200';
                         @endphp
                         <span class="px-2.5 py-1 text-xs font-bold rounded-full border {{ $badgeClass }}">
                             {{ $absen->status }}
@@ -172,9 +172,9 @@
     <!-- Pagination Section -->
     <div class="mt-6 flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
         <div class="text-sm text-gray-500 font-medium">
-            Menampilkan <span class="font-bold text-[#002D8B] bg-blue-50 px-2 py-0.5 rounded-md">{{ $riwayat->firstItem() ?? 0 }}</span> 
-            sampai <span class="font-bold text-[#002D8B] bg-blue-50 px-2 py-0.5 rounded-md">{{ $riwayat->lastItem() ?? 0 }}</span> 
-            dari total <span class="font-bold text-[#002D8B] bg-blue-50 px-2 py-0.5 rounded-md">{{ $riwayat->total() }}</span> data.
+            Menampilkan <span class="font-bold text-[#F97316] bg-orange-50 px-2 py-0.5 rounded-md">{{ $riwayat->firstItem() ?? 0 }}</span> 
+            sampai <span class="font-bold text-[#F97316] bg-orange-50 px-2 py-0.5 rounded-md">{{ $riwayat->lastItem() ?? 0 }}</span> 
+            dari total <span class="font-bold text-[#F97316] bg-orange-50 px-2 py-0.5 rounded-md">{{ $riwayat->total() }}</span> data.
         </div>
         <div class="pagination-wrapper">
             {{ $riwayat->links() }}

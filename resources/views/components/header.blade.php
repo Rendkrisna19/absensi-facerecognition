@@ -1,10 +1,10 @@
 <header class="flex items-center justify-between h-16 px-6 bg-white shadow-sm border-b border-gray-100 z-10 relative shrink-0 font-poppins">
     
     <div class="flex items-center">
-        <button @click="isSidebarOpen = !isSidebarOpen" class="text-gray-500 hover:text-[#002D8B] focus:outline-none lg:hidden transition-colors">
+        <button @click="isSidebarOpen = !isSidebarOpen" class="text-gray-500 hover:text-[#F97316] focus:outline-none lg:hidden transition-colors">
             <i class="fa-solid fa-bars text-xl"></i>
         </button>
-        <button @click="isMini = !isMini" class="hidden text-gray-500 hover:text-[#002D8B] focus:outline-none lg:block transition-colors">
+        <button @click="isMini = !isMini" class="hidden text-gray-500 hover:text-[#F97316] focus:outline-none lg:block transition-colors">
             <i class="fa-solid fa-bars-staggered text-xl"></i>
         </button>
         
@@ -14,7 +14,7 @@
     <div class="flex items-center gap-4 md:gap-5">
         
         <div x-data="realtimeClock()" class="hidden md:flex flex-col text-right border-r border-gray-200 pr-4">
-            <span class="text-sm font-bold text-[#002D8B]" x-text="time"></span>
+            <span class="text-sm font-bold text-[#F97316]" x-text="time"></span>
             <span class="text-xs text-gray-500" x-text="date"></span>
         </div>
 
@@ -37,7 +37,7 @@
         @endphp
 
         <div class="relative" x-data="{ notifOpen: false }" @click.away="notifOpen = false">
-            <button @click="notifOpen = !notifOpen" class="relative text-gray-400 hover:text-[#002D8B] transition-colors focus:outline-none mt-1">
+            <button @click="notifOpen = !notifOpen" class="relative text-gray-400 hover:text-[#F97316] transition-colors focus:outline-none mt-1">
                 <i class="fa-regular fa-bell text-xl"></i>
                 @if($unreadCount > 0)
                 <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 border border-white rounded-full animate-ping"></span>
@@ -51,13 +51,13 @@
                 <div class="p-4 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
                     <span class="text-sm font-bold text-gray-800">Notifikasi Sistem</span>
                     @if($unreadCount > 0)
-                    <span class="text-[10px] bg-[#002D8B] text-white px-2 py-0.5 rounded-full font-bold tracking-wider">{{ $unreadCount }} BARU</span>
+                    <span class="text-[10px] bg-[#F97316] text-white px-2 py-0.5 rounded-full font-bold tracking-wider">{{ $unreadCount }} BARU</span>
                     @endif
                 </div>
                 <div class="max-h-72 overflow-y-auto">
                     @forelse($notifications as $notif)
-                    <div class="p-4 border-b border-gray-50 hover:bg-blue-50/50 transition flex gap-3 items-start cursor-pointer {{ $notif->is_read ? 'opacity-60' : '' }}">
-                        <div class="w-9 h-9 rounded-full bg-blue-100 text-[#002D8B] flex items-center justify-center shrink-0">
+                    <div class="p-4 border-b border-gray-50 hover:bg-orange-50/50 transition flex gap-3 items-start cursor-pointer {{ $notif->is_read ? 'opacity-60' : '' }}">
+                        <div class="w-9 h-9 rounded-full bg-orange-100 text-[#F97316] flex items-center justify-center shrink-0">
                             <i class="fa-solid {{ $notif->icon ?? 'fa-bell' }} text-sm"></i>
                         </div>
                         <div>
@@ -72,7 +72,7 @@
                     @endforelse
                 </div>
                 <div class="p-3 text-center bg-gray-50 hover:bg-gray-100 transition border-t border-gray-100">
-                    <a href="{{ route('notifications.readAll') }}" class="text-xs font-bold text-[#002D8B]">Tandai Semua Dibaca</a>
+                    <a href="{{ route('notifications.readAll') }}" class="text-xs font-bold text-[#F97316]">Tandai Semua Dibaca</a>
                 </div>
             </div>
         </div>
@@ -100,7 +100,7 @@
                  class="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl overflow-hidden shadow-lg z-50 border border-gray-100 py-1" 
                  style="display: none;">
                 
-                <a href="{{ route('profile.index') }}" class="block px-4 py-2.5 text-sm text-gray-600 font-medium hover:bg-gray-50 hover:text-[#002D8B] transition-colors">
+                <a href="{{ route('profile.index') }}" class="block px-4 py-2.5 text-sm text-gray-600 font-medium hover:bg-gray-50 hover:text-[#F97316] transition-colors">
                     <i class="fa-regular fa-user mr-2"></i> Profil Saya
                 </a>
                 

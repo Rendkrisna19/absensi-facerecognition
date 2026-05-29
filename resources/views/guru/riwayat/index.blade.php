@@ -10,12 +10,12 @@
     <!-- Card Ringkasan Singkat (Dinamis sesuai filter) -->
     <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center justify-between">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-[#002D8B]/10 text-[#002D8B] flex items-center justify-center">
+            <div class="w-10 h-10 rounded-full bg-[#F97316]/10 text-[#F97316] flex items-center justify-center">
                 <i class="fa-solid fa-clipboard-list text-lg"></i>
             </div>
             <div>
                 <p class="text-sm font-bold text-gray-800">Total Kehadiran</p>
-                <p class="text-xs text-gray-500">Bulan terpilih: <span class="font-bold text-[#002D8B]">{{ $totalHadir }} Hari</span></p>
+                <p class="text-xs text-gray-500">Bulan terpilih: <span class="font-bold text-[#F97316]">{{ $totalHadir }} Hari</span></p>
             </div>
         </div>
     </div>
@@ -24,7 +24,7 @@
     <form action="{{ route('guru.riwayat') }}" method="GET" class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex gap-2 items-end">
         <div class="flex-1">
             <label class="text-[10px] font-semibold text-gray-500 ml-1">Bulan</label>
-            <select name="bulan" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-[#002D8B]">
+            <select name="bulan" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-[#F97316]">
                 @foreach(range(1, 12) as $bln)
                     <option value="{{ $bln }}" {{ $bulanSelected == $bln ? 'selected' : '' }}>
                         {{ \Carbon\Carbon::create()->month($bln)->translatedFormat('F') }}
@@ -34,13 +34,13 @@
         </div>
         <div class="flex-1">
             <label class="text-[10px] font-semibold text-gray-500 ml-1">Tahun</label>
-            <select name="tahun" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-[#002D8B]">
+            <select name="tahun" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-[#F97316]">
                 @foreach(range(date('Y')-1, date('Y')+1) as $thn)
                     <option value="{{ $thn }}" {{ $tahunSelected == $thn ? 'selected' : '' }}>{{ $thn }}</option>
                 @endforeach
             </select>
         </div>
-        <button type="submit" class="bg-[#002D8B] hover:bg-[#001f63] text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors h-[34px]">
+        <button type="submit" class="bg-[#F97316] hover:bg-[#EA580C] text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors h-[34px]">
             <i class="fa-solid fa-filter"></i> Filter
         </button>
     </form>

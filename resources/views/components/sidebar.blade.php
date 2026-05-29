@@ -11,7 +11,7 @@
     <div class="flex items-center justify-center h-16 border-b border-gray-100 px-4 overflow-hidden shrink-0">
         <div class="flex items-center gap-3">
             <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-8 h-8 object-contain transition-transform duration-300 hover:scale-105">
-            <span x-show="!isMini" class="font-bold text-lg text-[#002D8B] whitespace-nowrap transition-opacity duration-300">Tri Jaya</span>
+            <span x-show="!isMini" class="font-bold text-lg text-[#F97316] whitespace-nowrap transition-opacity duration-300">SMA CODIFYHUB</span>
         </div>
     </div>
 
@@ -22,7 +22,7 @@
             <p x-show="!isMini" class="px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 mt-2">Menu Utama</p>
 
             <a href="{{ route('admin.dashboard') }}" 
-               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Dashboard">
+               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-[#F97316] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#F97316]' }}" title="Dashboard">
                 <i class="fa-solid fa-chart-pie text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Dashboard</span>
             </a>
@@ -30,19 +30,19 @@
             <p x-show="!isMini" class="px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 mt-6">Data Master</p>
 
             <a href="{{ route('admin.user.index') }}" 
-               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.user.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Manajemen Pengguna">
+               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.user.*') ? 'bg-[#F97316] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#F97316]' }}" title="Manajemen Pengguna">
                 <i class="fa-solid fa-user-shield text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Data Akun</span>
             </a>
             
             <a href="{{ route('admin.guru.index') }}" 
-               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.guru.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Data Pegawai & Guru">
+               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.guru.*') ? 'bg-[#F97316] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#F97316]' }}" title="Data Pegawai & Guru">
                 <i class="fa-solid fa-users text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Data Pegawai</span>
             </a>
 
             <a href="{{ route('admin.face.index') }}" 
-               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.face.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Perekaman Wajah">
+               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.face.*') ? 'bg-[#F97316] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#F97316]' }}" title="Perekaman Wajah">
                 <i class="fa-solid fa-id-badge text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Perekaman Wajah</span>
             </a>
@@ -50,31 +50,31 @@
             <p x-show="!isMini" class="px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 mt-6">Kehadiran & Cuti</p>
 
             <a href="{{ route('admin.riwayat-absensi.index') }}" 
-               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.riwayat-absensi.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Semua Riwayat Absensi">
+               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.riwayat-absensi.*') ? 'bg-[#F97316] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#F97316]' }}" title="Semua Riwayat Absensi">
                 <i class="fa-solid fa-clock-rotate-left text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Riwayat Absensi</span>
             </a>
 
             <a href="{{ route('admin.pengajuan-izin.index') }}" 
-               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.pengajuan-izin.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Validasi Izin & Cuti">
+               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.pengajuan-izin.*') ? 'bg-[#F97316] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#F97316]' }}" title="Validasi Izin & Cuti">
                 <i class="fa-solid fa-envelope-open-text text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Validasi Izin</span>
             </a>
 
             <p x-show="!isMini" class="px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 mt-6">Konfigurasi</p>
 
-            <a href="{{ route('admin.pengaturan-absensi.index') }}" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.pengaturan-absensi.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Pengaturan Jadwal Absensi">
+            <a href="{{ route('admin.pengaturan-absensi.index') }}" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.pengaturan-absensi.*') ? 'bg-[#F97316] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#F97316]' }}" title="Pengaturan Jadwal Absensi">
                 <i class="fa-solid fa-business-time text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Jadwal Absensi</span>
             </a>
 
             <a href="{{ route('admin.libur-semester.index') }}" 
-               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.libur-semester.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Libur Semester">
+               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.libur-semester.*') ? 'bg-[#F97316] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#F97316]' }}" title="Libur Semester">
                 <i class="fa-solid fa-calendar-day text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Libur Semester</span>
             </a>
 
-            <a href="{{ route('admin.pengaturan-lan.index') }}" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.pengaturan-lan.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Pengaturan Jaringan LAN">
+            <a href="{{ route('admin.pengaturan-lan.index') }}" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.pengaturan-lan.*') ? 'bg-[#F97316] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#F97316]' }}" title="Pengaturan Jaringan LAN">
                 <i class="fa-solid fa-network-wired text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Pengaturan LAN</span>
             </a>
@@ -82,15 +82,15 @@
 
         @if(auth()->check() && auth()->user()->role === 'kepala_yayasan')
             <p x-show="!isMini" class="px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 mt-4">Pemantauan</p>
-            <a href="{{ route('yayasan.dashboard') }}" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('yayasan.dashboard') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Dashboard">
+            <a href="{{ route('yayasan.dashboard') }}" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('yayasan.dashboard') ? 'bg-[#F97316] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#F97316]' }}" title="Dashboard">
                 <i class="fa-solid fa-chart-line text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Dashboard</span>
             </a>
-            <a href="{{ route('yayasan.laporan.index') }}" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('yayasan.laporan.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Laporan Kehadiran">
+            <a href="{{ route('yayasan.laporan.index') }}" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('yayasan.laporan.*') ? 'bg-[#F97316] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#F97316]' }}" title="Laporan Kehadiran">
                 <i class="fa-solid fa-file-signature text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Laporan Kehadiran</span>
             </a>
-            <a href="{{ route('yayasan.potongan.index') }}" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('yayasan.potongan.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Rekap Pemotongan Gaji">
+            <a href="{{ route('yayasan.potongan.index') }}" class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('yayasan.potongan.*') ? 'bg-[#F97316] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#F97316]' }}" title="Rekap Pemotongan Gaji">
                 <i class="fa-solid fa-money-bill-transfer text-lg min-w-[24px] text-center"></i>
                 <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Potongan Gaji</span>
             </a>

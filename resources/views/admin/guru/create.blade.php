@@ -133,7 +133,7 @@
 
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Foto Profil <span class="text-gray-400 font-normal">(Opsional)</span></label>
-                <input type="file" name="foto_profil" accept="image/jpeg,image/png,image/jpg" class="w-full px-4 py-1.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#24429b] focus:border-[#24429b] bg-white outline-none text-sm text-gray-600 file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[#24429b] hover:file:bg-blue-100">
+                <input type="file" name="foto_profil" accept="image/jpeg,image/png,image/jpg" class="w-full px-4 py-1.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#24429b] focus:border-[#24429b] bg-white outline-none text-sm text-gray-600 file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-[#24429b] hover:file:bg-orange-100">
                 <p class="text-[10px] text-gray-400 mt-1">Format: JPG, JPEG, PNG. Maksimal 2MB.</p>
             </div>
             
@@ -145,7 +145,7 @@
 
         <div class="flex justify-end gap-3 pt-5 border-t border-gray-100">
             <a href="{{ route('admin.guru.index') }}" class="px-6 py-2.5 rounded-xl border border-gray-300 text-gray-700 font-bold hover:bg-gray-50 transition-colors">Batal</a>
-            <button type="submit" :disabled="nikError" class="px-6 py-2.5 rounded-xl bg-[#24429b] text-white font-bold hover:bg-[#1a3175] transition-colors shadow-sm disabled:bg-blue-300 disabled:cursor-not-allowed flex items-center">
+            <button type="submit" :disabled="nikError" class="px-6 py-2.5 rounded-xl bg-[#24429b] text-white font-bold hover:bg-[#1a3175] transition-colors shadow-sm disabled:bg-orange-300 disabled:cursor-not-allowed flex items-center">
                 <i class="fa-solid fa-save mr-2"></i> Simpan Data
             </button>
         </div>

@@ -23,9 +23,9 @@
                     },
                     colors: {
                         brand: {
-                            DEFAULT: '#0a2c9c',
-                            light: '#1e40af',
-                            dark: '#08227a',
+                            DEFAULT: '#F97316',
+                            light: '#FB923C',
+                            dark: '#EA580C',
                         }
                     }
                 }
@@ -35,7 +35,7 @@
 
     <style>
         ::selection {
-            background-color: #0a2c9c;
+            background-color: #F97316;
             color: #ffffff;
         }
         

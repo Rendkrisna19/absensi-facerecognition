@@ -24,7 +24,7 @@
                 <h3 class="text-xl font-bold text-gray-800">Detail Profil Akun</h3>
                 <p class="text-sm text-gray-500 mt-1">Kelola informasi pribadi dan keamanan akun Anda.</p>
             </div>
-            <span class="bg-[#002D8B]/10 text-[#002D8B] px-4 py-1.5 rounded-lg font-bold text-xs uppercase tracking-wider">
+            <span class="bg-[#F97316]/10 text-[#F97316] px-4 py-1.5 rounded-lg font-bold text-xs uppercase tracking-wider">
                 {{ str_replace('_', ' ', $user->role) }}
             </span>
         </div>
@@ -64,30 +64,30 @@
                     
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label>
-                        <input type="text" name="name" value="{{ old('name', $user->name) }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all" required>
+                        <input type="text" name="name" value="{{ old('name', $user->name) }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#F08600] focus:border-[#F08600] outline-none transition-all" required>
                         @error('name') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Username / NIK</label>
-                        <input type="text" name="username" value="{{ old('username', $user->username) }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all">
+                        <input type="text" name="username" value="{{ old('username', $user->username) }}" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#F08600] focus:border-[#F08600] outline-none transition-all">
                         @error('username') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                     </div>
 
-                    <div class="bg-blue-50/50 p-5 rounded-xl border border-blue-100 mt-4">
+                    <div class="bg-orange-50/50 p-5 rounded-xl border border-orange-100 mt-4">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Ganti Password (Opsional)</label>
                         <div class="relative">
-                            <input type="password" name="password" id="password" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#1e3b8b] focus:border-[#1e3b8b] outline-none transition-all pr-10" placeholder="Kosongkan jika tidak ingin diubah">
-                            <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-400 hover:text-[#1e3b8b]">
+                            <input type="password" name="password" id="password" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#F08600] focus:border-[#F08600] outline-none transition-all pr-10" placeholder="Kosongkan jika tidak ingin diubah">
+                            <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-400 hover:text-[#F08600]">
                                 <i class="fa-regular fa-eye" id="eye-icon"></i>
                             </button>
                         </div>
-                        <p class="text-xs text-gray-500 mt-2"><i class="fa-solid fa-circle-info mr-1 text-[#002D8B]"></i> Biarkan kosong jika Anda hanya ingin mengubah data di atas.</p>
+                        <p class="text-xs text-gray-500 mt-2"><i class="fa-solid fa-circle-info mr-1 text-[#F97316]"></i> Biarkan kosong jika Anda hanya ingin mengubah data di atas.</p>
                         @error('password') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="flex justify-end pt-6 border-t border-gray-100">
-                        <button type="submit" class="px-8 py-3 rounded-xl bg-[#1e3b8b] hover:bg-[#152b69] text-white font-bold transition-colors shadow-sm flex items-center gap-2">
+                        <button type="submit" class="px-8 py-3 rounded-xl bg-[#F08600] hover:bg-[#152b69] text-white font-bold transition-colors shadow-sm flex items-center gap-2">
                             <i class="fa-solid fa-floppy-disk"></i> Simpan Profil
                         </button>
                     </div>
