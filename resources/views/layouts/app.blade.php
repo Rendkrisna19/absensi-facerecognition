@@ -92,5 +92,65 @@
 </script>
 @endif
 
+@if(session('toast_success'))
+<script>
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: false,
+        background: '#002D8B',
+        color: '#fff',
+        iconColor: '#fff',
+        customClass: {
+            popup: 'rounded-2xl',
+            title: 'font-medium text-sm'
+        }
+    });
+    Toast.fire({
+        icon: 'success',
+        title: "{{ session('toast_success') }}"
+    });
+</script>
+@endif
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            const methodInput = form.querySelector('input[name="_method"]');
+            if (methodInput && methodInput.value.toUpperCase() === 'DELETE') {
+                const buttons = form.querySelectorAll('button[type="submit"]');
+                buttons.forEach(btn => {
+                    btn.removeAttribute('onclick'); // hapus confirm bawaan
+                });
+                
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Apakah Anda Yakin?',
+                        text: 'Data yang dihapus tidak dapat dikembalikan!',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#e3342f',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                        customClass: {
+                            confirmButton: 'rounded-xl',
+                            cancelButton: 'rounded-xl'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            }
+        });
+    });
+</script>
+
 </body>
 </html>

@@ -69,7 +69,7 @@ class AuthController extends Controller
             // Abaikan error jika tabel notifications belum dibuat agar tidak mengganggu proses login
         }
 
-        return $this->redirectUser($user->role);
+        return $this->redirectUser($user->role, 'Berhasil Login');
     }
 
     public function logout(Request $request)
@@ -77,20 +77,26 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/');
+        return redirect('/login')->with('toast_success', 'Berhasil Logout');
     }
 
-    private function redirectUser($role)
+    private function redirectUser($role, $message = null)
     {
+        $redirect = null;
         switch ($role) {
             case 'admin':
-                return redirect()->intended('/admin/dashboard');
+                $redirect = redirect()->intended('/admin/dashboard'); break;
             case 'kepala_yayasan':
-                return redirect()->intended('/yayasan/dashboard');
+                $redirect = redirect()->intended('/yayasan/dashboard'); break;
             case 'guru':
-                return redirect()->intended('/guru/dashboard');
+                $redirect = redirect()->intended('/guru/dashboard'); break;
             default:
-                return redirect('/');
+                $redirect = redirect('/');
         }
+        
+        if ($message) {
+            return $redirect->with('toast_success', $message);
+        }
+        return $redirect;
     }
 }

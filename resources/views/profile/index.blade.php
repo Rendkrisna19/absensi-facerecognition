@@ -10,7 +10,7 @@
 @endpush
 
 @section('content')
-<div class="max-w-4xl mx-auto font-poppins">
+<div class="font-poppins w-full min-h-[calc(100vh-130px)] flex flex-col">
     
     @if(session('success'))
         <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl mb-6 text-sm font-medium flex items-center">
@@ -18,7 +18,7 @@
         </div>
     @endif
 
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex-1 flex flex-col">
         <div class="px-6 md:px-8 py-6 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
             <div>
                 <h3 class="text-xl font-bold text-gray-800">Detail Profil Akun</h3>

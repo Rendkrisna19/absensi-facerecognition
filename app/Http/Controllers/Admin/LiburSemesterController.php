@@ -27,8 +27,9 @@ class LiburSemesterController extends Controller
         return back()->with('success', 'Jadwal libur semester berhasil ditambahkan!');
     }
 
-    public function update(Request $request, LiburSemester $libur)
+    public function update(Request $request, $id)
     {
+        $libur = LiburSemester::findOrFail($id);
         $request->validate([
             'nama_semester' => 'required|string|max:255',
             'tanggal_mulai' => 'required|date',
@@ -39,8 +40,9 @@ class LiburSemesterController extends Controller
         return back()->with('success', 'Jadwal libur berhasil diperbarui!');
     }
 
-    public function destroy(LiburSemester $libur)
+    public function destroy($id)
     {
+        $libur = LiburSemester::findOrFail($id);
         $libur->delete();
         return back()->with('success', 'Jadwal libur berhasil dihapus!');
     }

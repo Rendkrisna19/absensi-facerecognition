@@ -97,7 +97,11 @@
         @endif
     </nav>
 
-    <div class="p-4 border-t border-gray-100 shrink-0 bg-gray-50">
+    <div class="p-4 border-t border-gray-100 shrink-0 bg-gray-50 space-y-2">
+        <a href="{{ route('profile.index') }}" class="flex items-center w-full px-3 py-3 text-gray-600 hover:bg-[#002D8B] hover:text-white rounded-xl transition-colors duration-200 shadow-sm {{ request()->routeIs('profile.index') ? 'bg-[#002D8B] text-white shadow-md' : '' }}" title="Profil Saya">
+            <i class="fa-solid fa-user-gear text-lg min-w-[24px] text-center"></i>
+            <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Profil Saya</span>
+        </a>
         <form action="{{ route('logout') }}" method="POST">
             @csrf
             <button type="submit" class="flex items-center w-full px-3 py-3 text-red-500 hover:bg-red-500 hover:text-white rounded-xl transition-colors duration-200 shadow-sm" title="Keluar">

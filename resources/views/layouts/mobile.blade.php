@@ -85,5 +85,28 @@
     </div>
 
     @stack('scripts')
+
+    @if(session('toast_success'))
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: false,
+            background: '#002D8B',
+            color: '#fff',
+            iconColor: '#fff',
+            customClass: {
+                popup: 'rounded-2xl',
+                title: 'font-medium text-sm'
+            }
+        });
+        Toast.fire({
+            icon: 'success',
+            title: "{{ session('toast_success') }}"
+        });
+    </script>
+    @endif
 </body>
 </html>
