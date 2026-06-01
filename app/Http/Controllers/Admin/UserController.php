@@ -46,7 +46,7 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username', // Pastikan username unik
+            'username' => 'required|string|size:16|unique:users,username', // Pastikan username unik dan 16 karakter
             'password' => 'required|min:6',
             'role' => 'required|in:admin,guru,kepala_yayasan', // Sesuaikan dengan role yang kamu punya
         ]);
@@ -54,6 +54,7 @@ class UserController extends Controller
         User::create([
             'name' => $request->name,
             'username' => $request->username,
+            'nik' => $request->username,
             'password' => Hash::make($request->password),
             'role' => $request->role,
         ]);
@@ -70,7 +71,7 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'username' => 'required|string|size:16|unique:users,username,' . $user->id,
             'password' => 'nullable|min:6', // Boleh kosong jika tidak mau ganti password
             'role' => 'required|in:admin,guru,kepala_yayasan',
         ]);
@@ -78,6 +79,7 @@ class UserController extends Controller
         $data = [
             'name' => $request->name,
             'username' => $request->username,
+            'nik' => $request->username,
             'role' => $request->role,
         ];
 

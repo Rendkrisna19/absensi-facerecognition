@@ -157,10 +157,7 @@
                     </div>
                 </div>
 
-                <!-- Ornamen Ikon Kecil Melayang -->
-                <div class="absolute -left-6 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg animate-bounce">
-                    <i class="fa-solid fa-bolt text-yellow-500 text-xl"></i>
-                </div>
+
 
             </div>
         </div>
