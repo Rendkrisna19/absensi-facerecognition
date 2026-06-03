@@ -58,4 +58,51 @@ class PengajuanIzinController extends Controller
 
         return redirect()->back()->with('success', 'Status pengajuan izin berhasil diperbarui!');
     }
+
+    public function cleanup(Request $request)
+    {
+        $request->validate([
+            'tipe_hapus' => 'required|in:hari,minggu,semua',
+            'tanggal' => 'required_if:tipe_hapus,hari|date',
+            'minggu' => 'required_if:tipe_hapus,minggu', 
+        ]);
+
+        try {
+            $query = PengajuanIzin::query();
+            $pesan = '';
+
+            if ($request->tipe_hapus == 'hari') {
+                $query->where('tanggal_mulai', '<=', $request->tanggal)
+                      ->where('tanggal_selesai', '>=', $request->tanggal);
+                $pesan = 'Data izin yang bersinggungan dengan tanggal ' . \Carbon\Carbon::parse($request->tanggal)->format('d-m-Y') . ' berhasil dihapus.';
+            } elseif ($request->tipe_hapus == 'minggu') {
+                $parts = explode('-W', $request->minggu);
+                if(count($parts) == 2) {
+                    $year = $parts[0];
+                    $week = $parts[1];
+                    $startOfWeek = \Carbon\Carbon::now()->setISODate($year, $week)->startOfWeek();
+                    $endOfWeek = $startOfWeek->copy()->endOfWeek();
+                    $query->whereBetween('tanggal_mulai', [$startOfWeek->format('Y-m-d'), $endOfWeek->format('Y-m-d')]);
+                    $pesan = 'Data izin minggu ke-' . $week . ' tahun ' . $year . ' berhasil dihapus.';
+                } else {
+                    return back()->with('error', 'Format minggu tidak valid.');
+                }
+            } elseif ($request->tipe_hapus == 'semua') {
+                $pesan = 'Semua data izin berhasil dibersihkan.';
+            }
+
+            // Hapus file bukti fisik sebelum record di database dihapus
+            $izins = $query->get();
+            foreach($izins as $izin) {
+                if($izin->file_bukti && \Illuminate\Support\Facades\Storage::disk('public')->exists($izin->file_bukti)) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($izin->file_bukti);
+                }
+            }
+
+            $deleted = $query->delete();
+            return back()->with('success', $pesan . ' (' . $deleted . ' baris terhapus)');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal membersihkan data: ' . $e->getMessage());
+        }
+    }
 }

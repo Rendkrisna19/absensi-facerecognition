@@ -86,6 +86,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/riwayat-absensi', [RiwayatAbsensiController::class, 'index'])->name('admin.riwayat-absensi.index');
     Route::get('/riwayat-absensi/pdf', [RiwayatAbsensiController::class, 'exportPdf'])->name('admin.riwayat-absensi.pdf');
     Route::get('/riwayat-absensi/excel', [RiwayatAbsensiController::class, 'exportExcel'])->name('admin.riwayat-absensi.excel');
+    Route::post('/riwayat-absensi/cleanup', [RiwayatAbsensiController::class, 'cleanup'])->name('admin.riwayat-absensi.cleanup');
+    Route::post('/pengajuan-izin/cleanup', [App\Http\Controllers\Admin\PengajuanIzinController::class, 'cleanup'])->name('admin.pengajuan-izin.cleanup');
 });
 
 // 4. Group Routes: KEPALA YAYASAN

@@ -5,18 +5,88 @@
 
 @section('content')
 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+    @if(session('success'))
+        <div class="bg-green-100 border border-green-200 text-green-700 px-4 py-3 rounded-xl mb-4 text-sm font-medium flex items-center">
+            <i class="fa-solid fa-circle-check mr-2"></i> {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="bg-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-4 text-sm font-medium flex items-center">
+            <i class="fa-solid fa-circle-xmark mr-2"></i> {{ session('error') }}
+        </div>
+    @endif
+    @if($errors->any())
+        <div class="bg-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-4 text-sm font-medium">
+            <ul class="list-disc pl-5">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
             <h3 class="text-xl font-bold text-gray-800">Log Kehadiran Pegawai</h3>
             <p class="text-sm text-gray-500 mt-1">Pantau seluruh riwayat jam masuk, jam pulang, dan status izin pegawai.</p>
         </div>
-        <div class="flex gap-2">
+        <div class="flex flex-wrap gap-2" x-data="{ openCleanup: false }">
+            <button @click="openCleanup = true" type="button" class="bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-broom"></i> Bersihkan Data
+            </button>
             <a href="{{ route('admin.riwayat-absensi.pdf', request()->all()) }}" target="_blank" class="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border border-red-200 hover:border-transparent px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 shadow-sm">
                 <i class="fa-solid fa-file-pdf"></i> PDF
             </a>
             <a href="{{ route('admin.riwayat-absensi.excel', request()->all()) }}" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white border border-emerald-200 hover:border-transparent px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 shadow-sm">
                 <i class="fa-solid fa-file-excel"></i> Excel
             </a>
+
+            <!-- Modal Cleanup Data Absensi -->
+            <template x-teleport="body">
+                <div x-show="openCleanup" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div x-show="openCleanup" x-transition.opacity @click="openCleanup = false" class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div>
+                    <div x-show="openCleanup" x-transition.scale.origin.bottom class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden z-10">
+                        <div class="px-5 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                            <h3 class="font-bold flex items-center gap-2 text-gray-800"><i class="fa-solid fa-broom text-[#002D8B]"></i> Bersihkan Data Absensi</h3>
+                            <button @click="openCleanup = false" class="text-gray-400 hover:text-gray-600 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+                        </div>
+                        <form id="form-cleanup-absensi" action="{{ route('admin.riwayat-absensi.cleanup') }}" method="POST" class="p-5" x-data="{ tipeHapus: 'hari' }">
+                            @csrf
+                            <div class="bg-red-50 border border-red-200 text-red-600 text-xs px-3 py-2 rounded-lg mb-4 flex gap-2">
+                                <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
+                                <span>Tindakan ini akan menghapus data absensi secara permanen.</span>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-sm font-bold text-gray-700 mb-1.5">Mode Pembersihan</label>
+                                <select name="tipe_hapus" x-model="tipeHapus" class="w-full border-2 border-gray-300 rounded-xl text-sm focus:ring-[#002D8B] focus:border-[#002D8B] p-2.5 transition bg-gray-50 hover:bg-white cursor-pointer font-medium">
+                                    <option value="hari">Hapus 1 Hari Tertentu</option>
+                                    <option value="minggu">Hapus 1 Minggu Tertentu</option>
+                                    <option value="semua">Hapus Semua Data Absensi</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-5" x-show="tipeHapus == 'hari'">
+                                <label class="block text-sm font-bold text-gray-700 mb-1.5">Pilih Tanggal</label>
+                                <input type="date" name="tanggal" required="required" :disabled="tipeHapus !== 'hari'" class="w-full border-2 border-gray-300 rounded-xl text-sm focus:ring-[#002D8B] focus:border-[#002D8B] p-2.5 transition bg-white shadow-sm font-medium text-gray-700">
+                            </div>
+
+                            <div class="mb-5" x-show="tipeHapus == 'minggu'" style="display: none;">
+                                <label class="block text-sm font-bold text-gray-700 mb-1.5">Pilih Minggu (Week)</label>
+                                <input type="week" name="minggu" required="required" :disabled="tipeHapus !== 'minggu'" class="w-full border-2 border-gray-300 rounded-xl text-sm focus:ring-[#002D8B] focus:border-[#002D8B] p-2.5 transition bg-white shadow-sm font-medium text-gray-700">
+                                <p class="text-[10px] text-gray-400 mt-1.5">*Pilih minggu ke berapa dalam suatu tahun</p>
+                            </div>
+
+                            <div class="flex justify-end gap-2 pt-2 border-t border-gray-100">
+                                <button type="button" @click="openCleanup = false" class="px-4 py-2.5 bg-gray-100 text-gray-700 border border-gray-200 rounded-xl text-sm font-bold hover:bg-gray-200 transition">Batal</button>
+                                <button type="button" onclick="confirmCleanupAbsensi()" class="px-4 py-2.5 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition-colors shadow-sm flex items-center gap-1.5">
+                                    <i class="fa-solid fa-trash-can"></i> Hapus Permanen
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </template>
         </div>
     </div>
 
@@ -181,4 +251,30 @@
         </div>
     </div>
 </div>
+
+<script>
+    function confirmCleanupAbsensi() {
+        if(typeof Swal === 'undefined') {
+            if(confirm('Apakah Anda yakin ingin menghapus data ini secara permanen?')) {
+                document.getElementById('form-cleanup-absensi').submit();
+            }
+            return;
+        }
+        Swal.fire({
+            title: 'Bersihkan Data Absensi?',
+            text: "Data yang dipilih akan dihapus secara permanen dan tidak dapat dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444', 
+            cancelButtonColor: '#6b7280', 
+            confirmButtonText: '<i class="fa-solid fa-trash-can mr-1"></i> Ya, Hapus Permanen!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('form-cleanup-absensi').submit();
+            }
+        });
+    }
+</script>
 @endsection

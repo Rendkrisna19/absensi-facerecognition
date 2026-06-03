@@ -50,7 +50,7 @@ class PengajuanIzinController extends Controller
             $pathBukti = $request->file('file_bukti')->store('bukti_izin', 'public');
         }
 
-        PengajuanIzin::create([
+        $izin = PengajuanIzin::create([
             'user_id' => auth()->id(),
             'jenis' => $request->jenis,
             'tanggal_mulai' => $request->tanggal_mulai,
@@ -58,6 +58,17 @@ class PengajuanIzinController extends Controller
             'alasan' => $request->alasan,
             'file_bukti' => $pathBukti,
             'status' => 'Pending', // Default status
+        ]);
+
+        // Tambahkan notifikasi
+        \Illuminate\Support\Facades\DB::table('notifications')->insert([
+            'user_id' => auth()->id(), // user yang mengajukan (atau null jika global)
+            'title' => 'Pengajuan Izin',
+            'message' => '<b>' . auth()->user()->name . '</b> mengajukan ' . $request->jenis,
+            'icon' => 'fa-envelope-open-text',
+            'is_read' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return redirect()->route('guru.pengajuan-izin.index')

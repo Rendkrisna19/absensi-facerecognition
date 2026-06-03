@@ -56,9 +56,19 @@
             </a>
 
             <a href="{{ route('admin.pengajuan-izin.index') }}" 
-               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.pengajuan-izin.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Validasi Izin & Cuti">
-                <i class="fa-solid fa-envelope-open-text text-lg min-w-[24px] text-center"></i>
-                <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Validasi Izin</span>
+               class="relative flex items-center justify-between px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.pengajuan-izin.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Validasi Izin & Cuti">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-envelope-open-text text-lg min-w-[24px] text-center"></i>
+                    <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Validasi Izin</span>
+                </div>
+                @php
+                    $pendingIzin = \App\Models\PengajuanIzin::where('status', 'Pending')->count();
+                @endphp
+                @if($pendingIzin > 0)
+                    <span x-show="!isMini" class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">{{ $pendingIzin }} Baru</span>
+                    <span x-show="isMini" class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                    <span x-show="isMini" class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                @endif
             </a>
 
             <p x-show="!isMini" class="px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 mt-6">Konfigurasi</p>

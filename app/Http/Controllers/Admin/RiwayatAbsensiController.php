@@ -78,4 +78,43 @@ class RiwayatAbsensiController extends Controller
             'Riwayat_Absensi_Admin.xlsx'
         );
     }
+
+    public function cleanup(Request $request)
+    {
+        $request->validate([
+            'tipe_hapus' => 'required|in:hari,minggu,semua',
+            'tanggal' => 'required_if:tipe_hapus,hari|date',
+            'minggu' => 'required_if:tipe_hapus,minggu', 
+        ]);
+
+        try {
+            $query = Absensi::query();
+            $pesan = '';
+
+            if ($request->tipe_hapus == 'hari') {
+                $query->where('tanggal', $request->tanggal);
+                $pesan = 'Data absensi tanggal ' . \Carbon\Carbon::parse($request->tanggal)->format('d-m-Y') . ' berhasil dihapus.';
+            } elseif ($request->tipe_hapus == 'minggu') {
+                // $request->minggu is typically '2026-W01'
+                $parts = explode('-W', $request->minggu);
+                if(count($parts) == 2) {
+                    $year = $parts[0];
+                    $week = $parts[1];
+                    $startOfWeek = Carbon::now()->setISODate($year, $week)->startOfWeek();
+                    $endOfWeek = $startOfWeek->copy()->endOfWeek();
+                    $query->whereBetween('tanggal', [$startOfWeek->format('Y-m-d'), $endOfWeek->format('Y-m-d')]);
+                    $pesan = 'Data absensi minggu ke-' . $week . ' tahun ' . $year . ' berhasil dihapus.';
+                } else {
+                    return back()->with('error', 'Format minggu tidak valid.');
+                }
+            } elseif ($request->tipe_hapus == 'semua') {
+                $pesan = 'Semua data absensi berhasil dibersihkan.';
+            }
+
+            $deleted = $query->delete();
+            return back()->with('success', $pesan . ' (' . $deleted . ' baris terhapus)');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal membersihkan data: ' . $e->getMessage());
+        }
+    }
 }
