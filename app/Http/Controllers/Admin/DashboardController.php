@@ -20,11 +20,11 @@ class DashboardController extends Controller
         // 2. Hitung Status Kehadiran Hari Ini
         // Sesuaikan nama kolom 'tanggal' dan 'status' dengan tabel database Anda
         $hadir = Absensi::whereDate('created_at', $hariIni)
-                        ->where('status', 'tepat_waktu')
+                        ->where('status', 'Hadir')
                         ->count();
 
         $terlambat = Absensi::whereDate('created_at', $hariIni)
-                            ->where('status', 'terlambat')
+                            ->where('status', 'Terlambat')
                             ->count();
 
         // Alpa didapat dari Total Guru dikurangi yang sudah absen hari ini
@@ -48,5 +48,20 @@ class DashboardController extends Controller
                             ->get();
 
         return view('admin.dashboard.index', compact('stats', 'recent_absensi'));
+    }
+
+    public function semuaAbsen(Request $request)
+    {
+        $query = Absensi::with('user')->orderBy('jam_masuk', 'desc');
+
+        if ($request->filled('tanggal')) {
+            $query->where('tanggal', $request->tanggal);
+        } else {
+            $query->where('tanggal', Carbon::today()->format('Y-m-d'));
+        }
+
+        $absensi = $query->paginate(10);
+
+        return response()->json($absensi);
     }
 }

@@ -88,15 +88,15 @@
     </div>
 
     <!-- Recent Activity Table Section -->
-    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8" x-data="absensiModal()">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-gray-100 pb-5 gap-4">
             <div>
                 <h4 class="text-xl font-bold text-gray-800">Aktivitas Masuk Terbaru</h4>
                 <p class="text-sm text-gray-500 mt-1">Daftar absensi terakhir hari ini.</p>
             </div>
-            <a href="#" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-[#1e3b8b] bg-blue-50 rounded-xl hover:bg-[#1e3b8b] hover:text-white transition-colors duration-300">
+            <button @click="openModal()" type="button" class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-[#1e3b8b] bg-blue-50 rounded-xl hover:bg-[#1e3b8b] hover:text-white transition-colors duration-300">
                 Lihat Semua Data <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
-            </a>
+            </button>
         </div>
         
         <div class="overflow-x-auto rounded-2xl border border-gray-100">
@@ -132,11 +132,11 @@
                             </span>
                         </td>
                         <td class="p-5">
-                            @if($absen->status == 'tepat_waktu')
+                            @if($absen->status == 'Hadir')
                                 <span class="inline-flex items-center px-4 py-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl text-xs font-bold uppercase tracking-wider">
-                                    <i class="fa-solid fa-check-circle mr-1.5"></i> Tepat Waktu
+                                    <i class="fa-solid fa-check-circle mr-1.5"></i> Hadir
                                 </span>
-                            @elseif($absen->status == 'terlambat')
+                            @elseif($absen->status == 'Terlambat')
                                 <span class="inline-flex items-center px-4 py-2 bg-orange-50 text-orange-600 border border-orange-100 rounded-xl text-xs font-bold uppercase tracking-wider">
                                     <i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Terlambat
                                 </span>
@@ -168,7 +168,161 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Modal Lihat Semua Data -->
+        <div x-show="isOpen" style="display: none;" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity" @click="closeModal()"></div>
+        <div x-show="isOpen" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto" x-transition>
+            <div class="bg-white rounded-3xl shadow-xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden" @click.stop>
+                <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">Semua Data Absensi</h3>
+                        <p class="text-sm text-gray-500 mt-1">Daftar kehadiran lengkap berdasarkan tanggal.</p>
+                    </div>
+                    <button @click="closeModal()" class="text-gray-400 hover:text-red-500 transition-colors w-10 h-10 rounded-full hover:bg-red-50 flex items-center justify-center">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                <div class="p-6 flex-1 overflow-y-auto">
+                    <div class="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50">
+                        <label for="filter_tanggal" class="text-sm font-semibold text-gray-700 whitespace-nowrap">Pilih Tanggal:</label>
+                        <input type="date" id="filter_tanggal" x-model="filterDate" @change="fetchData()" class="border border-gray-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-full sm:w-auto">
+                    </div>
+                    <div x-show="isLoading" class="py-12 flex justify-center items-center">
+                        <i class="fa-solid fa-circle-notch fa-spin text-4xl text-[#1e3b8b]"></i>
+                    </div>
+                    <div x-show="!isLoading" class="overflow-x-auto rounded-2xl border border-gray-100">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50/80 text-gray-600 border-b border-gray-100">
+                                    <th class="p-4 font-semibold w-16 text-center">No</th>
+                                    <th class="p-4 font-semibold">Profil Guru</th>
+                                    <th class="p-4 font-semibold">Waktu Masuk</th>
+                                    <th class="p-4 font-semibold">Status Presensi</th>
+                                    <th class="p-4 font-semibold text-center">Metode / Jaringan</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-50">
+                                <template x-for="(absen, index) in absensiData.data" :key="absen.id">
+                                    <tr class="hover:bg-blue-50/40 transition-colors duration-200">
+                                        <td class="p-4 text-gray-500 font-medium text-center" x-text="(absensiData.current_page - 1) * absensiData.per_page + index + 1"></td>
+                                        <td class="p-4">
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700 flex items-center justify-center font-bold text-sm shadow-inner" x-text="absen.user && absen.user.name ? absen.user.name.substring(0, 2).toUpperCase() : 'G'"></div>
+                                                <div>
+                                                    <span class="font-bold text-gray-800 text-base" x-text="absen.user ? absen.user.name : 'Guru Tidak Diketahui'"></span>
+                                                    <p class="text-xs text-gray-400 font-mono mt-0.5 tracking-wide" x-text="'NIK: ' + (absen.user ? (absen.user.nik || '-') : '-')"></p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="inline-flex items-center font-bold text-gray-700 bg-gray-100 px-3 py-1.5 rounded-xl text-xs">
+                                                <i class="fa-regular fa-clock text-gray-400 mr-2 text-sm"></i> 
+                                                <span x-text="formatTime(absen.jam_masuk) + ' WIB'"></span>
+                                            </span>
+                                        </td>
+                                        <td class="p-4">
+                                            <template x-if="absen.status === 'Hadir'">
+                                                <span class="inline-flex items-center px-3 py-1.5 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl text-xs font-bold uppercase tracking-wider">
+                                                    <i class="fa-solid fa-check-circle mr-1.5"></i> Hadir
+                                                </span>
+                                            </template>
+                                            <template x-if="absen.status === 'Terlambat'">
+                                                <span class="inline-flex items-center px-3 py-1.5 bg-orange-50 text-orange-600 border border-orange-100 rounded-xl text-xs font-bold uppercase tracking-wider">
+                                                    <i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Terlambat
+                                                </span>
+                                            </template>
+                                            <template x-if="absen.status !== 'Hadir' && absen.status !== 'Terlambat'">
+                                                <span class="inline-flex items-center px-3 py-1.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-xl text-xs font-bold uppercase tracking-wider">
+                                                    <i class="fa-solid fa-circle-info mr-1.5"></i> <span x-text="absen.status"></span>
+                                                </span>
+                                            </template>
+                                        </td>
+                                        <td class="p-4 text-center">
+                                            <div class="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50/50 px-3 py-1.5 rounded-lg border border-emerald-100/50">
+                                                <i class="fa-solid fa-wifi"></i> Valid (LAN)
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template x-if="absensiData.data && absensiData.data.length === 0">
+                                    <tr>
+                                        <td colspan="5" class="p-12 text-center bg-gray-50/30">
+                                            <div class="flex flex-col items-center justify-center text-gray-400">
+                                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100 mb-3">
+                                                    <i class="fa-regular fa-folder-open text-3xl text-gray-300"></i>
+                                                </div>
+                                                <p class="font-bold text-gray-600">Tidak ada data absensi</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div x-show="absensiData.last_page > 1" class="mt-6 flex flex-col sm:flex-row items-center justify-between border-t border-gray-100 pt-4 gap-4">
+                        <p class="text-sm text-gray-500">
+                            Menampilkan <span class="font-bold text-gray-800" x-text="absensiData.from || 0"></span> - <span class="font-bold text-gray-800" x-text="absensiData.to || 0"></span> dari <span class="font-bold text-gray-800" x-text="absensiData.total || 0"></span> data
+                        </p>
+                        <div class="flex gap-2">
+                            <button @click="fetchData(absensiData.prev_page_url)" :disabled="!absensiData.prev_page_url" class="px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                                <i class="fa-solid fa-angle-left mr-1"></i> Prev
+                            </button>
+                            <button @click="fetchData(absensiData.next_page_url)" :disabled="!absensiData.next_page_url" class="px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                                Next <i class="fa-solid fa-angle-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
+
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('absensiModal', () => ({
+        isOpen: false,
+        isLoading: false,
+        filterDate: '{{ \Carbon\Carbon::now()->format('Y-m-d') }}',
+        absensiData: {},
+        
+        openModal() {
+            this.isOpen = true;
+            if (!this.absensiData.data) {
+                this.fetchData();
+            }
+        },
+        
+        closeModal() {
+            this.isOpen = false;
+        },
+        
+        fetchData(url = null) {
+            this.isLoading = true;
+            let fetchUrl = url || `{{ route('admin.dashboard.semua-absen') }}?tanggal=${this.filterDate}`;
+            
+            if (url && !url.includes('tanggal=')) {
+                fetchUrl += (fetchUrl.includes('?') ? '&' : '?') + `tanggal=${this.filterDate}`;
+            }
+
+            fetch(fetchUrl)
+                .then(res => res.json())
+                .then(data => {
+                    this.absensiData = data;
+                    this.isLoading = false;
+                })
+                .catch(err => {
+                    console.error('Error fetching data:', err);
+                    this.isLoading = false;
+                });
+        },
+        
+        formatTime(datetimeStr) {
+            if (!datetimeStr) return '-';
+            return datetimeStr.substring(11, 16);
+        }
+    }));
+});
+</script>
 @endsection

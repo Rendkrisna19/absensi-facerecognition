@@ -54,6 +54,7 @@ Route::get('/notifications/read-all', function() {
 // 3. Group Routes: ADMIN
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/dashboard/semua-absen', [DashboardController::class, 'semuaAbsen'])->name('admin.dashboard.semua-absen');
     Route::get('/guru/download-template', [GuruController::class, 'downloadTemplate'])->name('admin.guru.downloadTemplate');
     Route::post('/guru/import-excel', [GuruController::class, 'importExcel'])->name('admin.guru.importExcel');
     Route::resource('guru', GuruController::class)->names('admin.guru');
