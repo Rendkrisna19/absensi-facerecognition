@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Absensi;
 use App\Models\User;
+use App\Services\AlpaService;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
@@ -15,6 +16,11 @@ class LaporanAbsensiController extends Controller
 {
     public function index(Request $request)
     {
+        // Backfill Alpa records for the date range before querying
+        $startDate = $request->start_date ?? Carbon::now()->startOfMonth()->toDateString();
+        $endDate = $request->end_date ?? Carbon::now()->endOfMonth()->toDateString();
+        AlpaService::backfillAlpaRecords($startDate, $endDate);
+
         // 1. Ambil data guru untuk dropdown
         $guruQuery = User::where('role', 'guru');
         if ($request->filled('unit_sekolah') && $request->unit_sekolah !== 'Semua') {
@@ -56,9 +62,12 @@ class LaporanAbsensiController extends Controller
     {
         Carbon::setLocale('id');
         
-        // 1. Tangkap parameter filter yang sama dengan halaman index
+        // Backfill Alpa records before export
         $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
         $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+        AlpaService::backfillAlpaRecords($startDate, $endDate);
+
+        // 1. Tangkap parameter filter yang sama dengan halaman index
         $guruId = $request->input('guru_id');
         $unitSekolah = $request->input('unit_sekolah');
 
@@ -85,8 +94,11 @@ class LaporanAbsensiController extends Controller
     // Method Export Excel
     public function exportExcel(Request $request)
     {
+        // Backfill Alpa records before export
         $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
         $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+        AlpaService::backfillAlpaRecords($startDate, $endDate);
+
         $guruId = $request->input('guru_id');
         $unitSekolah = $request->input('unit_sekolah');
 

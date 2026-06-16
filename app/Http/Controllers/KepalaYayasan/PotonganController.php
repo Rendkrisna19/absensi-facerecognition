@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Absensi;
 use App\Models\PengaturanAbsensi;
+use App\Services\AlpaService;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
@@ -31,6 +32,7 @@ class PotonganController extends Controller
         $totalGuruDipotong = 0;
 
         foreach ($gurus as $guru) {
+            // Count Terlambat records
             $riwayatTelat = Absensi::where('user_id', $guru->id)
                 ->whereMonth('tanggal', $bulan)
                 ->whereYear('tanggal', $tahun)
@@ -38,11 +40,23 @@ class PotonganController extends Controller
                 ->orderBy('tanggal', 'asc')
                 ->get();
 
-            $jumlahTelat = $riwayatTelat->count();
-            $totalPotongan = $jumlahTelat * $nominalDenda;
+            // Count Alpa records
+            $riwayatAlpa = Absensi::where('user_id', $guru->id)
+                ->whereMonth('tanggal', $bulan)
+                ->whereYear('tanggal', $tahun)
+                ->where('status', 'Alpa')
+                ->orderBy('tanggal', 'asc')
+                ->get();
 
-            if ($jumlahTelat > 0) $totalGuruDipotong++;
+            $jumlahTelat = $riwayatTelat->count();
+            $jumlahAlpa = $riwayatAlpa->count();
+            $totalPotongan = ($jumlahTelat + $jumlahAlpa) * $nominalDenda;
+
+            if (($jumlahTelat + $jumlahAlpa) > 0) $totalGuruDipotong++;
             $totalKeseluruhanPotongan += $totalPotongan;
+
+            // Merge riwayat for display
+            $riwayatGabungan = $riwayatTelat->merge($riwayatAlpa)->sortBy('tanggal')->values();
 
             $dataPotongan[] = (object)[
                 'id' => $guru->id,
@@ -51,8 +65,9 @@ class PotonganController extends Controller
                 'jabatan' => $guru->jabatan,
                 'foto' => $guru->foto_profil,
                 'jumlah_telat' => $jumlahTelat,
+                'jumlah_alpa' => $jumlahAlpa,
                 'total_potongan' => $totalPotongan,
-                'riwayat' => $riwayatTelat
+                'riwayat' => $riwayatGabungan
             ];
         }
 
@@ -74,6 +89,11 @@ class PotonganController extends Controller
         $bulanSelected = $request->input('bulan', Carbon::now()->month);
         $tahunSelected = $request->input('tahun', Carbon::now()->year);
         $unitSekolah = $request->input('unit_sekolah', 'Semua');
+
+        // Backfill Alpa records for the selected month
+        $startDate = Carbon::createFromDate($tahunSelected, $bulanSelected, 1)->startOfMonth()->format('Y-m-d');
+        $endDate = Carbon::createFromDate($tahunSelected, $bulanSelected, 1)->endOfMonth()->format('Y-m-d');
+        AlpaService::backfillAlpaRecords($startDate, $endDate);
 
         $laporan = $this->getPotonganData($bulanSelected, $tahunSelected, $unitSekolah);
         $namaBulanTahun = Carbon::createFromDate($tahunSelected, $bulanSelected, 1)->translatedFormat('F Y');
@@ -97,6 +117,11 @@ class PotonganController extends Controller
         $bulan = $request->input('bulan', Carbon::now()->month);
         $tahun = $request->input('tahun', Carbon::now()->year);
         $unitSekolah = $request->input('unit_sekolah');
+
+        // Backfill Alpa records
+        $startDate = Carbon::createFromDate($tahun, $bulan, 1)->startOfMonth()->format('Y-m-d');
+        $endDate = Carbon::createFromDate($tahun, $bulan, 1)->endOfMonth()->format('Y-m-d');
+        AlpaService::backfillAlpaRecords($startDate, $endDate);
         
         $laporan = $this->getPotonganData($bulan, $tahun, $unitSekolah);
         $namaBulanTahun = Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F Y');
@@ -116,6 +141,12 @@ class PotonganController extends Controller
         $bulan = $request->input('bulan', Carbon::now()->month);
         $tahun = $request->input('tahun', Carbon::now()->year);
         $unitSekolah = $request->input('unit_sekolah');
+
+        // Backfill Alpa records
+        $startDate = Carbon::createFromDate($tahun, $bulan, 1)->startOfMonth()->format('Y-m-d');
+        $endDate = Carbon::createFromDate($tahun, $bulan, 1)->endOfMonth()->format('Y-m-d');
+        AlpaService::backfillAlpaRecords($startDate, $endDate);
+
         $namaBulanTahun = Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F Y');
 
         return Excel::download(new PotonganExport($bulan, $tahun, $unitSekolah), 'Laporan_Potongan_Gaji_'.$namaBulanTahun.'.xlsx');

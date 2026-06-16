@@ -26,7 +26,7 @@
 
     <div class="header">
         <h2>YAYASAN TRI JAYA</h2>
-        <p>LAPORAN RINCIAN KEHADIRAN GURU & PEGAWAI</p>
+        <p>LAPORAN RINCIAN KEHADIRAN GURU</p>
         <p>Periode: <strong>{{ \Carbon\Carbon::parse($startDate)->translatedFormat('d M Y') }} s/d {{ \Carbon\Carbon::parse($endDate)->translatedFormat('d M Y') }}</strong></p>
     </div>
 
@@ -35,7 +35,7 @@
             <tr>
                 <th class="text-center" width="5%">No</th>
                 <th width="15%">Tanggal</th>
-                <th width="30%">Nama Pegawai</th>
+                <th width="30%">Nama Guru</th>
                 <th class="text-center" width="15%">Jam Masuk</th>
                 <th class="text-center" width="15%">Keterlambatan</th>
                 <th class="text-center" width="20%">Status</th>

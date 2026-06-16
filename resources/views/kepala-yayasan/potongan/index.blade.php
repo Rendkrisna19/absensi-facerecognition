@@ -9,7 +9,7 @@
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 no-print">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-                <h2 class="text-xl font-bold text-gray-800">Laporan Potongan Gaji Pegawai</h2>
+                <h2 class="text-xl font-bold text-gray-800">Laporan Potongan Gaji Guru</h2>
                 <p class="text-sm text-gray-500">Berdasarkan akumulasi keterlambatan bulan: <strong class="text-[#002D8B]">{{ $namaBulanTahun }}</strong></p>
             </div>
             

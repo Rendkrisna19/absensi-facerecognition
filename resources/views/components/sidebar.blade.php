@@ -36,9 +36,9 @@
             </a>
             
             <a href="{{ route('admin.guru.index') }}" 
-               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.guru.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Data Pegawai & Guru">
+               class="flex items-center px-3 py-3 rounded-xl group transition-all duration-200 {{ request()->routeIs('admin.guru.*') ? 'bg-[#002D8B] text-white shadow-md' : 'text-gray-500 hover:text-white hover:bg-[#002D8B]' }}" title="Data Guru">
                 <i class="fa-solid fa-users text-lg min-w-[24px] text-center"></i>
-                <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Data Pegawai</span>
+                <span x-show="!isMini" class="ml-3 font-medium whitespace-nowrap">Data Guru</span>
             </a>
 
             <a href="{{ route('admin.face.index') }}" 

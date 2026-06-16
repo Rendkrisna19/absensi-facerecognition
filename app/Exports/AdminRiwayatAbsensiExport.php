@@ -58,7 +58,7 @@ class AdminRiwayatAbsensiExport implements FromCollection, WithHeadings, WithMap
 
     public function headings(): array
     {
-        return ['No', 'Tanggal', 'Pegawai', 'NIK', 'Unit Sekolah', 'Jam Masuk', 'Jam Pulang', 'Keterlambatan', 'Status'];
+        return ['No', 'Tanggal', 'Guru', 'NIK', 'Unit Sekolah', 'Jam Masuk', 'Jam Pulang', 'Keterlambatan', 'Status'];
     }
 
     public function map($absen): array

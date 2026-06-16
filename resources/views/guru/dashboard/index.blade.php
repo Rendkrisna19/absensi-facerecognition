@@ -1,5 +1,5 @@
 @extends('layouts.mobile') @section('title', 'Beranda')
-@section('subtitle', 'Halo, Selamat Pagi')
+@section('subtitle', 'Halo, ' . $greeting)
 @section('page_title', auth()->user()->name)
 
 @section('content')

@@ -35,7 +35,7 @@
                             </div>
                             <input type="text" name="nik" id="nik" value="{{ old('nik') }}" required autofocus
                                 class="w-full pl-12 pr-4 py-3.5 bg-[#F3F6FA] border-none rounded-2xl focus:bg-white focus:ring-2 focus:ring-[#002D8B] outline-none transition-all duration-300 text-gray-800 text-sm font-medium {{ $errors->has('nik') ? 'ring-2 ring-red-500' : '' }}"
-                                placeholder="Email / NIK">
+                                placeholder="Masukkan NIK Anda">
                         </div>
                         @error('nik')
                             <p class="text-red-500 text-xs mt-2 font-medium flex items-center ml-2">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Guru;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Absensi;
+use App\Services\AlpaService;
 use Carbon\Carbon;
 
 class RiwayatController extends Controller
@@ -17,6 +18,16 @@ class RiwayatController extends Controller
         $bulanSelected = $request->input('bulan', Carbon::now()->month);
         $tahunSelected = $request->input('tahun', Carbon::now()->year);
 
+        // Auto-create Alpa record for today before loading riwayat
+        AlpaService::createAlpaRecords(Carbon::now()->format('Y-m-d'));
+
+        // Backfill past working days in selected month that are missing Alpa records
+        $startOfMonth = Carbon::createFromDate($tahunSelected, $bulanSelected, 1)->startOfMonth()->format('Y-m-d');
+        $endOfRange = Carbon::now()->subDay()->format('Y-m-d');
+        if ($startOfMonth < $endOfRange) {
+            AlpaService::backfillAlpaRecords($startOfMonth, $endOfRange);
+        }
+
         $riwayatAbsen = Absensi::where('user_id', $user->id)
             ->whereMonth('tanggal', $bulanSelected)
             ->whereYear('tanggal', $tahunSelected)
@@ -27,7 +38,7 @@ class RiwayatController extends Controller
         $totalHadir = Absensi::where('user_id', $user->id)
             ->whereMonth('tanggal', $bulanSelected)
             ->whereYear('tanggal', $tahunSelected)
-            ->where('status', '!=', 'Alpa')
+            ->whereIn('status', ['Hadir', 'Terlambat'])
             ->count();
 
         return view('guru.riwayat.index', compact('riwayatAbsen', 'bulanSelected', 'tahunSelected', 'totalHadir'));

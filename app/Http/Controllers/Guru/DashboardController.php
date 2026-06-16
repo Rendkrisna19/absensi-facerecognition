@@ -7,6 +7,7 @@ use App\Models\Absensi;
 use App\Models\PengaturanAbsensi;
 use App\Models\LiburSemester; 
 use App\Models\PengajuanIzin;
+use App\Services\AlpaService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 
@@ -21,6 +22,22 @@ class DashboardController extends Controller
         $bulanIni = $hariIni->month;
         $tahunIni = $hariIni->year;
         $tanggalFormat = $hariIni->translatedFormat('l, d F Y');
+
+        // Salam dinamis berdasarkan jam WIB (Asia/Jakarta)
+        $jam = $hariIni->hour;
+        if ($jam >= 4 && $jam <= 10) {
+            $greeting = 'Selamat Pagi';
+        } elseif ($jam >= 11 && $jam <= 14) {
+            $greeting = 'Selamat Siang';
+        } elseif ($jam >= 15 && $jam <= 18) {
+            $greeting = 'Selamat Sore';
+        } else {
+            $greeting = 'Selamat Malam';
+        }
+
+        // Auto-create Alpa record for today if this guru hasn't attended
+        // (Only creates if attendance window has passed, handled gracefully)
+        AlpaService::createAlpaRecords($hariIni->format('Y-m-d'));
         
         // 1. AMBIL PENGATURAN ABSENSI (Untuk tahu jam pulang)
         $pengaturan = PengaturanAbsensi::first();
@@ -80,7 +97,13 @@ class DashboardController extends Controller
             ->where('status', 'Terlambat')
             ->count();
 
-        $totalDendaBulanIni = $totalTelatBulanIni * $nominalDendaFlat;
+        $totalAlpaBulanIni = Absensi::where('user_id', $user->id)
+            ->whereMonth('tanggal', $bulanIni)
+            ->whereYear('tanggal', $tahunIni)
+            ->where('status', 'Alpa')
+            ->count();
+
+        $totalDendaBulanIni = ($totalTelatBulanIni + $totalAlpaBulanIni) * $nominalDendaFlat;
 
         // 6. RIWAYAT PENGAJUAN IZIN
         $riwayatIzin = PengajuanIzin::where('user_id', $user->id)
@@ -96,7 +119,8 @@ class DashboardController extends Controller
             'totalHadirBulanIni',
             'totalDendaBulanIni',
             'riwayatIzin',
-            'jamPulang' 
+            'jamPulang',
+            'greeting'
         ));
     }
 }

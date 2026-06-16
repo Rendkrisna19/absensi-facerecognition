@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Absensi;
 use App\Models\PengaturanAbsensi;
+use App\Services\AlpaService;
 use Carbon\Carbon;
 
 class DendaController extends Controller
@@ -18,24 +19,37 @@ class DendaController extends Controller
         $bulanSelected = $request->input('bulan', Carbon::now()->month);
         $tahunSelected = $request->input('tahun', Carbon::now()->year);
 
+        // Ensure Alpa records exist for past working days
+        AlpaService::createAlpaRecords(Carbon::now()->format('Y-m-d'));
+        $startOfMonth = Carbon::createFromDate($tahunSelected, $bulanSelected, 1)->startOfMonth()->format('Y-m-d');
+        $endOfRange = Carbon::now()->subDay()->format('Y-m-d');
+        if ($startOfMonth < $endOfRange) {
+            AlpaService::backfillAlpaRecords($startOfMonth, $endOfRange);
+        }
+
         $pengaturan = PengaturanAbsensi::first();
         $nominalDendaFlat = $pengaturan ? $pengaturan->denda_terlambat : 0;
 
-        $riwayatTerlambat = Absensi::where('user_id', $user->id)
+        // Get both Terlambat and Alpa records
+        $riwayatDenda = Absensi::where('user_id', $user->id)
             ->whereMonth('tanggal', $bulanSelected)
             ->whereYear('tanggal', $tahunSelected)
-            ->where('status', 'Terlambat')
+            ->whereIn('status', ['Terlambat', 'Alpa'])
             ->orderBy('tanggal', 'desc')
             ->get();
 
-        $totalHariTelat = $riwayatTerlambat->count();
-        $totalDenda = $totalHariTelat * $nominalDendaFlat;
+        $totalHariTelat = $riwayatDenda->where('status', 'Terlambat')->count();
+        $totalHariAlpa = $riwayatDenda->where('status', 'Alpa')->count();
+        $totalHariDenda = $totalHariTelat + $totalHariAlpa;
+        $totalDenda = $totalHariDenda * $nominalDendaFlat;
 
         $namaBulanTahun = Carbon::createFromDate($tahunSelected, $bulanSelected, 1)->translatedFormat('F Y');
 
         return view('guru.denda.index', compact(
-            'riwayatTerlambat', 
-            'totalHariTelat', 
+            'riwayatDenda', 
+            'totalHariTelat',
+            'totalHariAlpa',
+            'totalHariDenda', 
             'totalDenda', 
             'nominalDendaFlat',
             'bulanSelected',

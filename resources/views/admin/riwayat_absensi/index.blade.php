@@ -27,8 +27,8 @@
 
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-            <h3 class="text-xl font-bold text-gray-800">Log Kehadiran Pegawai</h3>
-            <p class="text-sm text-gray-500 mt-1">Pantau seluruh riwayat jam masuk, jam pulang, dan status izin pegawai.</p>
+            <h3 class="text-xl font-bold text-gray-800">Log Kehadiran Guru</h3>
+            <p class="text-sm text-gray-500 mt-1">Pantau seluruh riwayat jam masuk, jam pulang, dan status izin guru.</p>
         </div>
         <div class="flex flex-wrap gap-2" x-data="{ openCleanup: false }">
             <button @click="openCleanup = true" type="button" class="bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 shadow-sm">
@@ -93,7 +93,7 @@
     <form method="GET" action="{{ route('admin.riwayat-absensi.index') }}" class="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6 grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
         
         <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Cari Pegawai</label>
+            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Cari Guru</label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-gray-400"></i>

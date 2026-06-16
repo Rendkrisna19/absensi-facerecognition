@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Absensi;
 use Illuminate\Http\Request;
+use App\Services\AlpaService;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
@@ -47,6 +48,9 @@ class RiwayatAbsensiController extends Controller
 
     public function index(Request $request)
     {
+        // Backfill Alpa records for filtered period before querying
+        $this->backfillForRequest($request);
+
         $query = $this->buildQuery($request);
         $riwayat = $query->paginate(15)->withQueryString();
 
@@ -56,6 +60,8 @@ class RiwayatAbsensiController extends Controller
     public function exportPdf(Request $request)
     {
         Carbon::setLocale('id');
+        $this->backfillForRequest($request);
+
         $query = $this->buildQuery($request);
         $riwayat = $query->get();
 
@@ -67,6 +73,8 @@ class RiwayatAbsensiController extends Controller
 
     public function exportExcel(Request $request)
     {
+        $this->backfillForRequest($request);
+
         return Excel::download(
             new AdminRiwayatAbsensiExport(
                 $request->search,
@@ -77,6 +85,31 @@ class RiwayatAbsensiController extends Controller
             ),
             'Riwayat_Absensi_Admin.xlsx'
         );
+    }
+
+    /**
+     * Helper: backfill Alpa records for the month/year specified in request filters.
+     */
+    private function backfillForRequest(Request $request): void
+    {
+        $bulan = $request->input('bulan', 'all');
+        $tahun = $request->input('tahun', 'all');
+
+        if ($bulan !== 'all' && $tahun !== 'all') {
+            $startDate = Carbon::createFromDate($tahun, $bulan, 1)->startOfMonth()->format('Y-m-d');
+            $endDate = Carbon::createFromDate($tahun, $bulan, 1)->endOfMonth()->format('Y-m-d');
+            AlpaService::backfillAlpaRecords($startDate, $endDate);
+        } elseif ($tahun !== 'all') {
+            // Full year backfill
+            $startDate = Carbon::createFromDate($tahun, 1, 1)->format('Y-m-d');
+            $endDate = Carbon::createFromDate($tahun, 12, 31)->format('Y-m-d');
+            AlpaService::backfillAlpaRecords($startDate, $endDate);
+        } else {
+            // Default: backfill current month
+            $startDate = Carbon::now()->startOfMonth()->format('Y-m-d');
+            $endDate = Carbon::now()->subDay()->format('Y-m-d');
+            AlpaService::backfillAlpaRecords($startDate, $endDate);
+        }
     }
 
     public function cleanup(Request $request)

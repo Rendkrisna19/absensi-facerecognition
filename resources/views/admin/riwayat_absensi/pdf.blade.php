@@ -11,12 +11,12 @@
     </style>
 </head>
 <body>
-    <h2 class="text-center">Riwayat Absensi Pegawai Keseluruhan</h2>
+    <h2 class="text-center">Riwayat Absensi Guru Keseluruhan</h2>
     <table>
         <thead>
             <tr>
                 <th>No</th>
-                <th>Pegawai</th>
+                <th>Guru</th>
                 <th>NIK</th>
                 <th>Unit Sekolah</th>
                 <th class="text-center">Tanggal</th>

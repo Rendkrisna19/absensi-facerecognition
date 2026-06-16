@@ -42,7 +42,7 @@ class LaporanAbsensiExport implements FromCollection, WithHeadings, WithMapping,
 
     public function headings(): array
     {
-        return ['No', 'Tanggal', 'Hari', 'Nama Pegawai', 'Jabatan', 'Jam Masuk', 'Keterlambatan', 'Status'];
+        return ['No', 'Tanggal', 'Hari', 'Nama Guru', 'Jabatan', 'Jam Masuk', 'Keterlambatan', 'Status'];
     }
 
     public function map($absen): array

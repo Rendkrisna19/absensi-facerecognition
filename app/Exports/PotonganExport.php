@@ -42,13 +42,20 @@ class PotonganExport implements FromCollection, WithHeadings, WithMapping, WithS
                 ->where('status', 'Terlambat')
                 ->count();
 
-            if ($jumlahTelat > 0) {
+            $jumlahAlpa = Absensi::where('user_id', $guru->id)
+                ->whereMonth('tanggal', $this->bulan)
+                ->whereYear('tanggal', $this->tahun)
+                ->where('status', 'Alpa')
+                ->count();
+
+            if (($jumlahTelat + $jumlahAlpa) > 0) {
                 $data[] = (object)[
                     'nik' => $guru->nik,
                     'name' => $guru->name,
                     'jabatan' => $guru->jabatan,
                     'jumlah_telat' => $jumlahTelat,
-                    'potongan' => $jumlahTelat * $nominalDenda
+                    'jumlah_alpa' => $jumlahAlpa,
+                    'potongan' => ($jumlahTelat + $jumlahAlpa) * $nominalDenda
                 ];
             }
         }
@@ -60,14 +67,14 @@ class PotonganExport implements FromCollection, WithHeadings, WithMapping, WithS
 
     public function headings(): array
     {
-        return ['No', 'NIK', 'Nama Guru', 'Jabatan', 'Total Telat (Hari)', 'Total Potongan (Rp)'];
+        return ['No', 'NIK', 'Nama Guru', 'Jabatan', 'Total Telat (Hari)', 'Total Alpa (Hari)', 'Total Potongan (Rp)'];
     }
 
     public function map($row): array
     {
         static $no = 0;
         $no++;
-        return [$no, $row->nik, $row->name, $row->jabatan, $row->jumlah_telat, $row->potongan];
+        return [$no, $row->nik, $row->name, $row->jabatan, $row->jumlah_telat, $row->jumlah_alpa, $row->potongan];
     }
 
     public function styles(Worksheet $sheet)
