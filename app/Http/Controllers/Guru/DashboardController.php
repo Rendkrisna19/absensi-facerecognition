@@ -35,9 +35,12 @@ class DashboardController extends Controller
             $greeting = 'Selamat Malam';
         }
 
-        // Auto-create Alpa record for today if this guru hasn't attended
-        // (Only creates if attendance window has passed, handled gracefully)
-        AlpaService::createAlpaRecords($hariIni->format('Y-m-d'));
+        // Backfill Alpa records for past working days this month (not today)
+        $startOfMonth = Carbon::createFromDate($tahunIni, $bulanIni, 1)->format('Y-m-d');
+        $yesterday = $hariIni->copy()->subDay()->format('Y-m-d');
+        if ($startOfMonth <= $yesterday) {
+            AlpaService::backfillAlpaRecords($startOfMonth, $yesterday);
+        }
         
         // 1. AMBIL PENGATURAN ABSENSI (Untuk tahu jam pulang)
         $pengaturan = PengaturanAbsensi::first();
