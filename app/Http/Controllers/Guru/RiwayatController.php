@@ -18,10 +18,7 @@ class RiwayatController extends Controller
         $bulanSelected = $request->input('bulan', Carbon::now()->month);
         $tahunSelected = $request->input('tahun', Carbon::now()->year);
 
-        // Backfill past working days that are missing Alpa records (up to yesterday)
-        AlpaService::createAlpaRecords(Carbon::now()->subDay()->format('Y-m-d'));
-
-        // Backfill past working days in selected month that are missing Alpa records
+        // Backfill past working days in selected month that are missing Alpa records (up to yesterday, never today)
         $startOfMonth = Carbon::createFromDate($tahunSelected, $bulanSelected, 1)->startOfMonth()->format('Y-m-d');
         $endOfRange = Carbon::now()->subDay()->format('Y-m-d');
         if ($startOfMonth < $endOfRange) {

@@ -52,11 +52,18 @@ class AlpaService
 
     /**
      * Create Alpa records for all gurus who did not attend on a given date.
+     * Only processes PAST dates — never today or future (school day may still be ongoing).
      * Returns the number of new Alpa records created.
      */
     public static function createAlpaRecords(?string $date = null): int
     {
-        $date = $date ?? Carbon::now()->format('Y-m-d');
+        $date = $date ?? Carbon::now()->subDay()->format('Y-m-d');
+
+        // NEVER create Alpa for today or future — teachers haven't finished scanning yet
+        $today = Carbon::now()->format('Y-m-d');
+        if ($date >= $today) {
+            return 0;
+        }
 
         if (!self::isWorkingDay($date)) {
             return 0;

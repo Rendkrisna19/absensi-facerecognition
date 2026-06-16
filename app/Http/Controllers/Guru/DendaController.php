@@ -19,8 +19,7 @@ class DendaController extends Controller
         $bulanSelected = $request->input('bulan', Carbon::now()->month);
         $tahunSelected = $request->input('tahun', Carbon::now()->year);
 
-        // Ensure Alpa records exist for past working days (up to yesterday, not today)
-        AlpaService::createAlpaRecords(Carbon::now()->subDay()->format('Y-m-d'));
+        // Backfill past working days in selected month (up to yesterday, never today)
         $startOfMonth = Carbon::createFromDate($tahunSelected, $bulanSelected, 1)->startOfMonth()->format('Y-m-d');
         $endOfRange = Carbon::now()->subDay()->format('Y-m-d');
         if ($startOfMonth < $endOfRange) {
