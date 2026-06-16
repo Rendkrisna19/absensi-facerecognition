@@ -121,6 +121,45 @@
         @endforelse
     </div>
 
+    <!-- Pagination -->
+    @if($riwayatDenda->hasPages())
+    <div class="flex justify-center mt-4">
+        <nav class="inline-flex rounded-xl overflow-hidden shadow-sm border border-gray-200">
+            {{-- Previous Page Link --}}
+            @if ($riwayatDenda->onFirstPage())
+                <span class="px-3 py-2 text-xs font-semibold text-gray-400 bg-gray-50 cursor-not-allowed">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </span>
+            @else
+                <a href="{{ $riwayatDenda->previousPageUrl() }}" class="px-3 py-2 text-xs font-semibold text-gray-600 bg-white hover:bg-gray-50 transition-colors border-r border-gray-200">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </a>
+            @endif
+
+            {{-- Pagination Elements --}}
+            @foreach ($riwayatDenda->getUrlRange(1, $riwayatDenda->lastPage()) as $page => $url)
+                @if ($page == $riwayatDenda->currentPage())
+                    <span class="px-3.5 py-2 text-xs font-bold text-white bg-red-500">{{ $page }}</span>
+                @else
+                    <a href="{{ $url }}" class="px-3.5 py-2 text-xs font-semibold text-gray-600 bg-white hover:bg-gray-50 transition-colors border-r border-gray-200">{{ $page }}</a>
+                @endif
+            @endforeach
+
+            {{-- Next Page Link --}}
+            @if ($riwayatDenda->hasMorePages())
+                <a href="{{ $riwayatDenda->nextPageUrl() }}" class="px-3 py-2 text-xs font-semibold text-gray-600 bg-white hover:bg-gray-50 transition-colors">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            @else
+                <span class="px-3 py-2 text-xs font-semibold text-gray-400 bg-gray-50 cursor-not-allowed">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </span>
+            @endif
+        </nav>
+    </div>
+    <p class="text-center text-[10px] text-gray-400 mt-2">Halaman {{ $riwayatDenda->currentPage() }} dari {{ $riwayatDenda->lastPage() }} ({{ $riwayatDenda->total() }} data)</p>
+    @endif
+
     <!-- Spacer agar list terbawah tidak tertutup navigasi -->
     <div class="h-8"></div>
 </div>

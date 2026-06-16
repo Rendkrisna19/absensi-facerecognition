@@ -30,18 +30,24 @@ class DendaController extends Controller
         $pengaturan = PengaturanAbsensi::first();
         $nominalDendaFlat = $pengaturan ? $pengaturan->denda_terlambat : 0;
 
-        // Get both Terlambat and Alpa records
+        // Count totals from ALL records (not just current page)
+        $baseQuery = Absensi::where('user_id', $user->id)
+            ->whereMonth('tanggal', $bulanSelected)
+            ->whereYear('tanggal', $tahunSelected);
+
+        $totalHariTelat = (clone $baseQuery)->where('status', 'Terlambat')->count();
+        $totalHariAlpa = (clone $baseQuery)->where('status', 'Alpa')->count();
+        $totalHariDenda = $totalHariTelat + $totalHariAlpa;
+        $totalDenda = $totalHariDenda * $nominalDendaFlat;
+
+        // Get paginated Terlambat and Alpa records
         $riwayatDenda = Absensi::where('user_id', $user->id)
             ->whereMonth('tanggal', $bulanSelected)
             ->whereYear('tanggal', $tahunSelected)
             ->whereIn('status', ['Terlambat', 'Alpa'])
             ->orderBy('tanggal', 'desc')
-            ->get();
-
-        $totalHariTelat = $riwayatDenda->where('status', 'Terlambat')->count();
-        $totalHariAlpa = $riwayatDenda->where('status', 'Alpa')->count();
-        $totalHariDenda = $totalHariTelat + $totalHariAlpa;
-        $totalDenda = $totalHariDenda * $nominalDendaFlat;
+            ->paginate(10)
+            ->appends($request->query());
 
         $namaBulanTahun = Carbon::createFromDate($tahunSelected, $bulanSelected, 1)->translatedFormat('F Y');
 
