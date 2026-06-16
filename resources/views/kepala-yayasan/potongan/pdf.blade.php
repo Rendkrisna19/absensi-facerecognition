@@ -27,7 +27,7 @@
 
     <div class="header">
         <h2>YAYASAN TRI JAYA</h2>
-        <p>REKAPITULASI PEMOTONGAN GAJI (KETERLAMBATAN)</p>
+        <p>REKAPITULASI PEMOTONGAN GAJI (KETERLAMBATAN & KETIDAK-HADIRAN)</p>
         <p>Periode: <strong>{{ $namaBulanTahun }}</strong></p>
     </div>
 
@@ -35,10 +35,11 @@
         <thead>
             <tr>
                 <th class="text-center" width="5%">No</th>
-                <th width="20%">NIK</th>
-                <th width="35%">Nama Lengkap</th>
-                <th class="text-center" width="20%">Frekuensi Telat</th>
-                <th class="text-right" width="20%">Total Potongan</th>
+                <th width="18%">NIK</th>
+                <th width="30%">Nama Lengkap</th>
+                <th class="text-center" width="12%">Frekuensi Telat</th>
+                <th class="text-center" width="12%">Tidak Absen</th>
+                <th class="text-right" width="23%">Total Potongan</th>
             </tr>
         </thead>
         <tbody>
@@ -50,18 +51,19 @@
                     <td>{{ $data->nik }}<br><small style="color: #666;">{{ $data->jabatan }}</small></td>
                     <td class="font-bold">{{ $data->name }}</td>
                     <td class="text-center">{{ $data->jumlah_telat }} Hari</td>
+                    <td class="text-center">{{ $data->jumlah_alpa ?? 0 }} Hari</td>
                     <td class="text-right font-bold text-red">Rp {{ number_format($data->total_potongan, 0, ',', '.') }}</td>
                 </tr>
                 @endif
             @empty
                 <tr>
-                    <td colspan="5" class="text-center">Tidak ada data pemotongan gaji di bulan ini.</td>
+                    <td colspan="6" class="text-center">Tidak ada data pemotongan gaji di bulan ini.</td>
                 </tr>
             @endforelse
             
             @if($totalKeseluruhan > 0)
             <tr class="total-row">
-                <td colspan="4" class="text-right font-bold">TOTAL KESELURUHAN POTONGAN</td>
+                <td colspan="5" class="text-right font-bold">TOTAL KESELURUHAN POTONGAN</td>
                 <td class="text-right font-bold text-red">Rp {{ number_format($totalKeseluruhan, 0, ',', '.') }}</td>
             </tr>
             @endif

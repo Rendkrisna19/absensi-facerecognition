@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Potongan Gaji')
-@section('page_title', 'Rekap Pemotongan Gaji (Keterlambatan)')
+@section('page_title', 'Rekap Pemotongan Gaji (Keterlambatan & Ketidak-hadiran)')
 
 @section('content')
 <div class="space-y-6 print-area" x-data="{ modalOpen: false, modalData: null }">
@@ -10,7 +10,7 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <h2 class="text-xl font-bold text-gray-800">Laporan Potongan Gaji Guru</h2>
-                <p class="text-sm text-gray-500">Berdasarkan akumulasi keterlambatan bulan: <strong class="text-[#002D8B]">{{ $namaBulanTahun }}</strong></p>
+                <p class="text-sm text-gray-500">Berdasarkan akumulasi keterlambatan & ketidak-hadiran bulan: <strong class="text-[#002D8B]">{{ $namaBulanTahun }}</strong></p>
             </div>
             
             <div class="flex items-center gap-3">
@@ -62,12 +62,12 @@
         <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
             <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Jumlah Guru Terpotong</p>
             <h3 class="text-3xl font-black text-gray-800">{{ $totalGuruDipotong }} <span class="text-sm font-medium text-gray-400">Orang</span></h3>
-            <p class="text-[10px] mt-2 text-gray-400">Guru yang terlambat minimal 1 kali di bulan ini</p>
+            <p class="text-[10px] mt-2 text-gray-400">Guru yang terlambat atau tidak absen minimal 1 kali di bulan ini</p>
         </div>
         <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
             <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Aturan Denda Sistem</p>
             <h3 class="text-3xl font-black text-orange-500">Rp {{ number_format($nominalDenda, 0, ',', '.') }}</h3>
-            <p class="text-[10px] mt-2 text-gray-400 font-bold">Dikalikan (x) jumlah hari terlambat</p>
+            <p class="text-[10px] mt-2 text-gray-400 font-bold">Dikalikan (x) jumlah hari terlambat + tidak absen</p>
         </div>
     </div>
 
@@ -89,13 +89,14 @@
                         <th class="px-5 py-4 font-bold text-center w-12">No</th>
                         <th class="px-5 py-4 font-bold">Data Guru</th>
                         <th class="px-5 py-4 font-bold text-center">Frekuensi Telat</th>
+                        <th class="px-5 py-4 font-bold text-center">Tidak Absen</th>
                         <th class="px-5 py-4 font-bold text-right">Nominal Potongan</th>
                         <th class="px-5 py-4 font-bold text-center no-print w-32">Rincian</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @forelse($dataPotongan as $index => $data)
-                    <tr class="hover:bg-red-50/30 transition-colors guru-row {{ $data->jumlah_telat > 0 ? 'bg-white' : 'bg-gray-50/30 opacity-60' }}">
+                    <tr class="hover:bg-red-50/30 transition-colors guru-row {{ ($data->jumlah_telat + $data->jumlah_alpa) > 0 ? 'bg-white' : 'bg-gray-50/30 opacity-60' }}">
                         <td class="px-5 py-4 text-center text-gray-500 font-medium">{{ $index + 1 }}</td>
                         <td class="px-5 py-4">
                             <div class="flex items-center gap-3">
@@ -114,12 +115,23 @@
                         </td>
                         <td class="px-5 py-4 text-center">
                             @if($data->jumlah_telat > 0)
-                                <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">
+                                <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-bold border border-orange-200">
                                     {{ $data->jumlah_telat }} Kali
                                 </span>
                             @else
                                 <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200">
-                                    Disiplin (0)
+                                    0
+                                </span>
+                            @endif
+                        </td>
+                        <td class="px-5 py-4 text-center">
+                            @if($data->jumlah_alpa > 0)
+                                <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">
+                                    {{ $data->jumlah_alpa }} Kali
+                                </span>
+                            @else
+                                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200">
+                                    0
                                 </span>
                             @endif
                         </td>
@@ -129,19 +141,20 @@
                             </span>
                         </td>
                         <td class="px-5 py-4 text-center no-print">
-                            @if($data->jumlah_telat > 0)
+                            @if(($data->jumlah_telat + $data->jumlah_alpa) > 0)
                                 <button @click="modalData = {{ json_encode([
                                     'name' => $data->name,
                                     'potongan' => number_format($data->total_potongan, 0, ',', '.'),
                                     'riwayat' => $data->riwayat->map(function($r) {
                                         return [
                                             'tanggal' => \Carbon\Carbon::parse($r->tanggal)->translatedFormat('l, d F Y'),
-                                            'jam' => \Carbon\Carbon::parse($r->jam_masuk)->format('H:i'),
-                                            'menit' => $r->menit_terlambat
+                                            'jam' => $r->jam_masuk ? \Carbon\Carbon::parse($r->jam_masuk)->format('H:i') : null,
+                                            'menit' => $r->menit_terlambat,
+                                            'status' => $r->status
                                         ];
                                     })
                                 ]) }}; modalOpen = true" 
-                                class="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 hover:bg-[#002D8B] hover:text-white flex items-center justify-center transition-all shadow-sm tooltip" title="Lihat Tanggal Telat">
+                                class="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 hover:bg-[#002D8B] hover:text-white flex items-center justify-center transition-all shadow-sm tooltip" title="Lihat Rincian">
                                     <i class="fa-solid fa-eye text-xs"></i>
                                 </button>
                             @else
@@ -151,7 +164,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-5 py-10 text-center text-gray-400">
+                        <td colspan="6" class="px-5 py-10 text-center text-gray-400">
                             <i class="fa-solid fa-folder-open text-4xl mb-3 block text-gray-300"></i>
                             Tidak ada data guru untuk ditampilkan.
                         </td>
@@ -161,7 +174,7 @@
                 @if(count($dataPotongan) > 0)
                 <tfoot class="bg-gray-100 font-bold border-t-2 border-gray-300 text-gray-800">
                     <tr>
-                        <td colspan="3" class="px-5 py-4 text-right uppercase tracking-wider text-xs">Total Potongan Seluruh Guru Bulan Ini</td>
+                        <td colspan="4" class="px-5 py-4 text-right uppercase tracking-wider text-xs">Total Potongan Seluruh Guru Bulan Ini</td>
                         <td class="px-5 py-4 text-right text-red-600 text-lg">Rp {{ number_format($totalKeseluruhanPotongan, 0, ',', '.') }}</td>
                         <td class="no-print"></td>
                     </tr>
@@ -184,7 +197,7 @@
                 
                 <div class="bg-[#002D8B] px-6 py-4 flex justify-between items-center">
                     <h3 class="text-lg leading-6 font-bold text-white" id="modal-title">
-                        <i class="fa-solid fa-clock-rotate-left mr-2"></i> Rincian Keterlambatan
+                        <i class="fa-solid fa-clock-rotate-left mr-2"></i> Rincian Keterlambatan & Ketidak-hadiran
                     </h3>
                     <button @click="modalOpen = false" class="text-blue-200 hover:text-white transition-colors">
                         <i class="fa-solid fa-xmark text-xl"></i>
@@ -205,24 +218,38 @@
                                 </div>
                             </div>
 
-                            <p class="text-xs text-gray-500 font-bold mb-3"><i class="fa-solid fa-calendar-days mr-1"></i> Daftar Tanggal Terlambat:</p>
+                            <p class="text-xs text-gray-500 font-bold mb-3"><i class="fa-solid fa-calendar-days mr-1"></i> Daftar Tanggal:</p>
                             
                             <div class="max-h-64 overflow-y-auto pr-2 custom-scrollbar space-y-2">
                                 <template x-for="(item, index) in modalData.riwayat" :key="index">
-                                    <div class="flex justify-between items-center bg-red-50/50 border border-red-100 p-3 rounded-xl">
+                                    <div class="flex justify-between items-center p-3 rounded-xl"
+                                         :class="item.status === 'Terlambat' ? 'bg-orange-50/50 border border-orange-100' : 'bg-gray-50 border border-gray-200'">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 rounded-full bg-red-100 text-red-500 flex items-center justify-center text-xs font-bold">
-                                                <i class="fa-solid fa-exclamation"></i>
+                                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
+                                                 :class="item.status === 'Terlambat' ? 'bg-orange-100 text-orange-500' : 'bg-gray-200 text-gray-500'">
+                                                <i :class="item.status === 'Terlambat' ? 'fa-solid fa-exclamation' : 'fa-solid fa-circle-xmark'"></i>
                                             </div>
                                             <div>
                                                 <p class="text-sm font-bold text-gray-800" x-text="item.tanggal"></p>
-                                                <p class="text-xs text-red-500 font-medium">Masuk: <span x-text="item.jam"></span> WIB</p>
+                                                <template x-if="item.jam">
+                                                    <p class="text-xs text-orange-500 font-medium">Masuk: <span x-text="item.jam"></span> WIB</p>
+                                                </template>
+                                                <template x-if="!item.jam">
+                                                    <p class="text-xs text-gray-500 font-medium">Tidak absen</p>
+                                                </template>
                                             </div>
                                         </div>
                                         <div class="text-right">
-                                            <span class="bg-white text-red-600 text-[10px] font-bold px-2 py-1 rounded-md border border-red-200 shadow-sm">
-                                                Telat <span x-text="item.menit"></span> Menit
-                                            </span>
+                                            <template x-if="item.status === 'Terlambat'">
+                                                <span class="bg-white text-orange-600 text-[10px] font-bold px-2 py-1 rounded-md border border-orange-200 shadow-sm">
+                                                    Telat <span x-text="item.menit"></span> Menit
+                                                </span>
+                                            </template>
+                                            <template x-if="item.status === 'Alpa'">
+                                                <span class="bg-white text-gray-600 text-[10px] font-bold px-2 py-1 rounded-md border border-gray-200 shadow-sm">
+                                                    Tidak Absen
+                                                </span>
+                                            </template>
                                         </div>
                                     </div>
                                 </template>
@@ -260,7 +287,7 @@
         th, td { border: 1px solid #e5e7eb !important; padding: 8px !important; }
         
         .print-area::before {
-            content: "YAYASAN TRI JAYA - REKAP PEMOTONGAN GAJI (KETERLAMBATAN) BULAN {{ strtoupper($namaBulanTahun) }}";
+            content: "YAYASAN TRI JAYA - REKAP PEMOTONGAN GAJI (KETERLAMBATAN & KETIDAK-HADIRAN) BULAN {{ strtoupper($namaBulanTahun) }}";
             display: block;
             text-align: center;
             font-size: 16px;

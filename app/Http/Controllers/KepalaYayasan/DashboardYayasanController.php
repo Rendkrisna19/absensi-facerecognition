@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Absensi;
 use App\Models\User;
 use App\Models\PengaturanAbsensi;
+use App\Services\AlpaService;
 use Carbon\Carbon;
 
 class DashboardYayasanController extends Controller
@@ -15,6 +16,13 @@ class DashboardYayasanController extends Controller
     {
         Carbon::setLocale('id');
         $hariIni = Carbon::now()->format('Y-m-d');
+
+        // Backfill Alpa records for current month
+        $startDate = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $endDate = Carbon::now()->subDay()->format('Y-m-d');
+        if ($startDate < $endDate) {
+            AlpaService::backfillAlpaRecords($startDate, $endDate);
+        }
         
         $bulanSelected = $request->input('bulan', Carbon::now()->month);
         $tahunSelected = $request->input('tahun', Carbon::now()->year);
@@ -57,8 +65,14 @@ class DashboardYayasanController extends Controller
                                      ->whereYear('tanggal', $tahunSelected)
                                      ->where('status', 'Terlambat')
                                      ->count();
-                                     
-        $totalDendaBulanIni = $totalTelatBulanIni * $nominalDendaFlat;
+        
+        $totalAlpaBulanIni = $getAbsensiQuery()
+                                     ->whereMonth('tanggal', $bulanSelected)
+                                     ->whereYear('tanggal', $tahunSelected)
+                                     ->where('status', 'Alpa')
+                                     ->count();
+                                              
+        $totalDendaBulanIni = ($totalTelatBulanIni + $totalAlpaBulanIni) * $nominalDendaFlat;
 
         $rataKehadiran = $totalGuru > 0 ? round(($sudahAbsen / $totalGuru) * 100) : 0;
 
